@@ -57,8 +57,8 @@ const Navbar: FC = () => {
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Appointment</Link>
-        <button 
-          className="login-button"
+        <Link 
+          to="/login"
           style={{
             backgroundColor: 'white',
             color: '#272b69',
@@ -66,11 +66,19 @@ const Navbar: FC = () => {
             padding: '0.5rem 1.5rem',
             borderRadius: '4px',
             fontWeight: 'bold',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            textDecoration: 'none',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#f0f1ff';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'white';
           }}
         >
-          Login
-        </button>
+          Sign In
+        </Link>
       </div>
     </nav>
   );

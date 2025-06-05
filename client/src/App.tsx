@@ -9,6 +9,8 @@ import Courses from './components/Courses'
 import About from './components/About'
 import ArticlesPage from './components/ArticlesPage'
 import CoursesPage from './components/CoursesPage'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
 import './App.css'
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/articles" element={<ArticlesPage />} />
             <Route path="/courses" element={<CoursesPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
           </Routes>
         </main>
         <Footer />
