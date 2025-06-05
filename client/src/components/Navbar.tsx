@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar: FC = () => {
   return (
@@ -26,33 +27,38 @@ const Navbar: FC = () => {
         Medical Portal
       </div>
       <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-        <a href="/" style={{ 
+        <Link to="/" style={{ 
           color: 'white', 
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
-        }}>Home</a>
-        <a href="/about" style={{ 
+        }}>Home</Link>
+        <Link to="/about" style={{ 
           color: 'white', 
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
-        }}>About</a>
-        <a href="/assessments" style={{ 
+        }}>About</Link>
+        <Link to="/assessments" style={{ 
           color: 'white', 
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
-        }}>Assessments</a>
-        <a href="/courses" style={{ 
+        }}>Assessments</Link>
+        <Link to="/articles" style={{ 
           color: 'white', 
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
-        }}>Courses</a>
-        <a href="/appointment" style={{ 
+        }}>Articles</Link>
+        <Link to="/courses" style={{ 
           color: 'white', 
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
-        }}>Appointment</a>
-        <button 
-          className="login-button"
+        }}>Courses</Link>
+        <Link to="/appointment" style={{ 
+          color: 'white', 
+          textDecoration: 'none',
+          transition: 'opacity 0.2s ease'
+        }}>Appointment</Link>
+        <Link 
+          to="/login"
           style={{
             backgroundColor: 'white',
             color: '#272b69',
@@ -60,11 +66,19 @@ const Navbar: FC = () => {
             padding: '0.5rem 1.5rem',
             borderRadius: '4px',
             fontWeight: 'bold',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            textDecoration: 'none',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = '#f0f1ff';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = 'white';
           }}
         >
-          Login
-        </button>
+          Sign In
+        </Link>
       </div>
     </nav>
   );
