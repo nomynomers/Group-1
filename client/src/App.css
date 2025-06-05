@@ -1,0 +1,86 @@
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  overflow-x: hidden;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+
+h1 {
+  color: #272b69;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+p {
+  color: #4a4a4a;
+  line-height: 1.6;
+}
+
+/* Navbar link styles */
+nav a {
+  transition: opacity 0.2s ease;
+}
+
+nav a:hover {
+  opacity: 0.8;
+}
+
+/* Login button styles */
+.login-button {
+  transition: background-color 0.2s ease !important;
+}
+
+.login-button:hover {
+  background-color: #e0e0e0 !important;
+}
+
+.login-button:active {
+  background-color: #d0d0d0 !important;
+}
+
+/* Hero button styles */
+main button {
+  transition: all 0.2s ease !important;
+}
+
+main button:first-of-type:hover {
+  background-color: #1f2254 !important;
+}
+
+main button:last-of-type:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Assessment button hover effect */
+main button[style*="alignSelf: flex-start"]:hover {
+  background-color: #1f2254 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Remove unused styles */
+.logo,
+.logo:hover,
+.logo.react:hover,
+.card,
+.read-the-docs {
+  display: none;
+}
