@@ -1,6 +1,13 @@
 import type { FC } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Courses: FC = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllClick = () => {
+    navigate('/courses');
+  };
+
   const courses = [
     {
       title: "Introduction to Health & Wellness",
@@ -135,27 +142,32 @@ const Courses: FC = () => {
 
         <div style={{
           textAlign: 'center',
-          marginTop: '2rem'
+          marginTop: '3rem'
         }}>
-          <button style={{
-            backgroundColor: '#272b69',
-            color: 'white',
-            border: 'none',
-            padding: '1rem 2rem',
-            borderRadius: '4px',
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#1f2254';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#272b69';
-          }}>
-            Browse All Courses
-          </button>
+          <Link 
+            to="/courses" 
+            onClick={handleViewAllClick}
+            style={{
+              backgroundColor: '#272b69',
+              color: 'white',
+              border: 'none',
+              padding: '1rem 2rem',
+              borderRadius: '4px',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              textDecoration: 'none',
+              display: 'inline-block'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#1f2254';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = '#272b69';
+            }}>
+            View All Courses
+          </Link>
         </div>
       </div>
     </div>

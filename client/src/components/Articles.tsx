@@ -1,6 +1,13 @@
 import type { FC } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Articles: FC = () => {
+  const navigate = useNavigate();
+
+  const handleViewAllClick = () => {
+    navigate('/articles');
+  };
+
   const articles = [
     {
       title: "Understanding the Importance of Regular Health Check-ups",
@@ -109,13 +116,6 @@ const Articles: FC = () => {
                 }}>
                   {article.title}
                 </h3>
-                <p style={{
-                  fontSize: '0.9rem',
-                  color: '#666',
-                  margin: 0
-                }}>
-                  {article.date}
-                </p>
               </div>
             </div>
           ))}
@@ -125,25 +125,30 @@ const Articles: FC = () => {
           textAlign: 'center',
           marginTop: '3rem'
         }}>
-          <button style={{
-            backgroundColor: '#272b69',
-            color: 'white',
-            border: 'none',
-            padding: '1rem 2rem',
-            borderRadius: '4px',
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#1f2254';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = '#272b69';
-          }}>
+          <Link 
+            to="/articles" 
+            onClick={handleViewAllClick}
+            style={{
+              backgroundColor: '#272b69',
+              color: 'white',
+              border: 'none',
+              padding: '1rem 2rem',
+              borderRadius: '4px',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              textDecoration: 'none',
+              display: 'inline-block'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#1f2254';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = '#272b69';
+            }}>
             View All Articles
-          </button>
+          </Link>
         </div>
       </div>
     </div>
