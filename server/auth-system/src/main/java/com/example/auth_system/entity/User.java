@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "AppUser")// ✅ Matches SQL table name
+@Table(name = "Users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //  Auto-increment INT
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
     @Column(nullable = false, unique = true)
