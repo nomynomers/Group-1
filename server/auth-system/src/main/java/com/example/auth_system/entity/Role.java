@@ -9,17 +9,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Role")
+@Table(name = "[Role]", schema = "dbo")  //  matches table name
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //  Auto-increment ID (int)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id") //  match DB
     private int roleId;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "role_name", nullable = false, unique = true) //  match DB
     private String roleName;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)

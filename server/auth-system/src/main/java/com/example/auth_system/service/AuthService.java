@@ -16,8 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @Slf4j
 public class AuthService {
@@ -131,40 +129,4 @@ public class AuthService {
 
         return new MessageResponse("Profile updated successfully!");
     }
-
-    public MessageResponse createUserByAdmin(CreateUserRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            return new MessageResponse("Error: Email is already taken!");
-        }
-
-        Role role = roleRepository.findByRoleName(request.getRoleName())
-                .orElseThrow(() -> new RuntimeException("Error: Role not found"));
-
-        User newUser = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .dateOfBirth(request.getDateOfBirth())
-                .phoneNumber(request.getPhoneNumber())
-                .registrationDate(LocalDateTime.now())
-                .role(role)
-                .build();
-
-        userRepository.save(newUser);
-
-        return new MessageResponse("User created successfully");
-    }
-
-    public MessageResponse deleteUserById(int userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("User not found with ID = " + userId);
-        }
-
-        userRepository.deleteById(userId);
-        return new MessageResponse("User deleted successfully with ID = " + userId);
-    }
-
-
-
 }
