@@ -1,6 +1,9 @@
 package com.example.auth_system.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,8 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
 public class UserProfile {
     private int userId;
     private String email;
@@ -21,4 +22,3 @@ public class UserProfile {
     private LocalDateTime registrationDate;
     private String roleName;
 }
-

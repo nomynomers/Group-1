@@ -1,12 +1,9 @@
 package com.example.auth_system.controller;
 
-import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UpdateProfileRequest;
 import com.example.auth_system.dto.UserProfile;
-import com.example.auth_system.entity.User;
 import com.example.auth_system.service.AuthService;
-import com.example.auth_system.service.UserDetailsServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,7 @@ public class UserController {
     @Autowired
     private AuthService authService;
     @GetMapping("/profile")
-    @PreAuthorize("hasRole('User') or hasRole('Admin')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> getUserProfile(Authentication authentication) {
         try {
             String email = authentication.getName();
@@ -39,7 +36,7 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    @PreAuthorize("hasRole('User') or hasRole('Admin')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UpdateProfileRequest request,
                                                Authentication authentication) {
         try {
@@ -51,28 +48,4 @@ public class UserController {
                     .body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
-
-    @PostMapping("/create")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
-        try {
-            MessageResponse response = authService.createUserByAdmin(request);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
-        }
-    }
-
-    @DeleteMapping("/{userId}")
-    @PreAuthorize("hasRole('Admin')")
-    public ResponseEntity<?> deleteUser(@PathVariable int userId) {
-        try {
-            MessageResponse response = authService.deleteUserById(userId);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
-        }
-    }
-
-
 }
