@@ -1,19 +1,32 @@
 package com.example.auth_system.service;
 
+import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
+import com.example.auth_system.entity.Role;
 import com.example.auth_system.entity.User;
+import com.example.auth_system.repository.RoleRepository;
 import com.example.auth_system.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     public List<UserProfile> getAllUsers() {
         return userRepository.findAll()
@@ -58,4 +71,29 @@ public class AdminService {
                 .roleName(user.getRole().getRoleName())
                 .build();
     }
+
+    public MessageResponse createUserByAdmin(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return new MessageResponse("Error: Email is already taken!");
+        }
+
+        Role role = roleRepository.findByRoleName(request.getRoleName().toUpperCase())
+                .orElseThrow(() -> new RuntimeException("Error: Role not found"));
+
+        User newUser = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .dateOfBirth(request.getDateOfBirth())
+                .phoneNumber(request.getPhoneNumber())
+                .registrationDate(LocalDateTime.now())
+                .role(role)
+                .build();
+
+        userRepository.save(newUser);
+
+        return new MessageResponse("User created successfully");
+    }
+
 }
