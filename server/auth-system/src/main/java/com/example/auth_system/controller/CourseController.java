@@ -1,0 +1,35 @@
+package com.example.auth_system.controller;
+
+import com.example.auth_system.dto.JwtResponse;
+import com.example.auth_system.dto.LoginRequest;
+import com.example.auth_system.dto.MessageResponse;
+import com.example.auth_system.dto.SignupRequest;
+import com.example.auth_system.service.AuthService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/course")
+@CrossOrigin(origins = "http://localhost:5173", maxAge = 3600)
+@Validated
+public class CourseController {
+
+    @Autowired
+    private AuthService authService;
+
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            JwtResponse jwtResponse = authService.authenticateUser(loginRequest);
+            return ResponseEntity.ok(jwtResponse);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: Invalid credentials!"));
+        }
+    }
+
+}
