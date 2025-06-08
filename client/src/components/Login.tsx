@@ -1,11 +1,42 @@
 import type { FC } from 'react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Login: FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        navigate("/"); 
+      } else {
+        const error = await response.json();
+        setMessage(error.message || "Login failed.");
+      }
+    } catch (err) {
+      setMessage("An error occurred. Please try again.");
+    }
+  };
 
   return (
     <div style={{
@@ -34,7 +65,7 @@ const Login: FC = () => {
           Welcome Back
         </h1>
 
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }} onSubmit={handleLogin}>
           <div>
             <label 
               htmlFor="email"
@@ -50,6 +81,8 @@ const Login: FC = () => {
             <input
               type="email"
               id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               style={{
                 width: '100%',
@@ -59,7 +92,8 @@ const Login: FC = () => {
                 fontSize: '1rem',
                 outline: 'none',
                 transition: 'border-color 0.2s ease',
-                backgroundColor: 'white'
+                backgroundColor: 'white',
+                color: 'black',
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = '#272b69';
@@ -85,7 +119,9 @@ const Login: FC = () => {
             <input
               type="password"
               id="password"
+              value={password}
               placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -94,7 +130,8 @@ const Login: FC = () => {
                 fontSize: '1rem',
                 outline: 'none',
                 transition: 'border-color 0.2s ease',
-                backgroundColor: 'white'
+                backgroundColor: 'white',
+                color: 'black',
               }}
               onFocus={(e) => {
                 e.target.style.borderColor = '#272b69';
@@ -153,6 +190,7 @@ const Login: FC = () => {
             Sign In
           </button>
         </form>
+        {message && <p style={{ color: "red" }}>{message}</p>}
 
         <div style={{
           marginTop: '1.5rem',
