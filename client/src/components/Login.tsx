@@ -1,33 +1,52 @@
-import type { FC } from 'react';
+import type { FC, FormEvent } from 'react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+
+interface LoginResponse {
+  token: string;
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
 
 const Login: FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
 
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       const response = await fetch("http://localhost:8080/api/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password } as LoginRequest),
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data: LoginResponse = await response.json();
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify({
+          id: data.id,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName
+        }));
         navigate("/"); 
       } else {
         const error = await response.json();

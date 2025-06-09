@@ -1,7 +1,40 @@
-import type { FC } from 'react';
-import { Link } from 'react-router-dom';
+import type { FC, MouseEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
 
 const Navbar: FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/');
+  };
+
+  const handleMouseOver = (e: MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.backgroundColor = '#f0f1ff';
+  };
+
+  const handleMouseOut = (e: MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.style.backgroundColor = 'white';
+  };
+
   return (
     <nav style={{
       backgroundColor: '#272b69', // Updated blue
@@ -57,28 +90,54 @@ const Navbar: FC = () => {
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Appointment</Link>
-        <Link 
-          to="/login"
-          style={{
-            backgroundColor: 'white',
-            color: '#272b69',
-            border: 'none',
-            padding: '0.5rem 1.5rem',
-            borderRadius: '4px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            textDecoration: 'none',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#f0f1ff';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'white';
-          }}
-        >
-          Sign In
-        </Link>
+        
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ color: 'white' }}>
+              {user.firstName} {user.lastName}
+            </span>
+            <button
+              onClick={handleLogout}
+              style={{
+                backgroundColor: 'white',
+                color: '#272b69',
+                border: 'none',
+                padding: '0.5rem 1.5rem',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={handleMouseOver}
+              onMouseOut={handleMouseOut}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            to="/login"
+            style={{
+              backgroundColor: 'white',
+              color: '#272b69',
+              border: 'none',
+              padding: '0.5rem 1.5rem',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e: MouseEvent<HTMLAnchorElement>) => {
+              e.currentTarget.style.backgroundColor = '#f0f1ff';
+            }}
+            onMouseOut={(e: MouseEvent<HTMLAnchorElement>) => {
+              e.currentTarget.style.backgroundColor = 'white';
+            }}
+          >
+            Sign In
+          </Link>
+        )}
       </div>
     </nav>
   );
