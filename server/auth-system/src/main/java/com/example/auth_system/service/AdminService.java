@@ -1,10 +1,13 @@
 package com.example.auth_system.service;
 
+import com.example.auth_system.dto.CreateCourseRequest;
 import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
+import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.Role;
 import com.example.auth_system.entity.User;
+import com.example.auth_system.repository.CourseRepository;
 import com.example.auth_system.repository.RoleRepository;
 import com.example.auth_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,9 @@ public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -94,6 +100,22 @@ public class AdminService {
         userRepository.save(newUser);
 
         return new MessageResponse("User created successfully");
+    }
+
+    public MessageResponse createCourseByAdmin(CreateCourseRequest request) {
+        Course newCourse = Course.builder()
+                .courseName(request.getCourseName())
+                .description(request.getDescription())
+                .targetAudience(request.getTargetAudience())
+                .durationMinutes(request.getDurationMinutes())
+                .createdBy(request.getCreatedBy())
+                .certificateAvailable(request.isCertificateAvailable())
+
+                .build();
+
+        courseRepository.save(newCourse);
+
+        return new MessageResponse("Course created successfully");
     }
 
 }

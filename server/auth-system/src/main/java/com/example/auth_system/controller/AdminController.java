@@ -1,5 +1,6 @@
 package com.example.auth_system.controller;
 
+import com.example.auth_system.dto.CreateCourseRequest;
 import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
@@ -43,10 +44,20 @@ public class AdminController {
         return adminService.deleteUser(id);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/users/create")
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             MessageResponse response = adminService.createUserByAdmin(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/courses/create")
+    public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest request) {
+        try {
+            MessageResponse response = adminService.createCourseByAdmin(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
