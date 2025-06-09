@@ -7,6 +7,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  roleName?: string;
 }
 
 const Navbar: FC = () => {
@@ -93,6 +94,27 @@ const Navbar: FC = () => {
         
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {user.roleName === 'ADMIN' && (
+              <Link
+                to="/admin"
+                style={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                Admin Dashboard
+              </Link>
+            )}
             <span style={{ color: 'white' }}>
               {user.firstName} {user.lastName}
             </span>

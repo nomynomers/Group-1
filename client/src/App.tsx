@@ -11,6 +11,7 @@ import ArticlesPage from './components/ArticlesPage'
 import CoursesPage from './components/CoursesPage'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
+import AdminDashboard from './components/AdminDashboard'
 import './App.css'
 
 
@@ -35,6 +36,7 @@ function App() {
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
         <Footer />
