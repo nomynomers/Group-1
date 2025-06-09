@@ -41,4 +41,8 @@ public class Course {
     }
 
     private boolean certificateAvailable;
+
+    private String imageCover;
+
+    private String author;
 }

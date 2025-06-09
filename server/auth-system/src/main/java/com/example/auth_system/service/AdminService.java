@@ -110,6 +110,8 @@ public class AdminService {
                 .durationMinutes(request.getDurationMinutes())
                 .createdBy(request.getCreatedBy())
                 .certificateAvailable(request.isCertificateAvailable())
+                .imageCover(request.getImageCover())
+                .author(request.getAuthor())
 
                 .build();
 

@@ -1,67 +1,93 @@
 import type { FC } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface Course {
+  courseId: number;
+  courseName: string;
+  durationMinutes: string;
+  targetAudience: string;
+  description: string;
+  imageCover: string;
+  author: string;
+}
 
 const CoursesPage: FC = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    axios.get<Course[]>('http://localhost:8080/api/courses')
+      .then(res => {
+        setCourses(res.data);
+      })
+      .catch(err => {
+        console.error("Error fetching courses:", err);
+      });
   }, []);
 
-  const courses = [
-    {
-      title: "Advanced Cardiac Life Support (ACLS)",
-      instructor: "Dr. Sarah Johnson",
-      duration: "16 hours",
-      level: "Advanced",
-      category: "Emergency Medicine",
-      image: "https://placehold.co/600x400",
-      description: "Comprehensive training in advanced cardiac life support techniques, including airway management, pharmacology, and team dynamics in emergency situations."
-    },
-    {
-      title: "Pediatric Emergency Care",
-      instructor: "Dr. Michael Chen",
-      duration: "12 hours",
-      level: "Intermediate",
-      category: "Pediatrics",
-      image: "https://placehold.co/600x400",
-      description: "Essential skills and knowledge for managing pediatric emergencies, from assessment to treatment protocols."
-    },
-    {
-      title: "Medical Ethics and Professionalism",
-      instructor: "Prof. Elizabeth Brown",
-      duration: "8 hours",
-      level: "All Levels",
-      category: "Ethics",
-      image: "https://placehold.co/600x400",
-      description: "Explore ethical dilemmas in healthcare, patient rights, and professional conduct in medical practice."
-    },
-    {
-      title: "Advanced Trauma Life Support",
-      instructor: "Dr. Robert Wilson",
-      duration: "20 hours",
-      level: "Advanced",
-      category: "Trauma",
-      image: "https://placehold.co/600x400",
-      description: "Comprehensive training in trauma assessment and management, including critical decision-making in emergency situations."
-    },
-    {
-      title: "Clinical Research Methodology",
-      instructor: "Dr. James Martinez",
-      duration: "15 hours",
-      level: "Intermediate",
-      category: "Research",
-      image: "https://placehold.co/600x400",
-      description: "Learn the fundamentals of clinical research design, data collection, and analysis methods."
-    },
-    {
-      title: "Medical Imaging Interpretation",
-      instructor: "Dr. Lisa Thompson",
-      duration: "10 hours",
-      level: "Intermediate",
-      category: "Radiology",
-      image: "https://placehold.co/600x400",
-      description: "Master the interpretation of various medical imaging modalities including X-rays, CT scans, and MRIs."
-    }
-  ];
+  // const CoursesPage: FC = () => {
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, []);
+
+  // const courses = [
+  //   {
+  //     courseName: "Advanced Cardiac Life Support (ACLS)",
+  //     author: "Dr. Sarah Johnson",
+  //     duration: "16 hours",
+  //     level: "Advanced",
+  //     category: "Emergency Medicine",
+  //     image: "https://placehold.co/600x400",
+  //     description: "Comprehensive training in advanced cardiac life support techniques, including airway management, pharmacology, and team dynamics in emergency situations."
+  //   },
+  //   {
+  //     courseName: "Pediatric Emergency Care",
+  //     author: "Dr. Michael Chen",
+  //     duration: "12 hours",
+  //     level: "Intermediate",
+  //     category: "Pediatrics",
+  //     image: "https://placehold.co/600x400",
+  //     description: "Essential skills and knowledge for managing pediatric emergencies, from assessment to treatment protocols."
+  //   },
+  //   {
+  //     courseName: "Medical Ethics and Professionalism",
+  //     author: "Prof. Elizabeth Brown",
+  //     duration: "8 hours",
+  //     level: "All Levels",
+  //     category: "Ethics",
+  //     image: "https://placehold.co/600x400",
+  //     description: "Explore ethical dilemmas in healthcare, patient rights, and professional conduct in medical practice."
+  //   },
+  //   {
+  //     courseName: "Advanced Trauma Life Support",
+  //     author: "Dr. Robert Wilson",
+  //     duration: "20 hours",
+  //     level: "Advanced",
+  //     category: "Trauma",
+  //     image: "https://placehold.co/600x400",
+  //     description: "Comprehensive training in trauma assessment and management, including critical decision-making in emergency situations."
+  //   },
+  //   {
+  //     courseName: "Clinical Research Methodology",
+  //     author: "Dr. James Martinez",
+  //     duration: "15 hours",
+  //     level: "Intermediate",
+  //     category: "Research",
+  //     image: "https://placehold.co/600x400",
+  //     description: "Learn the fundamentals of clinical research design, data collection, and analysis methods."
+  //   },
+  //   {
+  //     courseName: "Medical Imaging Interpretation",
+  //     author: "Dr. Lisa Thompson",
+  //     duration: "10 hours",
+  //     level: "Intermediate",
+  //     category: "Radiology",
+  //     image: "https://placehold.co/600x400",
+  //     description: "Master the interpretation of various medical imaging modalities including X-rays, CT scans, and MRIs."
+  //   }
+  // ];
 
   const categories = ["All", "Emergency Medicine", "Pediatrics", "Ethics", "Trauma", "Research", "Radiology"];
   const levels = ["All", "All Levels", "Intermediate", "Advanced"];
@@ -187,8 +213,8 @@ const CoursesPage: FC = () => {
               e.currentTarget.style.transform = 'translateY(0)';
             }}>
               <img 
-                src={course.image} 
-                alt={course.title}
+                src={course.imageCover} 
+                alt={course.courseName}
                 style={{
                   width: '100%',
                   height: '200px',
@@ -215,13 +241,13 @@ const CoursesPage: FC = () => {
                     padding: '0.25rem 0.75rem',
                     borderRadius: '4px'
                   }}>
-                    {course.category}
+                    {course.targetAudience}
                   </span>
                   <span style={{
                     fontSize: '0.9rem',
                     color: '#666'
                   }}>
-                    {course.duration}
+                    {course.durationMinutes} weeks
                   </span>
                 </div>
                 <h3 style={{
@@ -231,7 +257,7 @@ const CoursesPage: FC = () => {
                   fontWeight: '600',
                   lineHeight: '1.4'
                 }}>
-                  {course.title}
+                  {course.courseName}
                 </h3>
                 <div style={{ flex: 1 }}>
                   <p style={{
@@ -253,7 +279,7 @@ const CoursesPage: FC = () => {
                     fontSize: '0.9rem',
                     color: '#666'
                   }}>
-                    {course.instructor}
+                    Instructor: {course.author}
                   </span>
                   <span style={{
                     fontSize: '0.9rem',
@@ -263,7 +289,7 @@ const CoursesPage: FC = () => {
                     padding: '0.25rem 0.75rem',
                     borderRadius: '4px'
                   }}>
-                    {course.level}
+                    {course.targetAudience}
                   </span>
                 </div>
               </div>

@@ -24,4 +24,9 @@ public class CreateCourseRequest {
 
     @NotBlank()
     private boolean certificateAvailable;
+
+    private String imageCover;
+
+    @NotBlank()
+    private String author;
 }

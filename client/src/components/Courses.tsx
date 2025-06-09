@@ -1,5 +1,17 @@
 import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+interface Course {
+  courseId: number;
+  courseName: string;
+  durationMinutes: string;
+  targetAudience: string;
+  description: string;
+  imageCover: string;
+  author: string;
+}
 
 const Courses: FC = () => {
   const navigate = useNavigate();
@@ -8,32 +20,19 @@ const Courses: FC = () => {
     navigate('/courses');
   };
 
-  const courses = [
-    {
-      title: "Introduction to Health & Wellness",
-      instructor: "Dr. Sarah Johnson",
-      duration: "8 weeks",
-      level: "Beginner",
-      image: "https://placehold.co/600x400",
-      description: "Learn the fundamentals of maintaining a healthy lifestyle and preventing common health issues."
-    },
-    {
-      title: "Advanced Nutrition Planning",
-      instructor: "Dr. Michael Chen",
-      duration: "6 weeks",
-      level: "Intermediate",
-      image: "https://placehold.co/600x400",
-      description: "Master the art of creating personalized nutrition plans for optimal health and performance."
-    },
-    {
-      title: "Mental Health First Aid",
-      instructor: "Dr. Emily Rodriguez",
-      duration: "4 weeks",
-      level: "All Levels",
-      image: "https://placehold.co/600x400",
-      description: "Essential skills for recognizing and responding to mental health challenges in yourself and others."
-    }
-  ];
+  const [courses, setCourses] = useState<Course[]>([]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    axios.get<Course[]>('http://localhost:8080/api/courses/top3')
+      .then(res => {
+        setCourses(res.data);
+      })
+      .catch(err => {
+        console.error("Error fetching courses:", err);
+      });
+  }, []);
 
   return (
     <div style={{
@@ -76,8 +75,8 @@ const Courses: FC = () => {
               e.currentTarget.style.transform = 'translateY(0)';
             }}>
               <img 
-                src={course.image} 
-                alt={course.title}
+                src={course.imageCover} 
+                alt={course.courseName}
                 style={{
                   width: '100%',
                   height: '200px',
@@ -101,13 +100,13 @@ const Courses: FC = () => {
                     padding: '0.25rem 0.75rem',
                     borderRadius: '4px'
                   }}>
-                    {course.level}
+                    {course.targetAudience}
                   </span>
                   <span style={{
                     fontSize: '0.9rem',
                     color: '#666'
                   }}>
-                    {course.duration}
+                    {course.durationMinutes} weeks
                   </span>
                 </div>
                 <h3 style={{
@@ -117,7 +116,7 @@ const Courses: FC = () => {
                   fontWeight: '600',
                   lineHeight: '1.4'
                 }}>
-                  {course.title}
+                  {course.courseName}
                 </h3>
                 <p style={{
                   fontSize: '0.95rem',
@@ -133,7 +132,7 @@ const Courses: FC = () => {
                   margin: 0,
                   fontWeight: '500'
                 }}>
-                  Instructor: {course.instructor}
+                  Instructor: {course.author}
                 </p>
               </div>
             </div>

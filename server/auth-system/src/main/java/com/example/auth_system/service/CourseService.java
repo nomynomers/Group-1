@@ -23,4 +23,9 @@ public class CourseService {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID = " + id));
     }
+
+    public List<Course> getTop3Courses() {
+        return courseRepository.findTop3ByOrderByCreationDateDesc();
+    }
+
 }
