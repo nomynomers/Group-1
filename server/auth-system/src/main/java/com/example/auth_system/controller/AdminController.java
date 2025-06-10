@@ -1,9 +1,10 @@
 package com.example.auth_system.controller;
 
-
+import com.example.auth_system.dto.CreateCourseRequest;
 import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
+import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.service.AdminService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -44,7 +45,7 @@ public class AdminController {
         return adminService.deleteUser(id);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/users/create")
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest request) {
         try {
             MessageResponse response = adminService.createUserByAdmin(request);
@@ -52,6 +53,26 @@ public class AdminController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
         }
+    }
+
+    @PostMapping("/courses/create")
+    public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest request) {
+        try {
+            MessageResponse response = adminService.createCourseByAdmin(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/courses/{id}")
+    public MessageResponse deleteCourse(@PathVariable int id) {
+        return adminService.deleteCourse(id);
+    }
+
+    @PutMapping("/courses/{id}")
+    public MessageResponse updateCourse(@PathVariable int id, @Valid @RequestBody Course updatedCourse) {
+        return adminService.updateCourse(id, updatedCourse);
     }
 
 }

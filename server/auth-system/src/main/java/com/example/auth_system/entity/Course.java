@@ -1,6 +1,7 @@
 package com.example.auth_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,16 @@ public class Course {
     private int createdBy;
 
     private LocalDateTime creationDate;
+    @PrePersist
+    public void prePersist() {
+        if (creationDate == null) {
+            creationDate = LocalDateTime.now();
+        }
+    }
 
     private boolean certificateAvailable;
+
+    private String imageCover;
+
+    private String author;
 }

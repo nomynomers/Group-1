@@ -27,4 +27,10 @@ public class CourseController {
     public ResponseEntity<Course> getCourseById(@PathVariable int id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }
+
+    @GetMapping("/top3")
+    public ResponseEntity<List<Course>> getTop3Courses() {
+        return ResponseEntity.ok(courseService.getTop3Courses());
+    }
+
 }
