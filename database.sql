@@ -13,7 +13,7 @@ CREATE TABLE Role (
 );
 
 -- Create User table
-CREATE TABLE [User] (
+CREATE TABLE [Users] (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     email VARCHAR(255) UNIQUE NOT NULL,
     [password] VARCHAR(255) NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE QuestionOption (
 -- Create UserAssessment table
 CREATE TABLE UserAssessment (
     userAssessmentID INT PRIMARY KEY IDENTITY(1,1),
-    userID INT FOREIGN KEY REFERENCES [User](user_id),
+    userID INT FOREIGN KEY REFERENCES [Users](user_id),
     assessmentID INT FOREIGN KEY REFERENCES Assessment(assessmentID),
     completionDate DATETIME,
     riskLevel VARCHAR(50),
@@ -80,7 +80,7 @@ CREATE TABLE Consultant (
 -- Create Appointment table
 CREATE TABLE Appointment (
     appointmentID INT PRIMARY KEY IDENTITY(1,1),
-    userID INT FOREIGN KEY REFERENCES [User](user_id),
+    userID INT FOREIGN KEY REFERENCES [Users](user_id),
     consultantID INT FOREIGN KEY REFERENCES Consultant(consultantID),
     appointmentDate DATE,
     startTime TIME,
@@ -98,7 +98,7 @@ CREATE TABLE Course (
     description TEXT,
     targetAudience VARCHAR(50),
     durationMinutes INT,
-    createdBy INT FOREIGN KEY REFERENCES [User](user_id),
+    createdBy INT FOREIGN KEY REFERENCES [Users](user_id),
     creationDate DATETIME DEFAULT GETDATE(),
     certificateAvailable BIT
 );
@@ -124,7 +124,7 @@ CREATE TABLE CourseEvaluation (
 -- Create UserCourse table
 CREATE TABLE UserCourse (
     userCourseID INT PRIMARY KEY IDENTITY(1,1),
-    userID INT FOREIGN KEY REFERENCES [User](user_id),
+    userID INT FOREIGN KEY REFERENCES [Users](user_id),
     progressID INT,
     registrationDate DATETIME,
     completionDate DATETIME,
@@ -141,3 +141,9 @@ CREATE TABLE UserCourseProgress (
     completionStatus VARCHAR(50),
     completionDate DATETIME
 );
+
+ALTER TABLE [DrugPrevent].[dbo].[Course]
+ADD imageCover VARCHAR(500);
+
+ALTER TABLE [DrugPrevent].[dbo].[Course]
+ADD author VARCHAR(50);
