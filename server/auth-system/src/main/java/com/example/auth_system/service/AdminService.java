@@ -125,4 +125,24 @@ public class AdminService {
         return new MessageResponse("Course deleted successfully");
     }
 
+    public MessageResponse updateCourse(int id, Course updatedCourse) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        course.setCourseID(updatedCourse.getCourseID());
+        course.setEvaluationID(updatedCourse.getEvaluationID());
+        course.setModuleID(updatedCourse.getModuleID());
+        course.setCourseName(updatedCourse.getCourseName());
+        course.setDescription(updatedCourse.getDescription());
+        course.setTargetAudience(updatedCourse.getTargetAudience());
+        course.setDurationMinutes(updatedCourse.getDurationMinutes());
+        course.setCreatedBy(updatedCourse.getCreatedBy());
+        course.setCertificateAvailable(updatedCourse.isCertificateAvailable());
+        course.setImageCover(updatedCourse.getImageCover());
+        course.setAuthor(updatedCourse.getAuthor());
+
+        courseRepository.save(course);
+        return new MessageResponse("Course updated successfully");
+    }
+
 }

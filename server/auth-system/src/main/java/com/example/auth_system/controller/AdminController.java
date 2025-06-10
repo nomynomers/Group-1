@@ -4,6 +4,7 @@ import com.example.auth_system.dto.CreateCourseRequest;
 import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
+import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.service.AdminService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -67,6 +68,11 @@ public class AdminController {
     @DeleteMapping("/courses/{id}")
     public MessageResponse deleteCourse(@PathVariable int id) {
         return adminService.deleteCourse(id);
+    }
+
+    @PutMapping("/courses/{id}")
+    public MessageResponse updateCourse(@PathVariable int id, @Valid @RequestBody Course updatedCourse) {
+        return adminService.updateCourse(id, updatedCourse);
     }
 
 }
