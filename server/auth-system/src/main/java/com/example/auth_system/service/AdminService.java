@@ -78,6 +78,8 @@ public class AdminService {
                 .roleName(user.getRole().getRoleName())
                 .build();
     }
+<<<<<<< HEAD
+=======
 
     public MessageResponse createUserByAdmin(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
