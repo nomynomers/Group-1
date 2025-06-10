@@ -64,4 +64,9 @@ public class AdminController {
         }
     }
 
+    @DeleteMapping("/courses/{id}")
+    public MessageResponse deleteCourse(@PathVariable int id) {
+        return adminService.deleteCourse(id);
+    }
+
 }

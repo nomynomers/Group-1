@@ -1,5 +1,6 @@
 package com.example.auth_system.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -17,12 +18,11 @@ public class CreateCourseRequest {
     @NotBlank()
     private String targetAudience;
 
-    @NotBlank()
+    @Min(value = 1, message = "Duration must be greater than 0")
     private int durationMinutes;
     
     private int createdBy;
 
-    @NotBlank()
     private boolean certificateAvailable;
 
     private String imageCover;

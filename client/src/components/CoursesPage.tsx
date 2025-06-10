@@ -27,68 +27,6 @@ const CoursesPage: FC = () => {
       });
   }, []);
 
-  // const CoursesPage: FC = () => {
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
-
-  // const courses = [
-  //   {
-  //     courseName: "Advanced Cardiac Life Support (ACLS)",
-  //     author: "Dr. Sarah Johnson",
-  //     duration: "16 hours",
-  //     level: "Advanced",
-  //     category: "Emergency Medicine",
-  //     image: "https://placehold.co/600x400",
-  //     description: "Comprehensive training in advanced cardiac life support techniques, including airway management, pharmacology, and team dynamics in emergency situations."
-  //   },
-  //   {
-  //     courseName: "Pediatric Emergency Care",
-  //     author: "Dr. Michael Chen",
-  //     duration: "12 hours",
-  //     level: "Intermediate",
-  //     category: "Pediatrics",
-  //     image: "https://placehold.co/600x400",
-  //     description: "Essential skills and knowledge for managing pediatric emergencies, from assessment to treatment protocols."
-  //   },
-  //   {
-  //     courseName: "Medical Ethics and Professionalism",
-  //     author: "Prof. Elizabeth Brown",
-  //     duration: "8 hours",
-  //     level: "All Levels",
-  //     category: "Ethics",
-  //     image: "https://placehold.co/600x400",
-  //     description: "Explore ethical dilemmas in healthcare, patient rights, and professional conduct in medical practice."
-  //   },
-  //   {
-  //     courseName: "Advanced Trauma Life Support",
-  //     author: "Dr. Robert Wilson",
-  //     duration: "20 hours",
-  //     level: "Advanced",
-  //     category: "Trauma",
-  //     image: "https://placehold.co/600x400",
-  //     description: "Comprehensive training in trauma assessment and management, including critical decision-making in emergency situations."
-  //   },
-  //   {
-  //     courseName: "Clinical Research Methodology",
-  //     author: "Dr. James Martinez",
-  //     duration: "15 hours",
-  //     level: "Intermediate",
-  //     category: "Research",
-  //     image: "https://placehold.co/600x400",
-  //     description: "Learn the fundamentals of clinical research design, data collection, and analysis methods."
-  //   },
-  //   {
-  //     courseName: "Medical Imaging Interpretation",
-  //     author: "Dr. Lisa Thompson",
-  //     duration: "10 hours",
-  //     level: "Intermediate",
-  //     category: "Radiology",
-  //     image: "https://placehold.co/600x400",
-  //     description: "Master the interpretation of various medical imaging modalities including X-rays, CT scans, and MRIs."
-  //   }
-  // ];
-
   const categories = ["All", "Emergency Medicine", "Pediatrics", "Ethics", "Trauma", "Research", "Radiology"];
   const levels = ["All", "All Levels", "Intermediate", "Advanced"];
 

@@ -120,4 +120,9 @@ public class AdminService {
         return new MessageResponse("Course created successfully");
     }
 
+    public MessageResponse deleteCourse(int id) {
+        courseRepository.deleteById(id);
+        return new MessageResponse("Course deleted successfully");
+    }
+
 }
