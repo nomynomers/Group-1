@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface Course {
-  courseId: number;
+  courseID: number;
   courseName: string;
   durationMinutes: string;
   targetAudience: string;
@@ -60,7 +60,10 @@ const Courses: FC = () => {
           marginTop: '0.5rem'
         }}>
           {courses.map((course, index) => (
-            <div key={index} style={{
+            <div 
+            key={index} 
+            onClick={() => navigate(`/courses/${course.courseID}`)}
+            style={{
               backgroundColor: 'white',
               borderRadius: '8px',
               overflow: 'hidden',
