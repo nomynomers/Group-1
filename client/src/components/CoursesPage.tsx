@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface Course {
-  courseId: number;
+  courseID: number;
   courseName: string;
   durationMinutes: string;
   targetAudience: string;
@@ -13,6 +14,7 @@ interface Course {
 }
 
 const CoursesPage: FC = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
 
   useEffect(() => {
@@ -136,7 +138,10 @@ const CoursesPage: FC = () => {
           gap: '2rem'
         }}>
           {courses.map((course, index) => (
-            <div key={index} style={{
+            <div 
+            key={index} 
+            onClick={() => navigate(`/courses/${course.courseID}`)}
+            style={{
               backgroundColor: 'white',
               borderRadius: '8px',
               overflow: 'hidden',
