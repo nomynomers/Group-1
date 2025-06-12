@@ -15,10 +15,25 @@ const Navbar: FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const updateUser = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
+    };
+
+    // Initial check
+    updateUser();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateUser);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', updateUser);
+    };
   }, []);
 
   const handleLogout = () => {

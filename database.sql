@@ -147,3 +147,32 @@ ADD imageCover VARCHAR(500);
 
 ALTER TABLE [DrugPrevent].[dbo].[Course]
 ADD author VARCHAR(50);
+
+--===================================================================
+
+INSERT INTO Role (role_name)
+VALUES 
+('Admin'),
+('Member');
+
+INSERT INTO [Users] (email, [password], first_name, last_name, date_of_birth, phone_number, role_id)
+VALUES 
+('a@a.com', 'a', 'Alice', 'Wonderland', '1990-05-10', '1234567890', 1)
+
+INSERT INTO [DrugPrevent].[dbo].[Course] (
+    [evaluationID],
+    [moduleID],
+    [courseName],
+    [description],
+    [targetAudience],
+    [durationMinutes],
+    [createdBy],
+    [creationDate],
+    [certificateAvailable],
+    [imageCover],
+    [author]
+)
+VALUES
+( 1, 1, 'Introduction to Health & Wellness', 'Learn the fundamentals of maintaining a healthy lifestyle.', 'Beginner', 8, 1, '2025-06-08 20:22:58.590', 1, 'https://res.cloudinary.com/ddtm7drwo/image/upload/v1717869764/health_wellness.jpg', 'Dr. Sarah Johnson'),
+( 0, 0, 'Advanced Nutrition Planning', 'Master the art of creating personalized nutrition plans.', 'Intermediate', 5, 1, '2025-06-08 20:22:58.590', 0, 'https://res.cloudinary.com/ddtm7drwo/image/upload/v1717869764/nutrition_planning.jpg', 'Dr. Sarah Johnson'),
+( 0, 0, 'Mental Health First Aid', 'Essential skills for recognizing and responding to mental health issues.', 'Advanced', 12, 1, '2025-06-09 13:47:10.353', 1, 'https://res.cloudinary.com/ddtm7drwo/image/upload/v1717869764/mental_health_first_aid.jpg', 'Dr. Sarah Johnson');
