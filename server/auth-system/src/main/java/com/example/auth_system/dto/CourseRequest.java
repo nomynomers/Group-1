@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCourseRequest {
+public class CourseRequest {
     @NotBlank(message = "Course Name can not blank!")
     private String courseName;
 
@@ -20,7 +20,8 @@ public class CreateCourseRequest {
 
     @Min(value = 1, message = "Duration must be greater than 0")
     private int durationMinutes;
-    
+
+
     private int createdBy;
 
     private boolean certificateAvailable;
