@@ -57,7 +57,6 @@ public class AppointmentService {
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
-                .note(request.getNote())
                 .build();
 
         appointmentRepository.save(appointment);
