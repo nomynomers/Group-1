@@ -11,7 +11,6 @@ import com.example.auth_system.repository.CourseRepository;
 import com.example.auth_system.repository.RoleRepository;
 import com.example.auth_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,34 +21,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final RoleRepository roleRepository;
 
     public List<UserProfile> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
+        return userRepository.findAll().stream()
                 .map(this::mapToProfile)
                 .toList();
     }
 
     public UserProfile getUserById(int id) {
-        User user = userRepository.findById(String.valueOf(id))
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return mapToProfile(user);
     }
 
     public MessageResponse updateUser(int id, User updatedUser) {
-        User user = userRepository.findById(String.valueOf(id))
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setFirstName(updatedUser.getFirstName());
@@ -62,7 +52,10 @@ public class AdminService {
     }
 
     public MessageResponse deleteUser(int id) {
-        userRepository.deleteById(String.valueOf(id));
+        if (!userRepository.existsById(id)) {
+            return new MessageResponse("Error: User not found");
+        }
+        userRepository.deleteById(id);
         return new MessageResponse("User deleted successfully");
     }
 
@@ -99,7 +92,6 @@ public class AdminService {
                 .build();
 
         userRepository.save(newUser);
-
         return new MessageResponse("User created successfully");
     }
 
@@ -113,15 +105,16 @@ public class AdminService {
                 .certificateAvailable(request.isCertificateAvailable())
                 .imageCover(request.getImageCover())
                 .author(request.getAuthor())
-
                 .build();
 
         courseRepository.save(newCourse);
-
         return new MessageResponse("Course created successfully");
     }
 
     public MessageResponse deleteCourse(int id) {
+        if (!courseRepository.existsById(id)) {
+            return new MessageResponse("Error: Course not found");
+        }
         courseRepository.deleteById(id);
         return new MessageResponse("Course deleted successfully");
     }
@@ -130,9 +123,6 @@ public class AdminService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        course.setCourseID(updatedCourse.getCourseID());
-        course.setEvaluationID(updatedCourse.getEvaluationID());
-        course.setModuleID(updatedCourse.getModuleID());
         course.setCourseName(updatedCourse.getCourseName());
         course.setDescription(updatedCourse.getDescription());
         course.setTargetAudience(updatedCourse.getTargetAudience());
