@@ -28,6 +28,5 @@ public class Appointment {
     private LocalDate appointmentDate;
     private LocalTime startTime;
     private LocalTime endTime;
-    private String note;
 }
 

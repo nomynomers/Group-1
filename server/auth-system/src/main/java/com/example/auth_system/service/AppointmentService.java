@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,16 +23,16 @@ import java.util.List;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final EmailService emailService;
     private final UserRepository userRepository;
     private final ConsultantRepository consultantRepository;
+    private final EmailService emailService;
 
     /**
-     * Creates a new appointment after checking for time conflicts.
+     * Create appointment if time slot is free.
      */
     @Transactional
     public MessageResponse createAppointment(AppointmentRequest request) {
-        // 1. Validate time availability
+        // Check for time conflict
         List<Appointment> conflicts = appointmentRepository.findConflictingAppointments(
                 request.getConsultantID(),
                 request.getAppointmentDate(),
@@ -43,26 +44,24 @@ public class AppointmentService {
             return new MessageResponse("Error: This time slot is already booked.");
         }
 
-
+        // Find user and consultant
         User user = userRepository.findById(request.getUserID())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         Consultant consultant = consultantRepository.findById(request.getConsultantID())
                 .orElseThrow(() -> new RuntimeException("Consultant not found"));
 
-        // 2. Create appointment
+        // Build and save appointment
         Appointment appointment = Appointment.builder()
                 .user(user)
                 .consultant(consultant)
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(request.getStartTime())
                 .endTime(request.getEndTime())
-                .note(request.getNote())
                 .build();
 
         appointmentRepository.save(appointment);
 
-
+        // Send confirmation email
         try {
             emailService.sendAppointmentConfirmation(
                     user.getEmail(),
@@ -77,29 +76,30 @@ public class AppointmentService {
     }
 
     /**
-     * Cancels an appointment by ID.
+     * Cancel appointment by ID.
      */
     @Transactional
     public MessageResponse cancelAppointment(int appointmentID) {
-        return appointmentRepository.findById(appointmentID)
-                .map(a -> {
-                    appointmentRepository.deleteById(appointmentID);
-                    return new MessageResponse("Appointment canceled.");
-                })
-                .orElse(new MessageResponse("Error: Appointment not found."));
+        Optional<Appointment> optional = appointmentRepository.findById(appointmentID);
+        if (optional.isEmpty()) {
+            return new MessageResponse("Error: Appointment not found.");
+        }
+
+        appointmentRepository.deleteById(appointmentID);
+        return new MessageResponse("Appointment canceled.");
     }
 
     /**
-     * Retrieves appointments for a user.
+     * Get appointments by user ID.
      */
     public List<Appointment> getAppointmentsByUser(int userID) {
         return appointmentRepository.findByUser_UserId(userID);
     }
 
     /**
-     * Retrieves appointments for a consultant on a specific date.
+     * Get consultant appointments on a specific date.
      */
-    public List<Appointment> getAppointmentsForConsultantOnDate(int consultantID, LocalDate date) {
-        return appointmentRepository.findByConsultant_ConsultantIDAndAppointmentDate(consultantID, date);
+    public List<Appointment> getAppointmentsForConsultantOnDate(int consultantId, LocalDate date) {
+        return appointmentRepository.findByConsultant_ConsultantIdAndAppointmentDate(consultantId, date);
     }
 }

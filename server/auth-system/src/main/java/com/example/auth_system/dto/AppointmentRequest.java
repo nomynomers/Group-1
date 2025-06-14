@@ -27,5 +27,5 @@ public class AppointmentRequest {
     @NotNull(message = "End time is required")
     private LocalTime endTime;
 
-    private String note; // optional
+
 }
