@@ -11,6 +11,7 @@ import com.example.auth_system.repository.CourseRepository;
 import com.example.auth_system.repository.RoleRepository;
 import com.example.auth_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -122,7 +123,9 @@ public class AdminService {
     public MessageResponse updateCourse(int id, Course updatedCourse) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
-
+        course.setCourseID(updatedCourse.getCourseID());
+        course.setEvaluationID(updatedCourse.getEvaluationID());
+        course.setModuleID(updatedCourse.getModuleID());
         course.setCourseName(updatedCourse.getCourseName());
         course.setDescription(updatedCourse.getDescription());
         course.setTargetAudience(updatedCourse.getTargetAudience());
