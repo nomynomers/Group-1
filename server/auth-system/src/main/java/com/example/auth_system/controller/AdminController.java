@@ -1,6 +1,6 @@
 package com.example.auth_system.controller;
 
-import com.example.auth_system.dto.CreateCourseRequest;
+import com.example.auth_system.dto.CourseRequest;
 import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
@@ -56,7 +56,7 @@ public class AdminController {
     }
 
     @PostMapping("/courses/create")
-    public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest request) {
+    public ResponseEntity<?> createCourse(@Valid @RequestBody CourseRequest request) {
         try {
             MessageResponse response = adminService.createCourseByAdmin(request);
             return ResponseEntity.ok(response);
@@ -71,7 +71,7 @@ public class AdminController {
     }
 
     @PutMapping("/courses/{id}")
-    public MessageResponse updateCourse(@PathVariable int id, @Valid @RequestBody Course updatedCourse) {
+    public MessageResponse updateCourse(@PathVariable int id, @Valid @RequestBody CourseRequest updatedCourse) {
         return adminService.updateCourse(id, updatedCourse);
     }
 

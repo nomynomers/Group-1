@@ -33,6 +33,19 @@ const CourseInfo: FC = () => {
     }
   }, [id]);
 
+  const handleEnroll = async () => {
+    try {
+      await axios.post(`http://localhost:8080/api/enroll`, {
+        courseId: course?.courseId,
+        userId: 1
+      });
+      alert("Successfully enrolled!");
+    } catch (error) {
+      console.error("Enrollment failed:", error);
+      alert("Failed to enroll.");
+    }
+  };
+
   if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
   if (error) return <div style={{ padding: '2rem', color: 'red' }}>{error}</div>;
   if (!course) return null;
@@ -46,7 +59,7 @@ const CourseInfo: FC = () => {
           style={{ width: '100%', height: '300px', objectFit: 'cover', borderRadius: '6px', marginBottom: '2rem' }}
         />
         <h1 style={{ fontSize: '2.2rem', color: '#272b69', marginBottom: '1rem' }}>{course.courseName}</h1>
-        <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.25rem', justifyContent: 'space-between'}}>
+        <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.25rem', justifyContent: 'space-between' }}>
           <span style={{ backgroundColor: '#f0f1ff', padding: '0.5rem 1rem', borderRadius: '4px', fontWeight: '500', color: '#272b69' }}>
             {course.targetAudience}
           </span>
@@ -57,6 +70,7 @@ const CourseInfo: FC = () => {
         </p>
         <p style={{ fontWeight: '600', color: '#272b69' }}>Instructor: {course.author}</p>
         <button
+          onClick={handleEnroll}
           style={{
             marginTop: '2rem',
             padding: '0.75rem 1.5rem',

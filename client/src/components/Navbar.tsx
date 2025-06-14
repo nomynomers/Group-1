@@ -15,10 +15,25 @@ const Navbar: FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const updateUser = () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
+    };
+
+    // Initial check
+    updateUser();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateUser);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', updateUser);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -38,7 +53,7 @@ const Navbar: FC = () => {
 
   return (
     <nav style={{
-      backgroundColor: '#272b69', // Updated blue
+      backgroundColor: '#272b69',
       padding: '1rem 2rem',
       color: 'white',
       display: 'flex',
@@ -50,7 +65,7 @@ const Navbar: FC = () => {
       left: 0,
       right: 0,
       zIndex: 1000,
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // Subtle shadow for depth
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       boxSizing: 'border-box'
     }}>
       <div style={{ 

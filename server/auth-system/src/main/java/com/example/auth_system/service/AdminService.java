@@ -1,6 +1,6 @@
 package com.example.auth_system.service;
 
-import com.example.auth_system.dto.CreateCourseRequest;
+import com.example.auth_system.dto.CourseRequest;
 import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
@@ -96,7 +96,7 @@ public class AdminService {
         return new MessageResponse("User created successfully");
     }
 
-    public MessageResponse createCourseByAdmin(CreateCourseRequest request) {
+    public MessageResponse createCourseByAdmin(CourseRequest request) {
         Course newCourse = Course.builder()
                 .courseName(request.getCourseName())
                 .description(request.getDescription())
@@ -120,12 +120,10 @@ public class AdminService {
         return new MessageResponse("Course deleted successfully");
     }
 
-    public MessageResponse updateCourse(int id, Course updatedCourse) {
+    public MessageResponse updateCourse(int id, CourseRequest updatedCourse) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
-        course.setCourseID(updatedCourse.getCourseID());
-        course.setEvaluationID(updatedCourse.getEvaluationID());
-        course.setModuleID(updatedCourse.getModuleID());
+
         course.setCourseName(updatedCourse.getCourseName());
         course.setDescription(updatedCourse.getDescription());
         course.setTargetAudience(updatedCourse.getTargetAudience());
