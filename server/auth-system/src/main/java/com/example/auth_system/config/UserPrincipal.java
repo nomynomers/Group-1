@@ -30,7 +30,7 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal build(User user) {
-        // 👇 Add "ROLE_" prefix for Spring Security compatibility
+        //  Add "ROLE_" prefix for Spring Security compatibility
         String roleName = "ROLE_" + user.getRole().getRoleName();
 
         return new UserPrincipal(
