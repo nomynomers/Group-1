@@ -14,13 +14,13 @@ import java.util.List;
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
 
     @Query("""
-        SELECT a FROM Appointment a
-        WHERE a.consultant.consultantId = :consultantId
-        AND a.appointmentDate = :date
-        AND (
-            (a.startTime < :endTime AND a.endTime > :startTime)
-        )
-    """)
+    SELECT a FROM Appointment a
+    WHERE a.consultant.consultantId = :consultantId
+      AND a.appointmentDate = :date
+      AND (
+        CAST(a.startTime AS time) < CAST(:endTime AS time) AND CAST(a.endTime AS time) > CAST(:startTime AS time)
+      )
+""")
     List<Appointment> findConflictingAppointments(
             @Param("consultantId") int consultantId,
             @Param("date") LocalDate date,
