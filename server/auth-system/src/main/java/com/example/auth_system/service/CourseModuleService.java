@@ -22,6 +22,7 @@ public class CourseModuleService {
                 .moduleName(request.getModuleName())
                 .description(request.getDescription())
                 .durationMinutes(request.getDurationMinutes())
+                .content(request.getContent())
                 .build();
         return moduleRepository.save(module);
     }
@@ -38,6 +39,7 @@ public class CourseModuleService {
         module.setModuleName(request.getModuleName());
         module.setDescription(request.getDescription());
         module.setDurationMinutes(request.getDurationMinutes());
+        module.setContent(request.getContent());
 
         return moduleRepository.save(module);
     }

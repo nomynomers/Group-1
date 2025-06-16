@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 interface Course {
   courseID: number;
@@ -12,21 +13,13 @@ interface Course {
   author: string;
 }
 
-interface Module {
-  moduleID: number;
-  courseID: number;
-  moduleName: string;
-  description: string;
-  durationMinutes: number;
-}
-
 const CourseInfo: FC = () => {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [enrolled, setEnrolled] = useState<boolean>(false);
-  const [modules, setModules] = useState<Module[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -56,28 +49,8 @@ const CourseInfo: FC = () => {
       });
       setEnrolled(res.data);
 
-      if (res.data) {
-        fetchModules();
-      }
-
     } catch (err) {
       console.error("Failed to check enrollment:", err);
-    }
-  };
-
-
-
-  const fetchModules = async () => {
-    try {
-      const res = await axios.get<Module[]>(`http://localhost:8080/api/modules/${id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-    });
-
-      setModules(res.data);
-    } catch (error) {
-      console.error("Failed to load modules:", error);
     }
   };
 
@@ -99,7 +72,8 @@ const CourseInfo: FC = () => {
 
       alert("Successfully enrolled!");
       setEnrolled(true);
-      fetchModules();
+      navigate(`/learning/${course.courseID}`);
+
     } catch (error) {
       console.error("Enrollment failed:", error);
       alert("Failed to enroll.");
@@ -130,44 +104,22 @@ const CourseInfo: FC = () => {
           {course.description}
         </p>
         <p style={{ fontWeight: '600', color: '#272b69' }}>Instructor: {course.author}</p>
-
-        {!enrolled && (
-          <button
-            onClick={handleEnroll}
-            style={{
-              marginTop: '2rem',
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#272b69',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '1rem'
-            }}
-          >
-            Enroll Now
-          </button>
-        )}
-
-        {enrolled && (
-          <div style={{ marginTop: '3rem' }}>
-            <h2 style={{ fontSize: '1.6rem', color: '#272b69', marginBottom: '1rem' }}>Course Modules</h2>
-            {modules.length === 0 ? (
-              <p>No modules available.</p>
-            ) : (
-              <ul style={{ paddingLeft: '1rem' }}>
-                {modules.map(mod => (
-                  <li key={mod.moduleID} style={{ marginBottom: '1.2rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.25rem', color: 'black' }}>{mod.moduleName}</h3>
-                    <p style={{ color: '#555', marginBottom: '0.2rem' }}>{mod.description}</p>
-                    <p style={{ fontStyle: 'italic', color: '#777' }}>Duration: {mod.durationMinutes} hours</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
+        <button
+          onClick={enrolled ? () => navigate(`/learning/${course.courseID}`) : handleEnroll}
+          style={{
+            marginTop: '2rem',
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#272b69',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            fontSize: '1rem'
+          }}
+        >
+          {enrolled ? 'Start Learning' : 'Enroll Now'}
+        </button>
       </div>
     </div>
   );
