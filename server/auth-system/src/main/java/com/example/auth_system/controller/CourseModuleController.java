@@ -38,11 +38,17 @@ public class CourseModuleController {
     }
 
     @PutMapping("/{moduleId}")
-
     public ResponseEntity<CourseModule> updateModule(
             @PathVariable Integer moduleId,
             @RequestBody CourseModuleRequest request) {
         CourseModule updated = moduleService.updateModule(moduleId, request);
         return ResponseEntity.ok(updated);
     }
+
+    @DeleteMapping("/{moduleId}")
+    public ResponseEntity<?> deleteModule(@PathVariable Integer moduleId) {
+        moduleService.deleteModule(moduleId);
+        return ResponseEntity.ok().body("Module deleted successfully");
+    }
+
 }

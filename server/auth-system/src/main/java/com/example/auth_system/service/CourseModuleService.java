@@ -41,4 +41,11 @@ public class CourseModuleService {
 
         return moduleRepository.save(module);
     }
+
+    public void deleteModule(Integer moduleId) {
+        if (!moduleRepository.existsById(moduleId)) {
+            throw new RuntimeException("Module not found with ID: " + moduleId);
+        }
+        moduleRepository.deleteById(moduleId);
+    }
 }
