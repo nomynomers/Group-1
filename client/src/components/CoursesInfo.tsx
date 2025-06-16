@@ -55,15 +55,26 @@ const CourseInfo: FC = () => {
         }
       });
       setEnrolled(res.data);
+
+      if (res.data) {
+        fetchModules();
+      }
+
     } catch (err) {
       console.error("Failed to check enrollment:", err);
     }
   };
 
 
+
   const fetchModules = async () => {
     try {
-      const res = await axios.get<Module[]>(`http://localhost:8080/api/modules/${id}`);
+      const res = await axios.get<Module[]>(`http://localhost:8080/api/modules/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+
       setModules(res.data);
     } catch (error) {
       console.error("Failed to load modules:", error);
@@ -148,9 +159,9 @@ const CourseInfo: FC = () => {
               <ul style={{ paddingLeft: '1rem' }}>
                 {modules.map(mod => (
                   <li key={mod.moduleID} style={{ marginBottom: '1.2rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>{mod.moduleName}</h3>
+                    <h3 style={{ fontSize: '1.2rem', marginBottom: '0.25rem', color: 'black' }}>{mod.moduleName}</h3>
                     <p style={{ color: '#555', marginBottom: '0.2rem' }}>{mod.description}</p>
-                    <p style={{ fontStyle: 'italic', color: '#777' }}>Duration: {mod.durationMinutes} mins</p>
+                    <p style={{ fontStyle: 'italic', color: '#777' }}>Duration: {mod.durationMinutes} hours</p>
                   </li>
                 ))}
               </ul>
