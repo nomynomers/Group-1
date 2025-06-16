@@ -40,10 +40,14 @@ const AdminDashboard: FC = () => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Users data:', data);
+        console.log('First user:', data[0]); // Debug log for first user
         setUsers(data);
       } else if (response.status === 403) {
+        console.log('Access forbidden');
         navigate('/');
       } else {
+        console.log('Failed to fetch users:', response.status);
         setError('Failed to fetch users');
       }
     } catch (err) {
@@ -93,56 +97,72 @@ const AdminDashboard: FC = () => {
         backgroundColor: 'white', 
         borderRadius: '8px', 
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        marginTop: '2rem'
       }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table style={{ 
+          width: '100%', 
+          borderCollapse: 'collapse',
+          color: '#333' // Ensure text is visible
+        }}>
           <thead>
             <tr style={{ backgroundColor: '#f8f9fa' }}>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Name</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Email</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Phone</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Role</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Actions</th>
+              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
+              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Email</th>
+              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Phone</th>
+              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Role</th>
+              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
-              <tr key={user.userId} style={{ borderBottom: '1px solid #dee2e6' }}>
-                <td style={{ padding: '1rem' }}>{user.firstName} {user.lastName}</td>
-                <td style={{ padding: '1rem' }}>{user.email}</td>
-                <td style={{ padding: '1rem' }}>{user.phoneNumber}</td>
-                <td style={{ padding: '1rem' }}>{user.roleName}</td>
-                <td style={{ padding: '1rem' }}>
-                  <button
-                    onClick={() => navigate(`/admin/users/${user.userId}`)}
-                    style={{
-                      backgroundColor: '#272b69',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '4px',
-                      marginRight: '0.5rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteUser(user.userId)}
-                    style={{
-                      backgroundColor: '#dc3545',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Delete
-                  </button>
+            {users && users.length > 0 ? (
+              users.map(user => {
+                console.log('Rendering user:', user);
+                return (
+                  <tr key={user.userId} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
+                    <td style={{ padding: '1rem', color: '#333' }}>{user.firstName} {user.lastName}</td>
+                    <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
+                    <td style={{ padding: '1rem', color: '#333' }}>{user.phoneNumber || 'N/A'}</td>
+                    <td style={{ padding: '1rem', color: '#333' }}>{user.roleName || 'N/A'}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <button
+                        onClick={() => navigate(`/admin/users/${user.userId}`)}
+                        style={{
+                          backgroundColor: '#272b69',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '4px',
+                          marginRight: '0.5rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(user.userId)}
+                        style={{
+                          backgroundColor: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={5} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
+                  No users found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

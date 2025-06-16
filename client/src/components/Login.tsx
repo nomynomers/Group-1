@@ -10,6 +10,7 @@ interface LoginResponse {
   email: string;
   firstName: string;
   lastName: string;
+  roleName: string;
 }
 
 interface LoginRequest {
@@ -40,12 +41,14 @@ const Login: FC = () => {
 
       if (response.ok) {
         const data: LoginResponse = await response.json();
+        console.log('Login response:', data);
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify({
           id: data.id,
           email: data.email,
           firstName: data.firstName,
-          lastName: data.lastName
+          lastName: data.lastName,
+          roleName: data.roleName
         }));
         navigate("/"); 
       } else {

@@ -20,9 +20,16 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(UserPrincipal userPrincipal) {
-        String token = generateTokenFromEmail(userPrincipal.getEmail());
-        log.debug("Generated JWT token for {}: {}", userPrincipal.getEmail(), token); //
-        return token;
+        return Jwts.builder()
+                .setSubject(userPrincipal.getEmail())
+                .claim("role", userPrincipal.getAuthorities().stream()
+                        .findFirst()
+                        .map(authority -> authority.getAuthority())
+                        .orElse("ROLE_USER"))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
     }
 
     public String generateTokenFromEmail(String email) {

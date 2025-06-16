@@ -94,7 +94,7 @@ const Navbar: FC = () => {
         
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            {user.roleName === 'ADMIN' && (
+            {(user.roleName === 'ADMIN' || user.roleName === 'ROLE_ADMIN') && (
               <Link
                 to="/admin"
                 style={{

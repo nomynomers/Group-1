@@ -59,6 +59,12 @@ public class AuthService {
 
             String jwt = jwtUtils.generateJwtToken(userPrincipal);
 
+            // Get the role name from authorities
+            String roleName = userPrincipal.getAuthorities().stream()
+                    .findFirst()
+                    .map(authority -> authority.getAuthority().replace("ROLE_", ""))
+                    .orElse("USER");
+
             return JwtResponse.builder()
                     .token(jwt)
                     .type("Bearer")
@@ -66,6 +72,7 @@ public class AuthService {
                     .email(userPrincipal.getEmail())
                     .firstName(userPrincipal.getFirstName())
                     .lastName(userPrincipal.getLastName())
+                    .roleName(roleName)
                     .build();
 
         } catch (Exception e) {
