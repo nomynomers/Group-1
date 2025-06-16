@@ -13,6 +13,8 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CoursesInfo from './components/CoursesInfo'
+import LearningPage from './components/LearningPage';
+
 
 import './App.css'
 
@@ -40,6 +42,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/courses/:id" element={<CoursesInfo />} />
+            <Route path="/learning/:courseId" element={<LearningPage />} />
 
           </Routes>
         </main>

@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 interface Course {
   courseID: number;
@@ -17,6 +18,8 @@ const CourseInfo: FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const [enrolled, setEnrolled] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {
@@ -24,6 +27,8 @@ const CourseInfo: FC = () => {
         .then(res => {
           setCourse(res.data);
           setLoading(false);
+
+          checkEnrollment(res.data.courseID);
         })
         .catch(err => {
           setError('Failed to fetch course details.');
@@ -33,18 +38,48 @@ const CourseInfo: FC = () => {
     }
   }, [id]);
 
+
+  const checkEnrollment = async (courseID: number) => {
+    try {
+      const res = await axios.get<boolean>(`http://localhost:8080/api/enroll/check`, {
+        params: { courseID },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      setEnrolled(res.data);
+
+    } catch (err) {
+      console.error("Failed to check enrollment:", err);
+    }
+  };
+
   const handleEnroll = async () => {
     try {
+
+      if (!course?.courseID) {
+        alert("Course ID missing.");
+        return;
+      }
+
       await axios.post(`http://localhost:8080/api/enroll`, {
-        courseId: course?.courseId,
-        userId: 1
+        courseID: course.courseID
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
       });
+
       alert("Successfully enrolled!");
+      setEnrolled(true);
+      navigate(`/learning/${course.courseID}`);
+
     } catch (error) {
       console.error("Enrollment failed:", error);
       alert("Failed to enroll.");
     }
   };
+
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
   if (error) return <div style={{ padding: '2rem', color: 'red' }}>{error}</div>;
@@ -70,7 +105,7 @@ const CourseInfo: FC = () => {
         </p>
         <p style={{ fontWeight: '600', color: '#272b69' }}>Instructor: {course.author}</p>
         <button
-          onClick={handleEnroll}
+          onClick={enrolled ? () => navigate(`/learning/${course.courseID}`) : handleEnroll}
           style={{
             marginTop: '2rem',
             padding: '0.75rem 1.5rem',
@@ -83,7 +118,7 @@ const CourseInfo: FC = () => {
             fontSize: '1rem'
           }}
         >
-          Enroll Now
+          {enrolled ? 'Start Learning' : 'Enroll Now'}
         </button>
       </div>
     </div>

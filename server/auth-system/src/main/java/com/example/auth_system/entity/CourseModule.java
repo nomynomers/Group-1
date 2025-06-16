@@ -21,4 +21,6 @@ public class CourseModule {
     private String description;
 
     private int durationMinutes;
+
+    private String content;
 }
