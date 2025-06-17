@@ -14,6 +14,7 @@ import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
+import AssessmentPage from './components/AssessmentPage'
 import CreateUser from './components/CreateUser'
 import { UserProvider } from './context/UserContext'
 
@@ -21,6 +22,7 @@ import './App.css'
 
 function App() {
   return (
+    <UserProvider>
     <Router>
       <div className="app">
         <Navbar />
@@ -51,6 +53,7 @@ function App() {
         <Footer />
       </div>
     </Router>
+    </UserProvider>
   )
 }
 
