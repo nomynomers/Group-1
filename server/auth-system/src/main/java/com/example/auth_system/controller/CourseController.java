@@ -2,6 +2,7 @@ package com.example.auth_system.controller;
 
 import com.example.auth_system.entity.Course;
 import com.example.auth_system.service.CourseService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
