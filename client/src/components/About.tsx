@@ -1,6 +1,11 @@
 import type { FC } from 'react';
+import { useEffect } from 'react';
 
 const About: FC = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div style={{
       padding: '120px 0 60px',

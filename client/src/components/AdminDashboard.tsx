@@ -124,36 +124,36 @@ const AdminDashboard: FC = () => {
                     <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
                     <td style={{ padding: '1rem', color: '#333' }}>{user.phoneNumber || 'N/A'}</td>
                     <td style={{ padding: '1rem', color: '#333' }}>{user.roleName || 'N/A'}</td>
-                    <td style={{ padding: '1rem' }}>
-                      <button
-                        onClick={() => navigate(`/admin/users/${user.userId}`)}
-                        style={{
-                          backgroundColor: '#272b69',
-                          color: 'white',
-                          border: 'none',
-                          padding: '0.5rem 1rem',
-                          borderRadius: '4px',
-                          marginRight: '0.5rem',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteUser(user.userId)}
-                        style={{
-                          backgroundColor: '#dc3545',
-                          color: 'white',
-                          border: 'none',
-                          padding: '0.5rem 1rem',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
+                <td style={{ padding: '1rem' }}>
+                  <button
+                    onClick={() => navigate(`/admin/users/${user.userId}`)}
+                    style={{
+                      backgroundColor: '#272b69',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '4px',
+                      marginRight: '0.5rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUser(user.userId)}
+                    style={{
+                      backgroundColor: '#dc3545',
+                      color: 'white',
+                      border: 'none',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '4px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
                 );
               })
             ) : (
