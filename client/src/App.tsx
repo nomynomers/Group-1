@@ -15,6 +15,7 @@ import AdminDashboard from './components/AdminDashboard'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
 import AssessmentPage from './components/AssessmentPage'
+import QuestionPage from './components/QuestionPage'
 import CreateUser from './components/CreateUser'
 import { UserProvider } from './context/UserContext'
 
@@ -47,6 +48,7 @@ function App() {
             <Route path="/courses/:id" element={<CoursesInfo />} />
             <Route path="/learning/:courseId" element={<LearningPage />} />
             <Route path="/assessments" element={<AssessmentPage />} />
+            <Route path="/assessments/:id" element={<QuestionPage />} />
 
           </Routes>
         </main>
