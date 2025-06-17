@@ -14,6 +14,7 @@ import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage';
+import AssessmentPage from './components/AssessmentPage';
 
 
 import './App.css'
@@ -43,6 +44,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/courses/:id" element={<CoursesInfo />} />
             <Route path="/learning/:courseId" element={<LearningPage />} />
+            <Route path="/assessments" element={<AssessmentPage />} />
 
           </Routes>
         </main>
