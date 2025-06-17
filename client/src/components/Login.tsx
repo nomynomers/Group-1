@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useUser } from '../context/UserContext';
 
 interface LoginResponse {
   token: string;
@@ -28,6 +29,7 @@ const Login: FC = () => {
   const [message, setMessage] = useState<string>("");
 
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,13 +45,13 @@ const Login: FC = () => {
         const data: LoginResponse = await response.json();
         console.log('Login response:', data);
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify({
+        setUser({
           id: data.id,
           email: data.email,
           firstName: data.firstName,
           lastName: data.lastName,
           roleName: data.roleName
-        }));
+        });
         navigate("/"); 
       } else {
         const error = await response.json();

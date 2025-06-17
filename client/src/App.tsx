@@ -13,12 +13,11 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CoursesInfo from './components/CoursesInfo'
-import LearningPage from './components/LearningPage';
-import AssessmentPage from './components/AssessmentPage';
-
+import LearningPage from './components/LearningPage'
+import CreateUser from './components/CreateUser'
+import { UserProvider } from './context/UserContext'
 
 import './App.css'
-
 
 function App() {
   return (
@@ -42,6 +41,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/users/create" element={<CreateUser />} />
             <Route path="/courses/:id" element={<CoursesInfo />} />
             <Route path="/learning/:courseId" element={<LearningPage />} />
             <Route path="/assessments" element={<AssessmentPage />} />

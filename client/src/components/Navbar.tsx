@@ -1,29 +1,13 @@
 import type { FC, MouseEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  roleName?: string;
-}
+import { useUser } from '../context/UserContext';
 
 const Navbar: FC = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
     setUser(null);
     navigate('/');
   };
