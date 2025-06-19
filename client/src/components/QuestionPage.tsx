@@ -22,7 +22,9 @@ const QuestionPage: React.FC = () => {
   const { assessmentID } = useParams();
 
 useEffect(() => {
-  axios.get('http://localhost:8080/api/assessments/3/questions')
+  if (!assessmentID) return;
+
+  axios.get(`http://localhost:8080/api/assessments/${assessmentID}/questions`)
     .then(res => {
       console.log("Raw API response:", res.data);
       res.data.forEach((q: any, i: number) => {
@@ -53,7 +55,7 @@ useEffect(() => {
       style={{
         padding: '24px',
         maxWidth: '768px',
-        margin: '80px auto 0', // margin top = 80px (mt-20)
+        margin: '80px auto 0',
       }}
     >
       <h1
@@ -67,17 +69,17 @@ useEffect(() => {
       </h1>
 
       {questions.map(q => (
-        <div key={q.questionID} style={{ marginBottom: '24px', display: 'flex',  textAlign: 'left'}}>
+        <div key={q.questionID} style={{ marginBottom: '24px',  textAlign: 'left'}}>
           <p style={{ fontWeight: '500', marginBottom: '8px' }}>{q.questionText}</p>
           {Array.isArray(q.options) && q.options.map(o => (
-            <label key={o.optionID} style={{ display: 'block', marginBottom: '6px' }}>
+            <label key={o.optionID} style={{ display: 'block', marginBottom: '6px', color: 'black'}}>
               <input
                 type="radio"
                 name={`q_${q.questionID}`}
                 value={o.optionID}
                 checked={answers[q.questionID] === o.optionID}
                 onChange={() => handleOptionChange(q.questionID, o.optionID)}
-                style={{ marginRight: '8px' }}
+                style={{ marginRight: '8px', width: '15px', height: '15px', accentColor: '#2563eb', marginTop: '22px'}}
               />
               {o.optionValue}
             </label>
@@ -100,7 +102,7 @@ useEffect(() => {
       </button>
 
       {totalScore !== null && (
-        <div style={{ marginTop: '16px', fontSize: '1.125rem' }}>
+        <div style={{ marginTop: '16px', fontSize: '1.125rem', color: 'black' }}>
           <strong>Total Score:</strong> {totalScore}
         </div>
       )}
