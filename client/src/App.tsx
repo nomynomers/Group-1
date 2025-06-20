@@ -14,9 +14,9 @@ import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
+import CreateUser from './components/CreateUser'
 import AssessmentPage from './components/AssessmentPage'
 import QuestionPage from './components/QuestionPage'
-import CreateUser from './components/CreateUser'
 import { UserProvider } from './context/UserContext'
 
 import './App.css'
@@ -49,7 +49,6 @@ function App() {
             <Route path="/learning/:courseId" element={<LearningPage />} />
             <Route path="/assessments" element={<AssessmentPage />} />
             <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
-
           </Routes>
         </main>
         <Footer />
