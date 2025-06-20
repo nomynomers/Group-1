@@ -267,3 +267,120 @@ VALUES
  20,
  'Preventing drug use starts with education, strong personal values, and a supportive environment. Schools, families, and communities play a vital role in guiding youth toward healthy choices. Encouraging involvement in sports, arts, and other extracurricular activities can reduce the temptation to use drugs. One of the most critical skills is learning how to say �no� confidently. Assertive communication, body language, and the ability to walk away from risky situations are powerful tools. Role-playing and real-life scenarios help individuals practice these skills. Moreover, building a circle of supportive friends and mentors can make a significant difference. When people feel valued and understood, they are less likely to seek escape through drugs. Empowering individuals with knowledge and resilience is key to long-term prevention.'
 );
+
+-- Q1: In your life, which of the following substances have you ever used (non-medical use)?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'In your life, which of the following substances have you ever used (non-medical use)?');
+
+DECLARE @q1 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q1, 'No', 0),
+(@q1, 'Yes', 3);
+
+------------------------------------------------------------
+
+-- Q2: In the past 3 months, how often have you used [substance]?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'In the past three months, how often have you used [substance]?');
+
+DECLARE @q2 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q2, 'Never', 0),
+(@q2, 'Once or twice', 2),
+(@q2, 'Monthly', 3),
+(@q2, 'Weekly', 4),
+(@q2, 'Daily or almost daily', 6);
+
+------------------------------------------------------------
+
+-- Q3: During the past 3 months, how often have you had a strong desire or urge to use [substance]?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'During the past three months, how often have you had a strong desire or urge to use [substance]?');
+
+DECLARE @q3 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q3, 'Never', 0),
+(@q3, 'Once or twice', 3),
+(@q3, 'Monthly', 4),
+(@q3, 'Weekly', 5),
+(@q3, 'Daily or almost daily', 6);
+
+------------------------------------------------------------
+
+-- Q4: During the past 3 months, how often has your use led to health, social, legal or financial problems?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'During the past three months, how often has your use led to health, social, legal or financial problems?');
+
+DECLARE @q4 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q4, 'Never', 0),
+(@q4, 'Once or twice', 4),
+(@q4, 'Monthly', 5),
+(@q4, 'Weekly', 6),
+(@q4, 'Daily or almost daily', 7);
+
+------------------------------------------------------------
+
+-- Q5: During the past 3 months, how often have you failed to do what was normally expected of you?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'During the past three months, how often have you failed to do what was normally expected of you because of your use?');
+
+DECLARE @q5 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q5, 'Never', 0),
+(@q5, 'Once or twice', 5),
+(@q5, 'Monthly', 6),
+(@q5, 'Weekly', 7),
+(@q5, 'Daily or almost daily', 8);
+
+------------------------------------------------------------
+
+-- Q6: Has a friend or relative ever expressed concern about your use?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'Has a friend or relative or anyone else ever expressed concern about your use of [substance]?');
+
+DECLARE @q6 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q6, 'No, never', 0),
+(@q6, 'Yes, in the past 3 months', 6),
+(@q6, 'Yes, but not in the past 3 months', 3);
+
+------------------------------------------------------------
+
+-- Q7: Have you ever tried and failed to control, cut down or stop using?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'Have you ever tried and failed to control, cut down or stop using [substance]?');
+
+DECLARE @q7 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q7, 'No, never', 0),
+(@q7, 'Yes, in the past 3 months', 6),
+(@q7, 'Yes, but not in the past 3 months', 3);
+
+------------------------------------------------------------
+
+-- Q8: Have you ever used any drug by injection (non-medical use)?
+INSERT INTO AssessmentQuestion (assessmentID, questionText)
+VALUES (3, 'Have you ever used any drug by injection (non-medical use)?');
+
+DECLARE @q8 INT = SCOPE_IDENTITY();
+
+INSERT INTO QuestionOption (questionID, optionValue, score)
+VALUES
+(@q8, 'No, never', 0),
+(@q8, 'Yes, in the past 3 months', 2),
+(@q8, 'Yes, but not in the past 3 months', 1);
