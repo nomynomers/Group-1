@@ -16,7 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id") //  matches DB
+    @Column(name = "user_id")
     private int userId;
 
     @Column(name = "email", nullable = false, unique = true)
