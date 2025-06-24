@@ -9,6 +9,7 @@ interface Module {
   description: string;
   durationMinutes: number;
   content: string;
+  videoUrl; string;
 }
 
 const LearningPage: FC = () => {
@@ -79,11 +80,19 @@ const LearningPage: FC = () => {
                 {selectedModule.moduleName}
               </h2>
               <p style={{ fontStyle: 'italic', marginTop: '1rem', color: '#777' }}>
-                Duration: {selectedModule.durationMinutes} hours
+                Duration: {selectedModule.durationMinutes} minutes
               </p>
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.description}
               </p>
+              <iframe width="560" height="315" 
+                src={selectedModule.videoUrl}
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen="allowfullscreen">
+            </iframe>
+
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.content}
               </p>

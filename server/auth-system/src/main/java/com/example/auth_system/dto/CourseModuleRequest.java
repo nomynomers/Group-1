@@ -19,4 +19,6 @@ public class CourseModuleRequest {
     private int durationMinutes;
 
     private String content;
+
+    private String videoUrl;
 }
