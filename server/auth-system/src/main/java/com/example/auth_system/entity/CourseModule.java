@@ -23,4 +23,6 @@ public class CourseModule {
     private int durationMinutes;
 
     private String content;
+
+    private String videoUrl;
 }

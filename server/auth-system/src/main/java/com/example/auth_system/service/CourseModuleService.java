@@ -23,6 +23,7 @@ public class CourseModuleService {
                 .description(request.getDescription())
                 .durationMinutes(request.getDurationMinutes())
                 .content(request.getContent())
+                .content(request.getVideoUrl())
                 .build();
         return moduleRepository.save(module);
     }
@@ -40,6 +41,7 @@ public class CourseModuleService {
         module.setDescription(request.getDescription());
         module.setDurationMinutes(request.getDurationMinutes());
         module.setContent(request.getContent());
+        module.setVideoUrl(request.getVideoUrl());
 
         return moduleRepository.save(module);
     }
