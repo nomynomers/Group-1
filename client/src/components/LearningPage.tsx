@@ -18,6 +18,8 @@ const LearningPage: FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [isVideoCompleted, setIsVideoCompleted] = useState(false);
+
 
   const selectedModule = modules[selectedIndex];
 
@@ -34,13 +36,14 @@ const LearningPage: FC = () => {
         }
       });
 
+      setIsVideoCompleted(true);
       console.log("Marked as completed");
     } catch (error) {
       console.error("Failed to save progress", error);
     }
   };
 
-    const onPlayerStateChange = (event: any) => {
+  const onPlayerStateChange = (event: any) => {
     if (event.data === 0) {
       handleVideoEnd();
     }
@@ -67,7 +70,7 @@ const LearningPage: FC = () => {
           }
         });
         setModules(res.data);
-        setSelectedIndex(0); 
+        setSelectedIndex(0);
       } catch (error) {
         console.error("Failed to load modules:", error);
         console.log("Enroll ID:", localStorage.getItem("enrollId"));
@@ -84,6 +87,33 @@ const LearningPage: FC = () => {
     }
   };
 
+  useEffect(() => {
+    const checkCompletionStatus = async () => {
+      const enrollId = localStorage.getItem("enrollId");
+      const moduleId = modules[selectedIndex]?.moduleID;
+
+      if (!enrollId || !moduleId) return;
+
+      try {
+        const res = await axios.get(`http://localhost:8080/api/progress/status`, {
+          params: {
+            enrollId,
+            moduleId
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+        setIsVideoCompleted(res.data.completionStatus === true || res.data.completionStatus === 1);
+      } catch (error) {
+        console.error("Error checking completion status", error);
+      }
+    };
+
+    checkCompletionStatus();
+  }, [selectedIndex, modules]);
+
   const getYouTubeVideoId = (url: string): string => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
@@ -94,7 +124,7 @@ const LearningPage: FC = () => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
-      <div style={{ width: '250px', backgroundColor: '#f0f1ff', padding: '1rem', marginTop: '4rem'}}>
+      <div style={{ width: '250px', backgroundColor: '#f0f1ff', padding: '1rem', marginTop: '4rem' }}>
         <h2 style={{ color: '#272b69', marginBottom: '1rem' }}>Modules</h2>
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {modules.map((mod, index) => (
@@ -121,9 +151,9 @@ const LearningPage: FC = () => {
         {selectedModule ? (
           <>
             <div>
-                <Link to={`/courses/${courseId}`} style={{ display: 'block', marginBottom: '1rem', color: '#272b69', fontWeight: 'bold', textDecoration: 'none' }}>
-          ← Back to Course
-        </Link>
+              <Link to={`/courses/${courseId}`} style={{ display: 'block', marginBottom: '1rem', color: '#272b69', fontWeight: 'bold', textDecoration: 'none' }}>
+                ← Back to Course
+              </Link>
               <h2 style={{ fontSize: '1.8rem', color: '#272b69', marginBottom: '1rem' }}>
                 {selectedModule.moduleName}
               </h2>
@@ -144,26 +174,34 @@ const LearningPage: FC = () => {
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.content}
               </p>
-              
+
             </div>
-            <button
-              onClick={goToNextModule}
-              disabled={selectedIndex >= modules.length - 1}
-              style={{
-                marginTop: '2rem',
-                padding: '0.75rem 1.5rem',
-                backgroundColor: selectedIndex < modules.length - 1 ? '#272b69' : '#ccc',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: selectedIndex < modules.length - 1 ? 'pointer' : 'not-allowed',
-                alignSelf: 'flex-start',
-                fontWeight: 'bold',
-                fontSize: '1rem'
-              }}
-            >
-              Next Module →
-            </button>
+            <div>
+              <button
+                onClick={goToNextModule}
+                disabled={selectedIndex >= modules.length - 1}
+                style={{
+                  marginTop: '2rem',
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: selectedIndex < modules.length - 1 ? '#272b69' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: selectedIndex < modules.length - 1 ? 'pointer' : 'not-allowed',
+                  alignSelf: 'flex-start',
+                  fontWeight: 'bold',
+                  fontSize: '1rem'
+                }}
+              >
+                Next Module →
+              </button>
+              {isVideoCompleted && (
+                <span style={{ color: 'green', fontWeight: 'bold', marginLeft: '30px' }}>
+                  Module Completed!
+                </span>
+              )}
+            </div>
+
           </>
         ) : (
           <p>Loading module content...</p>

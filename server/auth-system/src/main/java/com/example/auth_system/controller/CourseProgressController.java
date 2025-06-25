@@ -3,14 +3,14 @@ package com.example.auth_system.controller;
 import com.example.auth_system.dto.ModuleCompleteDTO;
 import com.example.auth_system.entity.UserCourseProgress;
 import com.example.auth_system.repository.UserCourseProgressRepository;
+import com.example.auth_system.service.UserCourseProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/progress")
@@ -18,6 +18,9 @@ public class CourseProgressController {
 
     @Autowired
     private UserCourseProgressRepository repo;
+
+    @Autowired
+    private UserCourseProgressService progressService;
 
     @PostMapping("/complete")
     public ResponseEntity<?> markAsCompleted(@RequestBody ModuleCompleteDTO dto) {
@@ -32,6 +35,17 @@ public class CourseProgressController {
 
         repo.save(progress);
         return ResponseEntity.ok("Marked as completed");
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Object>> getCompletionStatus(
+            @RequestParam Integer enrollId,
+            @RequestParam Integer moduleId) {
+
+        Boolean status = progressService.getCompletionStatus(enrollId, moduleId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("completionStatus", status);
+        return ResponseEntity.ok(response);
     }
 }
 
