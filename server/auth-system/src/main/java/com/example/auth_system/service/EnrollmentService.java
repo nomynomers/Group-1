@@ -23,28 +23,30 @@ public class EnrollmentService {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
-    public String enrollUser(EnrollmentRequest request) {
+    public Integer enrollUser(EnrollmentRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName(); // email from JWT token
+        String email = auth.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (enrollmentRepository.existsByUserIdAndCourseId(user.getUserId(), request.getCourseID())) {
-            throw new RuntimeException("User already enrolled in this course");
+            Enrollment existing = enrollmentRepository.findByUserIdAndCourseId(user.getUserId(), request.getCourseID())
+                    .orElseThrow();
+            return existing.getEnroll_id();
         }
 
-
         Enrollment enrollment = Enrollment.builder()
-                .userId(user.getUserId()) // or getUserId() depending on your User entity
+                .userId(user.getUserId())
                 .courseId(request.getCourseID())
                 .enrolledAt(LocalDateTime.now())
                 .build();
 
-        enrollmentRepository.save(enrollment);
+        Enrollment saved = enrollmentRepository.save(enrollment);
 
-        return "Enrolled successfully!";
+        return saved.getEnroll_id();
     }
+
 
     public boolean isUserEnrolled(String email, int courseID) {
         User user = userRepository.findByEmail(email)

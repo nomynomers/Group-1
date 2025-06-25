@@ -24,9 +24,9 @@ public class EnrollmentController {
     private EnrollmentService enrollmentService;
 
     @PostMapping
-    public ResponseEntity<String> enroll(@RequestBody EnrollmentRequest request) {
-        String result = enrollmentService.enrollUser(request);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<Integer> enroll(@RequestBody EnrollmentRequest request) {
+        Integer enrollId = enrollmentService.enrollUser(request);
+        return ResponseEntity.ok(enrollId);
     }
 
     @GetMapping("/check")
