@@ -56,19 +56,22 @@ const CourseInfo: FC = () => {
 
   const handleEnroll = async () => {
     try {
-
       if (!course?.courseID) {
         alert("Course ID missing.");
         return;
       }
 
-      await axios.post(`http://localhost:8080/api/enroll`, {
+      const res = await axios.post(`http://localhost:8080/api/enroll`, {
         courseID: course.courseID
       }, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       });
+
+      const enrollId = res.data;
+      localStorage.setItem("enrollId", enrollId);
+      console.log("Enrollment ID:", enrollId);
 
       alert("Successfully enrolled!");
       setEnrolled(true);
@@ -79,6 +82,7 @@ const CourseInfo: FC = () => {
       alert("Failed to enroll.");
     }
   };
+
 
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
