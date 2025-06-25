@@ -1,6 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import YouTube from 'react-youtube';
+
 
 interface Module {
   moduleID: number;
@@ -19,6 +21,43 @@ const LearningPage: FC = () => {
 
   const selectedModule = modules[selectedIndex];
 
+  const handleVideoEnd = async () => {
+    try {
+      await axios.post('http://localhost:8080/api/progress/complete', {
+        enrollId: localStorage.getItem("enrollId"),
+        moduleId: selectedModule.moduleID,
+        completionStatus: true,
+        completionDate: new Date().toISOString()
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      console.log("Marked as completed");
+    } catch (error) {
+      console.error("Failed to save progress", error);
+    }
+  };
+
+    const onPlayerStateChange = (event: any) => {
+    if (event.data === 0) {
+      handleVideoEnd();
+    }
+  };
+
+  const youtubeOpts = {
+    width: '560',
+    height: '315',
+    playerVars: {
+      autoplay: 0,
+      controls: 1,
+      modestbranding: 1,
+      rel: 0,
+    },
+  };
+
+
   useEffect(() => {
     const fetchModules = async () => {
       try {
@@ -28,9 +67,11 @@ const LearningPage: FC = () => {
           }
         });
         setModules(res.data);
-        setSelectedIndex(0); // start with first
+        setSelectedIndex(0); 
       } catch (error) {
         console.error("Failed to load modules:", error);
+        console.log("Enroll ID:", localStorage.getItem("enrollId"));
+
       }
     };
 
@@ -42,6 +83,13 @@ const LearningPage: FC = () => {
       setSelectedIndex(selectedIndex + 1);
     }
   };
+
+  const getYouTubeVideoId = (url: string): string => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : '';
+  };
+
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -85,13 +133,13 @@ const LearningPage: FC = () => {
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.description}
               </p>
-              <iframe width="560" height="315" 
-                src={selectedModule.videoUrl}
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                allowfullscreen="allowfullscreen">
-            </iframe>
+
+              <YouTube
+                videoId={getYouTubeVideoId(selectedModule.videoUrl)}
+                opts={youtubeOpts}
+                onStateChange={onPlayerStateChange}
+              />
+
 
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.content}
