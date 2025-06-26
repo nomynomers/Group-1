@@ -1,9 +1,15 @@
-import { FC, useEffect, useState, useRef } from 'react';
+
+import { useEffect, useState, useRef } from 'react';
+import type { FC } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import YouTube from 'react-youtube';
 import { useNavigate } from "react-router-dom";
-
+declare global {
+  interface Window {
+    YT: any;
+  }
+}
 
 interface Module {
   moduleID: number;
@@ -12,7 +18,7 @@ interface Module {
   description: string;
   durationMinutes: number;
   content: string;
-  videoUrl; string;
+  videoUrl: string;
 }
 
 const LearningPage: FC = () => {
@@ -22,10 +28,10 @@ const LearningPage: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVideoCompleted, setIsVideoCompleted] = useState(false);
   const [completedModules, setCompletedModules] = useState<boolean[]>([]);
-  const [maxWatchTime, setMaxWatchTime] = useState(0);
+  const maxWatchTimeRef = useRef(0);
   const playerRef = useRef<any>(null);
-
-
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isSeekingRef = useRef(false);
 
   const selectedModule = modules[selectedIndex];
 
@@ -51,27 +57,20 @@ const LearningPage: FC = () => {
         return updated;
       });
 
-
       if (selectedIndex === modules.length - 1) {
-        try {
-          const res = await axios.get("http://localhost:8080/api/progress/course-complete", {
-            params: {
-              enrollId: localStorage.getItem("enrollId"),
-              courseId: courseId
-            },
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-          });
-
-          if (res.data.courseCompleted) {
-            console.log("All modules completed. Navigating to course info...");
-            navigate(`/courses/${courseId}`);
-          } else {
-            console.log("Not all modules are completed yet.");
+        const res = await axios.get("http://localhost:8080/api/progress/course-complete", {
+          params: {
+            enrollId: localStorage.getItem("enrollId"),
+            courseId: courseId
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
           }
-        } catch (error) {
-          console.error("Error checking full course completion:", error);
+        });
+
+        if (res.data.courseCompleted) {
+          console.log("All modules completed. Navigating to course info...");
+          navigate(`/courses/${courseId}`);
         }
       }
 
@@ -80,27 +79,25 @@ const LearningPage: FC = () => {
     }
   };
 
-  const onSeek = () => {
-    if (!playerRef.current) return;
-    const currentTime = playerRef.current.getCurrentTime();
-    if (currentTime > maxWatchTime + 2) {
-      playerRef.current.seekTo(maxWatchTime, true);
-    }
-  };
-
-
   const onPlayerReady = (event: any) => {
     playerRef.current = event.target;
 
-    setInterval(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
       if (playerRef.current && playerRef.current.getCurrentTime) {
         const currentTime = playerRef.current.getCurrentTime();
 
-        // Nếu người dùng tua quá thời gian được xem => kéo lại
-        if (currentTime > maxWatchTime + 2) {
-          playerRef.current.seekTo(maxWatchTime, true);
-        } else {
-          setMaxWatchTime(prev => Math.max(prev, currentTime));
+        if (!isSeekingRef.current && currentTime > maxWatchTimeRef.current + 2) {
+          isSeekingRef.current = true;
+          playerRef.current.seekTo(maxWatchTimeRef.current, true);
+          setTimeout(() => {
+            isSeekingRef.current = false;
+          }, 1000);
+        } else if (currentTime > maxWatchTimeRef.current) {
+          maxWatchTimeRef.current = currentTime;
         }
       }
     }, 1000);
@@ -112,11 +109,9 @@ const LearningPage: FC = () => {
     }
   };
 
-
-
   const youtubeOpts = {
-    width: '560',
-    height: '315',
+    width: '1120',
+    height: '630',
     playerVars: {
       autoplay: 0,
       controls: 1,
@@ -124,7 +119,6 @@ const LearningPage: FC = () => {
       rel: 0,
     },
   };
-
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -156,12 +150,9 @@ const LearningPage: FC = () => {
         );
 
         setCompletedModules(moduleCompletion);
-
         setSelectedIndex(0);
       } catch (error) {
         console.error("Failed to load modules:", error);
-        console.log("Enroll ID:", localStorage.getItem("enrollId"));
-
       }
     };
 
@@ -201,6 +192,14 @@ const LearningPage: FC = () => {
     checkCompletionStatus();
   }, [selectedIndex, modules]);
 
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
   const getYouTubeVideoId = (url: string): string => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
@@ -209,7 +208,6 @@ const LearningPage: FC = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar */}
       <div style={{ width: '250px', backgroundColor: '#f0f1ff', padding: '1rem', marginTop: '4rem' }}>
         <h2 style={{ color: '#272b69', marginBottom: '1rem' }}>Modules</h2>
         <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -224,7 +222,6 @@ const LearningPage: FC = () => {
                   alert("❗Please complete the current module before continuing.");
                 }
               }}
-
               style={{
                 padding: '0.75rem',
                 backgroundColor: index === selectedIndex ? '#272b69' : 'transparent',
@@ -240,7 +237,6 @@ const LearningPage: FC = () => {
         </ul>
       </div>
 
-      {/* Content */}
       <div style={{ flex: 1, padding: '2rem', backgroundColor: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', marginTop: '4rem', textAlign: 'left' }}>
         {selectedModule ? (
           <>
@@ -265,11 +261,9 @@ const LearningPage: FC = () => {
                 onStateChange={onPlayerStateChange}
               />
 
-
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.content}
               </p>
-
             </div>
             <div>
               <button
@@ -312,7 +306,6 @@ const LearningPage: FC = () => {
                 </span>
               )}
             </div>
-
           </>
         ) : (
           <p>Loading module content...</p>

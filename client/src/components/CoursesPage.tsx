@@ -199,16 +199,6 @@ const CoursesPage: FC = () => {
                   }}>
                     Instructor: {course.author}
                   </span>
-                  <span style={{
-                    fontSize: '0.9rem',
-                    color: '#272b69',
-                    fontWeight: '500',
-                    backgroundColor: '#f0f1ff',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '4px'
-                  }}>
-                    {course.targetAudience}
-                  </span>
                 </div>
               </div>
             </div>
