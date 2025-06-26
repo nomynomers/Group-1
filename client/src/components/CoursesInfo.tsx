@@ -20,6 +20,7 @@ const CourseInfo: FC = () => {
   const [error, setError] = useState<string>('');
   const [enrolled, setEnrolled] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [courseCompleted, setCourseCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     if (id) {
@@ -38,6 +39,36 @@ const CourseInfo: FC = () => {
     }
   }, [id]);
 
+  useEffect(() => {
+    if (courseCompleted) {
+      alert("🎉 Course Completed!");
+    }
+  }, [courseCompleted]);
+
+
+  const checkIfCourseCompleted = async (courseID: number) => {
+    const enrollId = localStorage.getItem("enrollId");
+    if (!enrollId) return;
+
+    try {
+      const res = await axios.get("http://localhost:8080/api/progress/course-complete", {
+        params: {
+          enrollId,
+          courseId: courseID
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      if (res.data.courseCompleted) {
+        setCourseCompleted(true);
+        navigate(`/courses/${courseID}`);
+      }
+    } catch (err) {
+      console.error("Failed to check course completion:", err);
+    }
+  };
 
   const checkEnrollment = async (courseID: number) => {
     try {
@@ -48,6 +79,10 @@ const CourseInfo: FC = () => {
         }
       });
       setEnrolled(res.data);
+
+      if (res.data) {
+        await checkIfCourseCompleted(courseID);
+      }
 
     } catch (err) {
       console.error("Failed to check enrollment:", err);
@@ -119,10 +154,15 @@ const CourseInfo: FC = () => {
             borderRadius: '6px',
             cursor: 'pointer',
             fontWeight: 'bold',
-            fontSize: '1rem'
+            fontSize: '1rem',
           }}
         >
-          {enrolled ? 'Start Learning' : 'Enroll Now'}
+          {enrolled
+            ? courseCompleted
+              ? 'Course Completed!'
+              : 'Start Learning'
+            : 'Enroll Now'}
+
         </button>
       </div>
     </div>

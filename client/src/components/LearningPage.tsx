@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import YouTube from 'react-youtube';
+import { useNavigate } from "react-router-dom";
 
 
 interface Module {
@@ -15,10 +16,12 @@ interface Module {
 }
 
 const LearningPage: FC = () => {
+  const navigate = useNavigate();
   const { courseId } = useParams<{ courseId: string }>();
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVideoCompleted, setIsVideoCompleted] = useState(false);
+  const [completedModules, setCompletedModules] = useState<boolean[]>([]);
 
 
   const selectedModule = modules[selectedIndex];
@@ -38,10 +41,42 @@ const LearningPage: FC = () => {
 
       setIsVideoCompleted(true);
       console.log("Marked as completed");
+
+      setCompletedModules(prev => {
+        const updated = [...prev];
+        updated[selectedIndex] = true;
+        return updated;
+      });
+
+
+      if (selectedIndex === modules.length - 1) {
+        try {
+          const res = await axios.get("http://localhost:8080/api/progress/course-complete", {
+            params: {
+              enrollId: localStorage.getItem("enrollId"),
+              courseId: courseId
+            },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+          });
+
+          if (res.data.courseCompleted) {
+            console.log("All modules completed. Navigating to course info...");
+            navigate(`/courses/${courseId}`);
+          } else {
+            console.log("Not all modules are completed yet.");
+          }
+        } catch (error) {
+          console.error("Error checking full course completion:", error);
+        }
+      }
+
     } catch (error) {
       console.error("Failed to save progress", error);
     }
   };
+
 
   const onPlayerStateChange = (event: any) => {
     if (event.data === 0) {
@@ -70,6 +105,28 @@ const LearningPage: FC = () => {
           }
         });
         setModules(res.data);
+
+        const moduleCompletion: boolean[] = await Promise.all(
+          res.data.map(async (mod) => {
+            try {
+              const response = await axios.get(`http://localhost:8080/api/progress/status`, {
+                params: {
+                  enrollId: localStorage.getItem("enrollId"),
+                  moduleId: mod.moduleID
+                },
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("token")}`
+                }
+              });
+              return response.data.completionStatus === true || response.data.completionStatus === 1;
+            } catch {
+              return false;
+            }
+          })
+        );
+
+        setCompletedModules(moduleCompletion);
+
         setSelectedIndex(0);
       } catch (error) {
         console.error("Failed to load modules:", error);
@@ -120,7 +177,6 @@ const LearningPage: FC = () => {
     return match && match[2].length === 11 ? match[2] : '';
   };
 
-
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
@@ -130,7 +186,15 @@ const LearningPage: FC = () => {
           {modules.map((mod, index) => (
             <li
               key={mod.moduleID}
-              onClick={() => setSelectedIndex(index)}
+              onClick={() => {
+                const canAccess = index === 0 || completedModules.slice(0, index).every(Boolean);
+                if (canAccess) {
+                  setSelectedIndex(index);
+                } else {
+                  alert("❗Please complete the current module before continuing.");
+                }
+              }}
+
               style={{
                 padding: '0.75rem',
                 backgroundColor: index === selectedIndex ? '#272b69' : 'transparent',
@@ -178,23 +242,39 @@ const LearningPage: FC = () => {
             </div>
             <div>
               <button
-                onClick={goToNextModule}
-                disabled={selectedIndex >= modules.length - 1}
+                onClick={() => {
+                  if (completedModules[selectedIndex]) {
+                    goToNextModule();
+                  } else {
+                    alert("Please complete the current module before continuing.");
+                  }
+                }}
+                disabled={
+                  selectedIndex >= modules.length - 1 ||
+                  !completedModules[selectedIndex]
+                }
                 style={{
                   marginTop: '2rem',
                   padding: '0.75rem 1.5rem',
-                  backgroundColor: selectedIndex < modules.length - 1 ? '#272b69' : '#ccc',
+                  backgroundColor:
+                    selectedIndex < modules.length - 1 && completedModules[selectedIndex]
+                      ? '#272b69'
+                      : '#ccc',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
-                  cursor: selectedIndex < modules.length - 1 ? 'pointer' : 'not-allowed',
+                  cursor:
+                    selectedIndex < modules.length - 1 && completedModules[selectedIndex]
+                      ? 'pointer'
+                      : 'not-allowed',
                   alignSelf: 'flex-start',
                   fontWeight: 'bold',
-                  fontSize: '1rem'
+                  fontSize: '1rem',
                 }}
               >
                 Next Module →
               </button>
+
               {isVideoCompleted && (
                 <span style={{ color: 'green', fontWeight: 'bold', marginLeft: '30px' }}>
                   Module Completed!

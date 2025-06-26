@@ -15,5 +15,11 @@ public class UserCourseProgressService {
                 .map(UserCourseProgress::getCompletionStatus)
                 .orElse(false);
     }
+
+    public boolean hasCompletedAllModules(Integer enrollId, Integer courseId) {
+        Integer total = progressRepository.countModulesInCourse(courseId);
+        Integer completed = progressRepository.countCompletedModules(enrollId, courseId);
+        return completed >= total && total > 0;
+    }
 }
 

@@ -47,5 +47,16 @@ public class CourseProgressController {
         response.put("completionStatus", status);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/course-complete")
+    public ResponseEntity<Map<String, Object>> isCourseCompleted(
+            @RequestParam Integer enrollId,
+            @RequestParam Integer courseId) {
+
+        boolean isCompleted = progressService.hasCompletedAllModules(enrollId, courseId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("courseCompleted", isCompleted);
+        return ResponseEntity.ok(response);
+    }
 }
 
