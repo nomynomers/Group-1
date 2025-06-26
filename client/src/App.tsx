@@ -18,6 +18,9 @@ import CreateUser from './components/CreateUser'
 import AssessmentPage from './components/AssessmentPage'
 import QuestionPage from './components/QuestionPage'
 import { UserProvider } from './context/UserContext'
+import BookAppointment from './components/BookAppointment';
+
+
 
 import './App.css'
 
@@ -49,13 +52,14 @@ function App() {
             <Route path="/learning/:courseId" element={<LearningPage />} />
             <Route path="/assessments" element={<AssessmentPage />} />
             <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
+            <Route path="/appointment" element={<BookAppointment />} />
           </Routes>
         </main>
         <Footer />
       </div>
     </Router>
     </UserProvider>
-  )
+  );
 }
 
 export default App
