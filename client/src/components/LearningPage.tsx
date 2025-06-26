@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import YouTube from 'react-youtube';
@@ -22,6 +22,9 @@ const LearningPage: FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [isVideoCompleted, setIsVideoCompleted] = useState(false);
   const [completedModules, setCompletedModules] = useState<boolean[]>([]);
+  const [maxWatchTime, setMaxWatchTime] = useState(0);
+  const playerRef = useRef<any>(null);
+
 
 
   const selectedModule = modules[selectedIndex];
@@ -77,12 +80,39 @@ const LearningPage: FC = () => {
     }
   };
 
+  const onSeek = () => {
+    if (!playerRef.current) return;
+    const currentTime = playerRef.current.getCurrentTime();
+    if (currentTime > maxWatchTime + 2) {
+      playerRef.current.seekTo(maxWatchTime, true);
+    }
+  };
+
+
+  const onPlayerReady = (event: any) => {
+    playerRef.current = event.target;
+
+    setInterval(() => {
+      if (playerRef.current && playerRef.current.getCurrentTime) {
+        const currentTime = playerRef.current.getCurrentTime();
+
+        // Nếu người dùng tua quá thời gian được xem => kéo lại
+        if (currentTime > maxWatchTime + 2) {
+          playerRef.current.seekTo(maxWatchTime, true);
+        } else {
+          setMaxWatchTime(prev => Math.max(prev, currentTime));
+        }
+      }
+    }, 1000);
+  };
 
   const onPlayerStateChange = (event: any) => {
-    if (event.data === 0) {
+    if (event.data === window.YT.PlayerState.ENDED) {
       handleVideoEnd();
     }
   };
+
+
 
   const youtubeOpts = {
     width: '560',
@@ -231,6 +261,7 @@ const LearningPage: FC = () => {
               <YouTube
                 videoId={getYouTubeVideoId(selectedModule.videoUrl)}
                 opts={youtubeOpts}
+                onReady={onPlayerReady}
                 onStateChange={onPlayerStateChange}
               />
 
