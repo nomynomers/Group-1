@@ -93,38 +93,25 @@ const LearningPage: FC = () => {
     playerRef.current = event.target;
 
     setInterval(() => {
-      if (playerRef.current) {
+      if (playerRef.current && playerRef.current.getCurrentTime) {
         const currentTime = playerRef.current.getCurrentTime();
-        setMaxWatchTime(prev => Math.max(prev, currentTime));
+
+        // Nếu người dùng tua quá thời gian được xem => kéo lại
+        if (currentTime > maxWatchTime + 2) {
+          playerRef.current.seekTo(maxWatchTime, true);
+        } else {
+          setMaxWatchTime(prev => Math.max(prev, currentTime));
+        }
       }
     }, 1000);
   };
 
-
   const onPlayerStateChange = (event: any) => {
-    if (event.data === window.YT.PlayerState.PLAYING) {
-      const interval = setInterval(() => {
-        if (playerRef.current) {
-          const currentTime = playerRef.current.getCurrentTime();
-          if (currentTime > maxWatchTime + 2) {
-            playerRef.current.seekTo(maxWatchTime, true);
-          } else {
-            setMaxWatchTime(prev => Math.max(prev, currentTime));
-          }
-        }
-      }, 1000);
-
-      const stopTracking = () => clearInterval(interval);
-      playerRef.current.addEventListener("onStateChange", (e: any) => {
-        if (e.data !== window.YT.PlayerState.PLAYING) stopTracking();
-      });
-    }
-
-
     if (event.data === window.YT.PlayerState.ENDED) {
       handleVideoEnd();
     }
   };
+
 
 
   const youtubeOpts = {
@@ -274,8 +261,8 @@ const LearningPage: FC = () => {
               <YouTube
                 videoId={getYouTubeVideoId(selectedModule.videoUrl)}
                 opts={youtubeOpts}
-                // onReady={onPlayerReady}
-                // onStateChange={onPlayerStateChange}
+                onReady={onPlayerReady}
+                onStateChange={onPlayerStateChange}
               />
 
 
