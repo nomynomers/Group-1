@@ -31,7 +31,7 @@ const CoursesPage: FC = () => {
       });
   }, []);
 
-  const levels = ["All Levels", "Youth", "Adults", "Teachers"];
+  const levels = ["All Levels", "Youth", "Adults", "Teachers", "Parents"];
 
   const filteredCourses = selectedLevel === 'All Levels'
   ? courses
@@ -80,8 +80,8 @@ const CoursesPage: FC = () => {
                     onClick={() => setSelectedLevel(level)}
                     key={index}
                     style={{
-                      backgroundColor: level === 'All Levels' ? '#272b69' : 'white',
-                      color: level === 'All Levels' ? 'white' : '#272b69',
+                      backgroundColor: selectedLevel === level ? '#272b69' : 'white',
+                      color: selectedLevel === level ? 'white' : '#272b69',
                       border: '1px solid #272b69',
                       padding: '0.5rem 1rem',
                       borderRadius: '4px',
@@ -89,12 +89,12 @@ const CoursesPage: FC = () => {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseOver={(e) => {
-                      if (level !== 'All Levels') {
+                      if (selectedLevel !== level) {
                         e.currentTarget.style.backgroundColor = '#f0f1ff';
                       }
                     }}
                     onMouseOut={(e) => {
-                      if (level !== 'All Levels') {
+                      if (selectedLevel !== level) {
                         e.currentTarget.style.backgroundColor = 'white';
                       }
                     }}
@@ -122,7 +122,8 @@ const CoursesPage: FC = () => {
               overflow: 'hidden',
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
               transition: 'transform 0.2s ease',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              width: '370px'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = 'translateY(-5px)';
