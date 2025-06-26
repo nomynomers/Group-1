@@ -16,6 +16,8 @@ interface Course {
 const CoursesPage: FC = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [selectedLevel, setSelectedLevel] = useState<string>('All Levels');
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,8 +31,11 @@ const CoursesPage: FC = () => {
       });
   }, []);
 
-  const categories = ["All", "Emergency Medicine", "Pediatrics", "Ethics", "Trauma", "Research", "Radiology"];
-  const levels = ["All", "All Levels", "Intermediate", "Advanced"];
+  const levels = ["All Levels", "Youth", "Adults", "Teachers"];
+
+  const filteredCourses = selectedLevel === 'All Levels'
+  ? courses
+  : courses.filter(course => course.targetAudience === selectedLevel);
 
   return (
     <div style={{
@@ -67,46 +72,16 @@ const CoursesPage: FC = () => {
             justifyContent: 'center',
             width: '100%'
           }}>
-            <div style={{ width: '100%', textAlign: 'center', marginBottom: '1rem' }}>
-              <h3 style={{ color: '#272b69', marginBottom: '0.5rem' }}>Categories</h3>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {categories.map((category, index) => (
-                  <button
-                    key={index}
-                    style={{
-                      backgroundColor: category === 'All' ? '#272b69' : 'white',
-                      color: category === 'All' ? 'white' : '#272b69',
-                      border: '1px solid #272b69',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseOver={(e) => {
-                      if (category !== 'All') {
-                        e.currentTarget.style.backgroundColor = '#f0f1ff';
-                      }
-                    }}
-                    onMouseOut={(e) => {
-                      if (category !== 'All') {
-                        e.currentTarget.style.backgroundColor = 'white';
-                      }
-                    }}
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
             <div style={{ width: '100%', textAlign: 'center' }}>
               <h3 style={{ color: '#272b69', marginBottom: '0.5rem' }}>Level</h3>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                 {levels.map((level, index) => (
                   <button
+                    onClick={() => setSelectedLevel(level)}
                     key={index}
                     style={{
-                      backgroundColor: level === 'All' ? '#272b69' : 'white',
-                      color: level === 'All' ? 'white' : '#272b69',
+                      backgroundColor: level === 'All Levels' ? '#272b69' : 'white',
+                      color: level === 'All Levels' ? 'white' : '#272b69',
                       border: '1px solid #272b69',
                       padding: '0.5rem 1rem',
                       borderRadius: '4px',
@@ -114,12 +89,12 @@ const CoursesPage: FC = () => {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseOver={(e) => {
-                      if (level !== 'All') {
+                      if (level !== 'All Levels') {
                         e.currentTarget.style.backgroundColor = '#f0f1ff';
                       }
                     }}
                     onMouseOut={(e) => {
-                      if (level !== 'All') {
+                      if (level !== 'All Levels') {
                         e.currentTarget.style.backgroundColor = 'white';
                       }
                     }}
@@ -137,7 +112,7 @@ const CoursesPage: FC = () => {
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
           gap: '2rem'
         }}>
-          {courses.map((course, index) => (
+          {filteredCourses.map((course, index) => (
             <div 
             key={index} 
             onClick={() => navigate(`/courses/${course.courseID}`)}
