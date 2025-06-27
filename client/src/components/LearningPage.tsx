@@ -86,6 +86,8 @@ const LearningPage: FC = () => {
       clearInterval(intervalRef.current);
     }
 
+    
+
     intervalRef.current = setInterval(() => {
       if (playerRef.current && playerRef.current.getCurrentTime) {
         const currentTime = playerRef.current.getCurrentTime();
@@ -100,6 +102,8 @@ const LearningPage: FC = () => {
           maxWatchTimeRef.current = currentTime;
         }
       }
+
+      // console.log(playerRef.current.getCurrentTime(), maxWatchTimeRef.current)
     }, 1000);
   };
 
@@ -218,6 +222,7 @@ const LearningPage: FC = () => {
                 const canAccess = index === 0 || completedModules.slice(0, index).every(Boolean);
                 if (canAccess) {
                   setSelectedIndex(index);
+                  maxWatchTimeRef.current = 0;
                 } else {
                   alert("❗Please complete the current module before continuing.");
                 }
@@ -270,6 +275,7 @@ const LearningPage: FC = () => {
                 onClick={() => {
                   if (completedModules[selectedIndex]) {
                     goToNextModule();
+                    maxWatchTimeRef.current = 0;
                   } else {
                     alert("Please complete the current module before continuing.");
                   }
