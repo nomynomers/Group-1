@@ -9,18 +9,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "[Role]", schema = "dbo")  //  matches table name
+@Table(name = "[Roles]", schema = "dbo")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Roles {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id") //  match DB
+    @Column(name = "roleId")
     private int roleId;
 
-    @Column(name = "role_name", nullable = false, unique = true) //  match DB
+    @Column(name = "roleName", nullable = false, unique = true)
     private String roleName;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)

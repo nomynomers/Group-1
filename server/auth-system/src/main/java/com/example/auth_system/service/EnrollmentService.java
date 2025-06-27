@@ -30,27 +30,27 @@ public class EnrollmentService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (enrollmentRepository.existsByUserIdAndCourseId(user.getUserId(), request.getCourseID())) {
-            Enrollment existing = enrollmentRepository.findByUserIdAndCourseId(user.getUserId(), request.getCourseID())
+        if (enrollmentRepository.existsByUserIDAndCourseID(user.getUserId(), request.getCourseID())) {
+            Enrollment existing = enrollmentRepository.findByUserIDAndCourseID(user.getUserId(), request.getCourseID())
                     .orElseThrow();
-            return existing.getEnroll_id();
+            return existing.getEnrollmentID();
         }
 
         Enrollment enrollment = Enrollment.builder()
-                .userId(user.getUserId())
-                .courseId(request.getCourseID())
+                .userID(user.getUserId())
+                .courseID(request.getCourseID())
                 .enrolledAt(LocalDateTime.now())
                 .build();
 
         Enrollment saved = enrollmentRepository.save(enrollment);
 
-        return saved.getEnroll_id();
+        return saved.getEnrollmentID();
     }
 
 
     public boolean isUserEnrolled(String email, int courseID) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return enrollmentRepository.existsByUserIdAndCourseId(user.getUserId(), courseID);
+        return enrollmentRepository.existsByUserIDAndCourseID(user.getUserId(), courseID);
     }
 }
