@@ -1,386 +1,162 @@
-﻿-- Create the database 
-CREATE DATABASE DrugPrevent;
+CREATE DATABASE DrugPrevention;
 GO
 
--- Use the database
-USE DrugPrevent;
+USE DrugPrevention;
 GO
 
--- Create Role table
-CREATE TABLE Role (
-    role_id INT PRIMARY KEY IDENTITY(1,1),
-    role_name VARCHAR(100) NOT NULL
+CREATE TABLE Roles (
+  roleID INT IDENTITY(1,1) PRIMARY KEY,
+  roleName VARCHAR(100) UNIQUE,
 );
 
--- Create User table
-CREATE TABLE [Users] (
-    user_id INT PRIMARY KEY IDENTITY(1,1),
-    email VARCHAR(255) UNIQUE NOT NULL,
-    [password] VARCHAR(255) NOT NULL,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    date_of_birth DATE,
-    phone_number VARCHAR(20),
-    registration_date DATETIME DEFAULT GETDATE(),
-    role_id INT FOREIGN KEY REFERENCES Role(role_id)
+CREATE TABLE Users (
+  userID INT IDENTITY(1,1) PRIMARY KEY,
+  roleID INT,
+  firstName VARCHAR(100),
+  lastName VARCHAR(100),
+  dateOfBirth DATE,
+  phoneNumber VARCHAR(20),
+  registrationDate DATETIME DEFAULT GETDATE(),
+  email VARCHAR(255) UNIQUE,
+  password VARCHAR(255),
+  accountStatus BIT,
+  FOREIGN KEY (roleID) REFERENCES Roles(roleID)
 );
 
--- Create Assessment table
-CREATE TABLE Assessment (
-    assessmentID INT PRIMARY KEY IDENTITY(1,1),
-    assessmentName VARCHAR(255),
-    description TEXT,
-    targetAudience VARCHAR(50),
-    estimatedTimeMinutes INT,
-    createdDate DATETIME DEFAULT GETDATE()
+CREATE TABLE Courses (
+  courseID INT IDENTITY(1,1) PRIMARY KEY,
+  courseName VARCHAR(255),
+  description VARCHAR(MAX),
+  targetAudience VARCHAR(50),
+  durationMinutes INT,
+  creationDate DATETIME DEFAULT GETDATE(),
+  imageCover VARCHAR(500),
+  author VARCHAR(50)
 );
 
--- Create AssessmentQuestion table
-CREATE TABLE AssessmentQuestion (
-    questionID INT PRIMARY KEY IDENTITY(1,1),
-    assessmentID INT FOREIGN KEY REFERENCES Assessment(assessmentID),
-    questionText TEXT
+CREATE TABLE Enrollments (
+  enrollmentID INT IDENTITY(1,1) PRIMARY KEY,
+  userID INT,
+  courseID INT,
+  enrolledAt DATETIME DEFAULT GETDATE(),
+  progressPercentage INT,
+  completeDate DATETIME,
+  FOREIGN KEY (userID) REFERENCES Users(userID),
+  FOREIGN KEY (courseID) REFERENCES Courses(courseID)
 );
 
--- Create QuestionOption table
-CREATE TABLE QuestionOption (
-    optionID INT PRIMARY KEY IDENTITY(1,1),
-    questionID INT FOREIGN KEY REFERENCES AssessmentQuestion(questionID),
-    optionValue VARCHAR(255),
-    score INT
+CREATE TABLE Assessments (
+  assessmentID INT IDENTITY(1,1) PRIMARY KEY,
+  assessmentName VARCHAR(255),
+  description VARCHAR(MAX),
+  targetAudience VARCHAR(50),
+  estimatedTimeMinutes INT,
+  createdDate DATETIME DEFAULT GETDATE(),
+  imageCover VARCHAR(255)
 );
 
--- Create UserAssessment table
-CREATE TABLE UserAssessment (
-    userAssessmentID INT PRIMARY KEY IDENTITY(1,1),
-    userID INT FOREIGN KEY REFERENCES [Users](user_id),
-    assessmentID INT FOREIGN KEY REFERENCES Assessment(assessmentID),
-    completionDate DATETIME,
-    riskLevel VARCHAR(50),
-    totalScore INT,
-    recommendationProvided TEXT
+CREATE TABLE CourseModules (
+  moduleID INT IDENTITY(1,1) PRIMARY KEY,
+  courseID INT,
+  moduleName VARCHAR(255),
+  description VARCHAR(MAX),
+  durationMinutes INT,
+  content NVARCHAR(MAX),
+  videoUrl VARCHAR(500),
+  moduleOrder INT,
+  FOREIGN KEY (courseID) REFERENCES Courses(courseID)
 );
 
--- Create UserAssessmentResponse table
-CREATE TABLE UserAssessmentResponse (
-    responseID INT PRIMARY KEY IDENTITY(1,1),
-    userAssessmentID INT FOREIGN KEY REFERENCES UserAssessment(userAssessmentID),
-    questionID INT FOREIGN KEY REFERENCES AssessmentQuestion(questionID),
-    optionID INT FOREIGN KEY REFERENCES QuestionOption(optionID)
+CREATE TABLE AssessmentQuestions (
+  questionID INT IDENTITY(1,1) PRIMARY KEY,
+  assessmentID INT,
+  questionText VARCHAR(MAX),
+  FOREIGN KEY (assessmentID) REFERENCES Assessments(assessmentID)
 );
 
--- Create Consultant table
-CREATE TABLE Consultant (
-    consultantID INT PRIMARY KEY IDENTITY(1,1),
-    specialization VARCHAR(255),
-    qualification VARCHAR(255),
-    yearsExperience INT
+CREATE TABLE UserAssessments (
+  userAssessmentID INT IDENTITY(1,1) PRIMARY KEY,
+  userID INT,
+  assessmentID INT,
+  completionDate DATETIME DEFAULT GETDATE(),
+  riskLevel VARCHAR(50),
+  totalScore INT,
+  recommendationProvided VARCHAR(MAX),
+  FOREIGN KEY (userID) REFERENCES Users(userID),
+  FOREIGN KEY (assessmentID) REFERENCES Assessments(assessmentID)
 );
 
--- Create Appointment table
-CREATE TABLE Appointment (
-    appointmentID INT PRIMARY KEY IDENTITY(1,1),
-    userID INT FOREIGN KEY REFERENCES [Users](user_id),
-    consultantID INT FOREIGN KEY REFERENCES Consultant(consultantID),
-    appointmentDate DATE,
-    startTime TIME,
-    endTime TIME,
-    status VARCHAR(50),
-    meetingLink VARCHAR(255)
+CREATE TABLE Articles (
+  articleID INT IDENTITY(1,1) PRIMARY KEY,
+  createdBy INT,
+  articleName VARCHAR(255),
+  description VARCHAR(MAX),
+  category VARCHAR(50),
+  durationMinutes INT,
+  creationDate DATETIME DEFAULT GETDATE(),
+  imageCover VARCHAR(500),
+  content VARCHAR(MAX),
+  FOREIGN KEY (createdBy) REFERENCES Users(userID)
 );
 
--- Create Course table
-CREATE TABLE Course (
-    courseID INT PRIMARY KEY IDENTITY(1,1),
-    evaluationID INT,
-    moduleID INT,
-    courseName VARCHAR(255),
-    description TEXT,
-    targetAudience VARCHAR(50),
-    durationMinutes INT,
-    createdBy INT FOREIGN KEY REFERENCES [Users](user_id),
-    creationDate DATETIME DEFAULT GETDATE(),
-    certificateAvailable BIT
+CREATE TABLE Consultants (
+  consultantID INT IDENTITY(1,1) PRIMARY KEY,
+  userID INT,
+  specialization VARCHAR(255),
+  qualification VARCHAR(255),
+  yearsExperience INT,
+  available BIT,
+  imageCover VARCHAR(255)
 );
 
--- Create CourseModule table
-CREATE TABLE CourseModule (
-    moduleID INT PRIMARY KEY IDENTITY(1,1),
-    courseID INT FOREIGN KEY REFERENCES Course(courseID),
-    moduleName VARCHAR(255),
-    description TEXT,
-    durationMinutes INT
+CREATE TABLE Appointments (
+  appointmentID INT IDENTITY(1,1) PRIMARY KEY,
+  userID INT,
+  consultantID INT,
+  appointmentDate DATE,
+  startTime TIME,
+  endTime TIME,
+  status VARCHAR(50),
+  meetingLink VARCHAR(255),
+  FOREIGN KEY (userID) REFERENCES Users(userID),
+  FOREIGN KEY (consultantID) REFERENCES Consultants(consultantID)
 );
 
--- Create CourseEvaluation table
-CREATE TABLE CourseEvaluation (
-    evaluationID INT PRIMARY KEY IDENTITY(1,1),
-    courseID INT FOREIGN KEY REFERENCES Course(courseID),
-    rating INT,
-    comments TEXT,
-    submissionDate DATETIME DEFAULT GETDATE()
+CREATE TABLE QuestionOptions (
+  optionID INT IDENTITY(1,1) PRIMARY KEY,
+  questionID INT,
+  optionValue VARCHAR(255),
+  score INT,
+  FOREIGN KEY (questionID) REFERENCES AssessmentQuestions(questionID)
 );
 
--- Create UserCourse table
-CREATE TABLE UserCourse (
-    userCourseID INT PRIMARY KEY IDENTITY(1,1),
-    userID INT FOREIGN KEY REFERENCES [Users](user_id),
-    progressID INT,
-    registrationDate DATETIME,
-    completionDate DATETIME,
-    progressPercentage DECIMAL(5, 2),
-    certificateIssued BIT,
-    lastAccessDate DATETIME
+CREATE TABLE UserAssessmentResponses (
+  responseID INT IDENTITY(1,1) PRIMARY KEY,
+  userAssessmentID INT,
+  questionID INT,
+  optionID INT,
+  FOREIGN KEY (userAssessmentID) REFERENCES UserAssessments(userAssessmentID),
+  FOREIGN KEY (optionID) REFERENCES QuestionOptions(optionID),
+  FOREIGN KEY (questionID) REFERENCES AssessmentQuestions(questionID)
 );
 
--- Create UserCourseProgress table
-CREATE TABLE UserCourseProgress (
-    progressID INT PRIMARY KEY IDENTITY(1,1),
-    userCourseID INT FOREIGN KEY REFERENCES UserCourse(userCourseID),
-    moduleID INT FOREIGN KEY REFERENCES CourseModule(moduleID),
-    completionStatus VARCHAR(50),
-    completionDate DATETIME
+CREATE TABLE CourseEvaluations (
+  evaluationID INT IDENTITY(1,1) PRIMARY KEY,
+  courseID INT,
+  userID INT,
+  rating INT,
+  comments VARCHAR(MAX),
+  submissionDate DATETIME DEFAULT GETDATE(),
+  FOREIGN KEY (courseID) REFERENCES Courses(courseID),
+  FOREIGN KEY (userID) REFERENCES Users(userID)
 );
 
-ALTER TABLE [DrugPrevent].[dbo].[Course]
-ADD imageCover VARCHAR(500);
-
-ALTER TABLE [DrugPrevent].[dbo].[Course]
-ADD author VARCHAR(50);
-
-ALTER TABLE Appointment
-ALTER COLUMN startTime TIME;
-
-ALTER TABLE Appointment
-ALTER COLUMN endTime TIME;
-
-CREATE TABLE Enrollment (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    user_id INT NOT NULL,
-    courseId INT NOT NULL,
-    enrolledAt DATETIME DEFAULT GETDATE(),
-
-    CONSTRAINT FK_Enrollment_User FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    CONSTRAINT FK_Enrollment_Course FOREIGN KEY (courseId) REFERENCES Course(courseID)
+CREATE TABLE ModuleCompletions (
+  progressID INT IDENTITY(1,1) PRIMARY KEY,
+  enrollmentID INT,
+  moduleID INT,
+  completionStatus BIT,
+  FOREIGN KEY (enrollmentID) REFERENCES Enrollments(enrollmentID),
+  FOREIGN KEY (moduleID) REFERENCES CourseModules(moduleID)
 );
 
-ALTER TABLE CourseModule
-ADD content NVARCHAR(MAX);
-
-ALTER TABLE Assessment
-ADD imageCover VARCHAR(255) NULL;
-GO
-
---===================================================================
-
-INSERT INTO Role (role_name)
-VALUES 
-('ADMIN'),
-('MEMBER'),
-('USER');
-
-INSERT INTO [DrugPrevent].[dbo].[Course] (
-    [evaluationID],
-    [moduleID],
-    [courseName],
-    [description],
-    [targetAudience],
-    [durationMinutes],
-    [createdBy],
-    [creationDate],
-    [certificateAvailable],
-    [imageCover],
-    [author]
-)
-VALUES
-( 1, 1, 'Introduction to Health & Wellness', 'Learn the fundamentals of maintaining a healthy lifestyle.', 'Beginner', 8, 1, '2025-06-08 20:22:58.590', 1, 'https://res.cloudinary.com/ddtm7drwo/image/upload/v1717869764/health_wellness.jpg', 'Dr. Sarah Johnson'),
-( 0, 0, 'Advanced Nutrition Planning', 'Master the art of creating personalized nutrition plans.', 'Intermediate', 5, 1, '2025-06-08 20:22:58.590', 0, 'https://res.cloudinary.com/ddtm7drwo/image/upload/v1717869764/nutrition_planning.jpg', 'Dr. Sarah Johnson'),
-( 0, 0, 'Mental Health First Aid', 'Essential skills for recognizing and responding to mental health issues.', 'Advanced', 12, 1, '2025-06-09 13:47:10.353', 1, 'https://res.cloudinary.com/ddtm7drwo/image/upload/v1717869764/mental_health_first_aid.jpg', 'Dr. Sarah Johnson');
-
-INSERT INTO Assessment (
-    assessmentName,
-    description,
-    targetAudience,
-    estimatedTimeMinutes,
-    createdDate,
-    imageCover
-) VALUES
-(
-    'ASSIST Test',
-    'The Alcohol, Smoking and Substance Involvement Screening Test (ASSIST) helps identify substance use and related risks among youth and adults.',
-    'Youth, Adults',
-    10,
-    GETDATE(),
-    'https://example.com/images/assist.jpg'
-),
-(
-    'CRAFFT Test',
-    'The CRAFFT screening tool is designed specifically for adolescents to assess high-risk alcohol and drug behaviors.',
-    'Adolescents, Teens',
-    8,
-    GETDATE(),
-    'https://example.com/images/crafft.jpg'
-);
-
-  INSERT INTO [DrugPrevent].[dbo].[Course] (
-
-    evaluationID,
-    moduleID,
-    courseName,
-    description,
-    targetAudience,
-    durationMinutes,
-    createdBy,
-    creationDate,
-    certificateAvailable,
-    imageCover,
-    author
-)
-VALUES
-(0, 0, 'Drug Awareness and Prevention', 'This course helps learners understand the dangers of drug use and methods of prevention.', 'Students', 8, 1, '2025-06-15 16:51:56.547', 1, 'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1749462769/drug_thumnail_cm8vxl.webp', 'John Nguyen'),
-(0, 0, 'Refusal Skills for Youth', 'Equips young people with strategies and confidence to say no to drugs in various situations.', 'Teenagers', 6, 1, '2025-06-15 16:52:13.647', 1, 'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1749479149/9ffa446ea8fb0c6591f9ffc0e0eff7b2_z46jx8.jpg', 'Mai Tran'),
-(0, 0, 'Counseling and Support for Drug Addicts', 'A course for social workers and educators on how to support individuals recovering from addiction.', 'Teachers', 12, 1, '2025-06-15 16:52:14.157', 1, 'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1749479278/drug_oldman_cqfcmr.jpg', 'Hung Le');
-
-INSERT INTO [DrugPrevent].[dbo].[CourseModule] 
-([courseID], [moduleName], [description], [durationMinutes], [content])
-VALUES 
--- Module 1
-(1, 
- 'Understanding Drug Abuse and Its Consequences',
- 'This module explores the fundamental concepts of drug abuse, its causes, and its effects on individuals and society.',
- 25,
- 'Drug abuse refers to the misuse of legal or illegal substances for non-medical purposes, often leading to addiction, health complications, and social problems. Many people fall into drug use due to curiosity, peer pressure, emotional distress, or exposure to environments where drugs are easily accessible. The consequences of drug abuse are far-reaching. On a personal level, it can damage the brain, heart, liver, and other organs. It also severely impacts mental health, leading to anxiety, depression, or psychosis. Socially, drug abuse can lead to broken relationships, unemployment, crime, and homelessness. Communities suffer as the demand for healthcare, law enforcement, and rehabilitation rises. Understanding these consequences is essential in developing empathy and awareness, especially among youth. Preventing drug abuse starts with education, open communication, and strong support systems.'
-),
-
--- Module 2
-(1, 
- 'Common Types of Drugs and Their Effects',
- 'This module provides an overview of commonly abused drugs, their classifications, and their physical and psychological effects.',
- 30,
- 'Drugs can be classified into several categories based on their effects on the body. Stimulants, such as cocaine and methamphetamine, increase alertness and energy but can cause heart problems, paranoia, and addiction. Depressants, like alcohol and benzodiazepines, slow down brain function, leading to drowsiness and impaired judgment. Overuse can result in overdose or death. Opioids, including heroin and prescription painkillers like oxycodone, are highly addictive and commonly responsible for overdose deaths. Hallucinogens, such as LSD and psilocybin mushrooms, alter perception and can lead to unpredictable behavior or psychological distress. Understanding the effects of these drugs helps individuals make informed choices and recognize the dangers of experimentation. It also supports efforts in early intervention and harm reduction strategies.'
-),
-
--- Module 3
-(1, 
- 'Prevention Strategies and How to Say No',
- 'This module teaches effective strategies for preventing drug use and equips learners with practical ways to resist peer pressure.',
- 20,
- 'Preventing drug use starts with education, strong personal values, and a supportive environment. Schools, families, and communities play a vital role in guiding youth toward healthy choices. Encouraging involvement in sports, arts, and other extracurricular activities can reduce the temptation to use drugs. One of the most critical skills is learning how to say  no  confidently. Assertive communication, body language, and the ability to walk away from risky situations are powerful tools. Role-playing and real-life scenarios help individuals practice these skills. Moreover, building a circle of supportive friends and mentors can make a significant difference. When people feel valued and understood, they are less likely to seek escape through drugs. Empowering individuals with knowledge and resilience is key to long-term prevention.'
-);
-
--- Q1: In your life, which of the following substances have you ever used (non-medical use)?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'In your life, which of the following substances have you ever used (non-medical use)?');
-
-DECLARE @q1 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q1, 'No', 0),
-(@q1, 'Yes', 3);
-
-------------------------------------------------------------
-
--- Q2: In the past 3 months, how often have you used [substance]?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'In the past three months, how often have you used [substance]?');
-
-DECLARE @q2 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q2, 'Never', 0),
-(@q2, 'Once or twice', 2),
-(@q2, 'Monthly', 3),
-(@q2, 'Weekly', 4),
-(@q2, 'Daily or almost daily', 6);
-
-------------------------------------------------------------
-
--- Q3: During the past 3 months, how often have you had a strong desire or urge to use [substance]?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'During the past three months, how often have you had a strong desire or urge to use [substance]?');
-
-DECLARE @q3 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q3, 'Never', 0),
-(@q3, 'Once or twice', 3),
-(@q3, 'Monthly', 4),
-(@q3, 'Weekly', 5),
-(@q3, 'Daily or almost daily', 6);
-
-------------------------------------------------------------
-
--- Q4: During the past 3 months, how often has your use led to health, social, legal or financial problems?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'During the past three months, how often has your use led to health, social, legal or financial problems?');
-
-DECLARE @q4 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q4, 'Never', 0),
-(@q4, 'Once or twice', 4),
-(@q4, 'Monthly', 5),
-(@q4, 'Weekly', 6),
-(@q4, 'Daily or almost daily', 7);
-
-------------------------------------------------------------
-
--- Q5: During the past 3 months, how often have you failed to do what was normally expected of you?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'During the past three months, how often have you failed to do what was normally expected of you because of your use?');
-
-DECLARE @q5 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q5, 'Never', 0),
-(@q5, 'Once or twice', 5),
-(@q5, 'Monthly', 6),
-(@q5, 'Weekly', 7),
-(@q5, 'Daily or almost daily', 8);
-
-------------------------------------------------------------
-
--- Q6: Has a friend or relative ever expressed concern about your use?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'Has a friend or relative or anyone else ever expressed concern about your use of [substance]?');
-
-DECLARE @q6 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q6, 'No, never', 0),
-(@q6, 'Yes, in the past 3 months', 6),
-(@q6, 'Yes, but not in the past 3 months', 3);
-
-------------------------------------------------------------
-
--- Q7: Have you ever tried and failed to control, cut down or stop using?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'Have you ever tried and failed to control, cut down or stop using [substance]?');
-
-DECLARE @q7 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q7, 'No, never', 0),
-(@q7, 'Yes, in the past 3 months', 6),
-(@q7, 'Yes, but not in the past 3 months', 3);
-
-------------------------------------------------------------
-
--- Q8: Have you ever used any drug by injection (non-medical use)?
-INSERT INTO AssessmentQuestion (assessmentID, questionText)
-VALUES (3, 'Have you ever used any drug by injection (non-medical use)?');
-
-DECLARE @q8 INT = SCOPE_IDENTITY();
-
-INSERT INTO QuestionOption (questionID, optionValue, score)
-VALUES
-(@q8, 'No, never', 0),
-(@q8, 'Yes, in the past 3 months', 2),
-(@q8, 'Yes, but not in the past 3 months', 1);

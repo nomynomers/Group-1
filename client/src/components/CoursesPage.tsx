@@ -166,7 +166,7 @@ const CoursesPage: FC = () => {
                     fontSize: '0.9rem',
                     color: '#666'
                   }}>
-                    {course.durationMinutes} weeks
+                    {course.durationMinutes} minutes
                   </span>
                 </div>
                 <h3 style={{
