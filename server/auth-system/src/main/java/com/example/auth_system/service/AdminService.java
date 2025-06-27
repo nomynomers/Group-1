@@ -5,13 +5,12 @@ import com.example.auth_system.dto.CreateUserRequest;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.dto.UserProfile;
 import com.example.auth_system.entity.Course;
-import com.example.auth_system.entity.Role;
+import com.example.auth_system.entity.Roles;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.CourseRepository;
 import com.example.auth_system.repository.RoleRepository;
 import com.example.auth_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +77,7 @@ public class AdminService {
             return new MessageResponse("Error: Email is already taken!");
         }
 
-        Role role = roleRepository.findByRoleName(request.getRoleName().toUpperCase())
+        Roles role = roleRepository.findByRoleName(request.getRoleName().toUpperCase())
                 .orElseThrow(() -> new RuntimeException("Error: Role not found"));
 
         User newUser = User.builder()
@@ -102,8 +101,6 @@ public class AdminService {
                 .description(request.getDescription())
                 .targetAudience(request.getTargetAudience())
                 .durationMinutes(request.getDurationMinutes())
-                .createdBy(request.getCreatedBy())
-                .certificateAvailable(request.isCertificateAvailable())
                 .imageCover(request.getImageCover())
                 .author(request.getAuthor())
                 .build();
@@ -128,8 +125,6 @@ public class AdminService {
         course.setDescription(updatedCourse.getDescription());
         course.setTargetAudience(updatedCourse.getTargetAudience());
         course.setDurationMinutes(updatedCourse.getDurationMinutes());
-        course.setCreatedBy(updatedCourse.getCreatedBy());
-        course.setCertificateAvailable(updatedCourse.isCertificateAvailable());
         course.setImageCover(updatedCourse.getImageCover());
         course.setAuthor(updatedCourse.getAuthor());
 

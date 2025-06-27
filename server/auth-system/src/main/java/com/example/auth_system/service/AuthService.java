@@ -3,7 +3,7 @@ package com.example.auth_system.service;
 import com.example.auth_system.config.JwtUtils;
 import com.example.auth_system.config.UserPrincipal;
 import com.example.auth_system.dto.*;
-import com.example.auth_system.entity.Role;
+import com.example.auth_system.entity.Roles;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.RoleRepository;
 import com.example.auth_system.repository.UserRepository;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +86,7 @@ public class AuthService {
             throw new RuntimeException("Error: Email is already taken!");
         }
 
-        Role userRole = roleRepository.findByRoleName("USER")
+        Roles userRole = roleRepository.findByRoleName("USER")
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
         User user = User.builder()

@@ -16,7 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "userID")
     private int userId;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -25,24 +25,24 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "first_name")
+    @Column(name = "firstName")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "lastName")
     private String lastName;
 
-    @Column(name = "date_of_birth")
+    @Column(name = "dateOfBirth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "phone_number")
+    @Column(name = "phoneNumber")
     private String phoneNumber;
 
-    @Column(name = "registration_date", nullable = false)
+    @Column(name = "registrationDate", nullable = false)
     private LocalDateTime registrationDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false) //  matches FK column
-    private Role role;
+    @JoinColumn(name = "roleID", nullable = false) //  matches FK column
+    private Roles role;
 
     @PrePersist
     public void prePersist() {

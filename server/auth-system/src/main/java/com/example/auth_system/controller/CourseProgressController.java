@@ -1,14 +1,13 @@
 package com.example.auth_system.controller;
 
 import com.example.auth_system.dto.ModuleCompleteDTO;
-import com.example.auth_system.entity.UserCourseProgress;
-import com.example.auth_system.repository.UserCourseProgressRepository;
-import com.example.auth_system.service.UserCourseProgressService;
+import com.example.auth_system.entity.ModuleCompletions;
+import com.example.auth_system.repository.ModuleCompletionRepository;
+import com.example.auth_system.service.ModuleCompletionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,21 +16,20 @@ import java.util.Map;
 public class CourseProgressController {
 
     @Autowired
-    private UserCourseProgressRepository repo;
+    private ModuleCompletionRepository repo;
 
     @Autowired
-    private UserCourseProgressService progressService;
+    private ModuleCompletionService progressService;
 
     @PostMapping("/complete")
     public ResponseEntity<?> markAsCompleted(@RequestBody ModuleCompleteDTO dto) {
-        UserCourseProgress progress = repo
+        ModuleCompletions progress = repo
                 .findByEnrollIdAndModuleID(dto.getEnrollId(), dto.getModuleId())
-                .orElse(new UserCourseProgress());
+                .orElse(new ModuleCompletions());
 
         progress.setEnrollId(dto.getEnrollId());
         progress.setModuleID(dto.getModuleId());
         progress.setCompletionStatus(true);
-        progress.setCompletionDate(LocalDateTime.now());
 
         repo.save(progress);
         return ResponseEntity.ok("Marked as completed");

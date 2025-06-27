@@ -7,7 +7,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Course")
+@Table(name = "Courses")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,10 +18,6 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int courseID;
 
-    private int evaluationID;
-
-    private int moduleID;
-
     private String courseName;
 
     private String description;
@@ -30,8 +26,6 @@ public class Course {
 
     private int durationMinutes;
 
-    private int createdBy;
-
     private LocalDateTime creationDate;
     @PrePersist
     public void prePersist() {
@@ -39,8 +33,6 @@ public class Course {
             creationDate = LocalDateTime.now();
         }
     }
-
-    private boolean certificateAvailable;
 
     private String imageCover;
 

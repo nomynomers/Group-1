@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Integer> {
-    boolean existsByUserIdAndCourseId(int userId, int courseId);
-    Optional<Enrollment> findByUserIdAndCourseId(Integer userId, Integer courseId);
+    boolean existsByUserIDAndCourseID(int userID, int courseID);
+    Optional<Enrollment> findByUserIDAndCourseID(Integer userID, Integer courseID);
 }

@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Enrollment")
+@Table(name = "Enrollments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,12 +14,11 @@ import java.time.LocalDateTime;
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int enroll_id;
+    private int enrollmentID;
 
-    @Column(name = "user_id")
-    private int userId;
+    private int userID;
 
-    private int courseId;
+    private int courseID;
 
     private LocalDateTime enrolledAt;
 }

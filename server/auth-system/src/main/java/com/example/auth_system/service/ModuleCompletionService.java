@@ -1,18 +1,18 @@
 package com.example.auth_system.service;
 
-import com.example.auth_system.entity.UserCourseProgress;
-import com.example.auth_system.repository.UserCourseProgressRepository;
+import com.example.auth_system.entity.ModuleCompletions;
+import com.example.auth_system.repository.ModuleCompletionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserCourseProgressService {
+public class ModuleCompletionService {
     @Autowired
-    private UserCourseProgressRepository progressRepository;
+    private ModuleCompletionRepository progressRepository;
 
     public Boolean getCompletionStatus(Integer enrollId, Integer moduleId) {
         return progressRepository.findByEnrollIdAndModuleID(enrollId, moduleId)
-                .map(UserCourseProgress::getCompletionStatus)
+                .map(ModuleCompletions::getCompletionStatus)
                 .orElse(false);
     }
 
