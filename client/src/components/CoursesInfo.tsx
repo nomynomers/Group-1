@@ -13,6 +13,16 @@ interface Course {
   author: string;
 }
 
+interface Evaluation {
+  evaluationID: number;
+  courseID: number;
+  userID: number;
+  rating: number;
+  comments: string;
+  submissionDate: string;
+}
+
+
 const CourseInfo: FC = () => {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
@@ -22,6 +32,12 @@ const CourseInfo: FC = () => {
   const navigate = useNavigate();
   const [courseCompleted, setCourseCompleted] = useState<boolean>(false);
 
+  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+  const userID = localStorage.getItem("userId");
+  const [newComment, setNewComment] = useState('');
+  const [newRating, setNewRating] = useState<number>(5);
+  const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => {
     if (id) {
       axios.get<Course>(`http://localhost:8080/api/courses/${id}`)
@@ -30,12 +46,15 @@ const CourseInfo: FC = () => {
           setLoading(false);
 
           checkEnrollment(res.data.courseID);
+
+          axios.get<Evaluation[]>(`http://localhost:8080/api/evaluations/by-course/${res.data.courseID}`)
+            .then(evaluationRes => {
+              setEvaluations(evaluationRes.data);
+            })
+            .catch(err => {
+              console.error("Failed to fetch evaluations:", err);
+            });
         })
-        .catch(err => {
-          setError('Failed to fetch course details.');
-          setLoading(false);
-          console.error(err);
-        });
     }
   }, [id]);
 
@@ -118,6 +137,45 @@ const CourseInfo: FC = () => {
     }
   };
 
+  const handleEvaluationSubmit = async () => {
+    const enrollId = localStorage.getItem("enrollId");
+    const userId = localStorage.getItem("userId");
+
+    if (!newComment.trim() || !userId || !course) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const res = await axios.post("http://localhost:8080/api/evaluations/create", {
+        courseID: course.courseID,
+        userID: parseInt(userId),
+        rating: newRating,
+        comments: newComment
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      // Refresh evaluations list
+      const updated = await axios.get<Evaluation[]>(`http://localhost:8080/api/evaluations/by-course/${course.courseID}`);
+      setEvaluations(updated.data);
+
+      // Reset form
+      setNewComment('');
+      setNewRating(5);
+      alert("✅ Evaluation submitted!");
+
+    } catch (err) {
+      console.error("Error submitting evaluation:", err);
+      alert("❌ Failed to submit evaluation.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
 
   if (loading) return <div style={{ padding: '2rem' }}>Loading...</div>;
@@ -181,6 +239,66 @@ const CourseInfo: FC = () => {
           </button>
         </div>
       </div>
+      {enrolled && (
+        <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#fff', borderRadius: '8px' }}>
+          <h3 style={{ marginBottom: '1rem', color: '#272b69' }}>Leave your evaluation</h3>
+
+          <label style={{ display: 'block', marginBottom: '0.5rem' }}>Rating:</label>
+          <select
+            value={newRating}
+            onChange={e => setNewRating(Number(e.target.value))}
+            style={{ padding: '0.5rem', marginBottom: '1rem' }}
+          >
+            {[5, 4, 3, 2, 1].map(num => (
+              <option key={num} value={num}>{num} Star{num > 1 ? 's' : ''}</option>
+            ))}
+          </select>
+
+
+          <textarea
+            value={newComment}
+            onChange={e => setNewComment(e.target.value)}
+            rows={4}
+            placeholder="Write your thoughts..."
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '1rem' }}
+          />
+
+
+          <button
+            onClick={handleEvaluationSubmit}
+            disabled={submitting}
+            style={{
+              backgroundColor: '#272b69',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              border: 'none',
+              borderRadius: '6px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+          >
+            {submitting ? 'Submitting...' : 'Submit Evaluation'}
+          </button>
+
+        </div>
+      )}
+
+      {evaluations.length > 0 && (
+        <div style={{ marginTop: '3rem', backgroundColor: 'white', padding: '2rem', borderRadius: '8px' }}>
+          <h2 style={{ color: '#272b69', marginBottom: '1.5rem' }}>📝 Course Evaluations</h2>
+          {evaluations.map((evalItem) => (
+            <div key={evalItem.evaluationID} style={{ borderBottom: '1px solid #eee', paddingBottom: '1rem', marginBottom: '1rem' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                Rating: {'⭐'.repeat(evalItem.rating)}
+              </div>
+              <div style={{ fontStyle: 'italic', color: '#555' }}>{evalItem.comments}</div>
+              <div style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
+                Submitted on {new Date(evalItem.submissionDate).toLocaleDateString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
