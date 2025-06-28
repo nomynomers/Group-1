@@ -20,6 +20,7 @@ interface Evaluation {
   rating: number;
   comments: string;
   submissionDate: string;
+  username: string;
 }
 
 
@@ -47,7 +48,12 @@ const CourseInfo: FC = () => {
 
           checkEnrollment(res.data.courseID);
 
-          axios.get<Evaluation[]>(`http://localhost:8080/api/evaluations/by-course/${res.data.courseID}`)
+          axios.get<Evaluation[]>(`http://localhost:8080/api/evaluations/by-course/${res.data.courseID}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            })
             .then(evaluationRes => {
               setEvaluations(evaluationRes.data);
             })
@@ -60,7 +66,7 @@ const CourseInfo: FC = () => {
 
   useEffect(() => {
     if (courseCompleted) {
-      alert("🎉 Course Completed!");
+      alert("Course Completed!");
     }
   }, [courseCompleted]);
 
@@ -138,20 +144,11 @@ const CourseInfo: FC = () => {
   };
 
   const handleEvaluationSubmit = async () => {
-    const enrollId = localStorage.getItem("enrollId");
-    const userId = localStorage.getItem("userId");
-
-    if (!newComment.trim() || !userId || !course) {
-      alert("Please fill out all fields.");
-      return;
-    }
-
     try {
       setSubmitting(true);
 
       const res = await axios.post("http://localhost:8080/api/evaluations/create", {
         courseID: course.courseID,
-        userID: parseInt(userId),
         rating: newRating,
         comments: newComment
       }, {
@@ -160,18 +157,16 @@ const CourseInfo: FC = () => {
         }
       });
 
-      // Refresh evaluations list
       const updated = await axios.get<Evaluation[]>(`http://localhost:8080/api/evaluations/by-course/${course.courseID}`);
       setEvaluations(updated.data);
 
-      // Reset form
       setNewComment('');
       setNewRating(5);
-      alert("✅ Evaluation submitted!");
+      alert("Evaluation submitted!");
 
     } catch (err) {
       console.error("Error submitting evaluation:", err);
-      alert("❌ Failed to submit evaluation.");
+      alert("Failed to submit evaluation.");
     } finally {
       setSubmitting(false);
     }
@@ -243,14 +238,14 @@ const CourseInfo: FC = () => {
         <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: '#fff', borderRadius: '8px' }}>
           <h3 style={{ marginBottom: '1rem', color: '#272b69' }}>Leave your evaluation</h3>
 
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>Rating:</label>
+          <label style={{ display: 'block', marginBottom: '0.5rem', color: 'black' }}>Rating:</label>
           <select
             value={newRating}
             onChange={e => setNewRating(Number(e.target.value))}
-            style={{ padding: '0.5rem', marginBottom: '1rem' }}
+            style={{ padding: '0.5rem', marginBottom: '1rem', backgroundColor: 'white', color: 'black' }}
           >
             {[5, 4, 3, 2, 1].map(num => (
-              <option key={num} value={num}>{num} Star{num > 1 ? 's' : ''}</option>
+              <option key={num} value={num}>{num} ⭐</option>
             ))}
           </select>
 
@@ -259,8 +254,8 @@ const CourseInfo: FC = () => {
             value={newComment}
             onChange={e => setNewComment(e.target.value)}
             rows={4}
-            placeholder="Write your thoughts..."
-            style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '1rem' }}
+            placeholder="Leave your comments here..."
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ccc', marginBottom: '1rem', backgroundColor: 'white', color: 'black' }}
           />
 
 
@@ -285,14 +280,14 @@ const CourseInfo: FC = () => {
 
       {evaluations.length > 0 && (
         <div style={{ marginTop: '3rem', backgroundColor: 'white', padding: '2rem', borderRadius: '8px' }}>
-          <h2 style={{ color: '#272b69', marginBottom: '1.5rem' }}>📝 Course Evaluations</h2>
+          <h2 style={{ color: '#272b69', marginBottom: '1.5rem' }}>Course Evaluations</h2>
           {evaluations.map((evalItem) => (
             <div key={evalItem.evaluationID} style={{ borderBottom: '1px solid #eee', paddingBottom: '1rem', marginBottom: '1rem' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                Rating: {'⭐'.repeat(evalItem.rating)}
+              <div style={{ fontWeight: 'bold', marginBottom: '0.5rem', color: 'black', alignItems: 'left', display: 'flex' }}>
+                {evalItem.username || 'Anonymous'} — {'⭐'.repeat(evalItem.rating)}
               </div>
-              <div style={{ fontStyle: 'italic', color: '#555' }}>{evalItem.comments}</div>
-              <div style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
+              <div style={{ fontStyle: 'italic', color: '#555', alignItems: 'left', display: 'flex' }}>{evalItem.comments}</div>
+              <div style={{ fontSize: '0.85rem', color: '#999', alignItems: 'left', display: 'flex', marginTop: '0.5rem' }}>
                 Submitted on {new Date(evalItem.submissionDate).toLocaleDateString()}
               </div>
             </div>
