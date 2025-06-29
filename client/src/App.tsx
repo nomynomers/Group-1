@@ -19,7 +19,7 @@ import AssessmentPage from './components/AssessmentPage'
 import QuestionPage from './components/QuestionPage'
 import { UserProvider } from './context/UserContext'
 import BookAppointment from './components/BookAppointment';
-import MyAppointments from './components/MyAppointments.tsx'
+import MyAppointments from './components/MyAppointments'
 
 
 import './App.css'
@@ -27,38 +27,39 @@ import './App.css'
 function App() {
   return (
     <UserProvider>
-    <Router>
-      <div className="app">
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={
-              <>
-                <Hero />
-                <Assessment />
-                <Team />
-                <Articles />
-                <Courses />
-              </>
-            } />
-            <Route path="/about" element={<About />} />
-            <Route path="/articles" element={<ArticlesPage />} />
-            <Route path="/courses" element={<CoursesPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/users/create" element={<CreateUser />} />
-            <Route path="/courses/:id" element={<CoursesInfo />} />
-            <Route path="/learning/:courseId" element={<LearningPage />} />
-            <Route path="/assessments" element={<AssessmentPage />} />
-            <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
-            <Route path="/appointment" element={<BookAppointment />} />
-            <Route path="/my-appointments" element={<MyAppointments />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+      <Router>
+        <div className="app">
+          <Navbar />
+          <main>
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Hero />
+                  <Assessment />
+                  <Team />
+                  <Articles />
+                  <Courses />
+                </>
+              } />
+              <Route path="/about" element={<About />} />
+              <Route path="/articles" element={<ArticlesPage />} />
+              <Route path="/courses" element={<CoursesPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/users/create" element={<CreateUser />} />
+              <Route path="/courses/:id" element={<CoursesInfo />} />
+              <Route path="/learning/:courseId" element={<LearningPage />} />
+              <Route path="/assessments" element={<AssessmentPage />} />
+              <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
+              <Route path="/appointments/book" element={<BookAppointment />} />
+              <Route path="/appointments/my" element={<MyAppointments />} />
+            </Routes>
+
+          </main>
+          <Footer />
+        </div>
+      </Router>
     </UserProvider>
   );
 }

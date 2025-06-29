@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const BookAppointment: React.FC = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [appointmentDate, setAppointmentDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [message, setMessage] = useState('');
@@ -15,7 +16,7 @@ const BookAppointment: React.FC = () => {
 
     const token = localStorage.getItem('token');
     if (!token || !user?.id) {
-      setMessage('Please login to book an appointment.');
+      setMessage('Please log in to book an appointment.');
       return;
     }
 
@@ -34,7 +35,11 @@ const BookAppointment: React.FC = () => {
           },
         }
       );
+
       setMessage(response.data.message || 'Appointment booked successfully!');
+      setTimeout(() => {
+        navigate('/appointments/my');
+      }, 1500);
     } catch (error: any) {
       const errMsg = error.response?.data?.message || 'Booking failed.';
       setMessage(errMsg);
@@ -85,14 +90,12 @@ const BookAppointment: React.FC = () => {
         {message && (
           <div className="mt-6 text-center text-lg font-medium text-green-600">
             {message}
-            <div className="mt-4">
-              <Link
-                to="/appointments/my"
-                className="text-blue-600 underline hover:text-blue-800 transition"
-              >
-                View My Appointments
-              </Link>
-            </div>
+          </div>
+        )}
+
+        {user && (
+          <div className="mt-6 text-center">
+            <Link to="/appointments/my">View My Appointments</Link>
           </div>
         )}
       </div>
