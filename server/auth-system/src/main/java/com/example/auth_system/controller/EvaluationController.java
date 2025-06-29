@@ -23,8 +23,8 @@ public class EvaluationController {
     private EvaluationService evaluationService;
 
     @GetMapping("/all")
-    public List<CourseEvaluation> getAllEvaluations() {
-        return repository.findAll();
+    public ResponseEntity<List<CourseEvaluation>> getAllEvaluations() {
+        return ResponseEntity.ok(evaluationService.getAllEvaluations());
     }
 
     @GetMapping("/by-course/{courseId}")
