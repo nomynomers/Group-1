@@ -76,18 +76,16 @@ public class AppointmentService {
         return new MessageResponse("Appointment booked successfully.");
     }
 
-    public List<AppointmentResponse> getAppointmentsByUser(int userID) {
-        List<Appointment> appointments = appointmentRepository.findByUser_UserId(userID);
+    public List<AppointmentResponse> getAppointmentsByUser(int userId) {
+        List<Appointment> appointments = appointmentRepository.findByUser_UserId(userId);
 
-        return appointments.stream().map(a -> {
-            String consultantName = a.getConsultant().getUser().getFirstName() + " " + a.getConsultant().getUser().getLastName();
-            String meetingLink = a.getMeetingLink();
-            return new AppointmentResponse(
-                    consultantName,
-                    meetingLink,
-                    a.getAppointmentDate().toString(),
-                    a.getStartTime().toString()
-            );
-        }).toList();
+        return appointments.stream().map(a -> AppointmentResponse.builder()
+                .consultantName(a.getConsultant().getUser().getFirstName() + " " + a.getConsultant().getUser().getLastName())
+                .meetingLink(a.getMeetingLink())
+                .date(a.getAppointmentDate().toString())
+                .startTime(a.getStartTime().toString())
+                .build()
+        ).collect(Collectors.toList());
     }
+
 }

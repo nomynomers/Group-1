@@ -27,6 +27,7 @@ public class Appointment {
     private Consultant consultant;
 
     private LocalDate appointmentDate;
+    @Column(name = "startTime", columnDefinition = "TIME")
     private LocalTime startTime;
     private String status;
     private String meetingLink;

@@ -4,6 +4,7 @@ import com.example.auth_system.config.UserPrincipal;
 import com.example.auth_system.dto.AppointmentRequest;
 import com.example.auth_system.dto.AppointmentResponse;
 import com.example.auth_system.dto.MessageResponse;
+import com.example.auth_system.entity.Appointment;
 import com.example.auth_system.service.AppointmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -35,10 +36,10 @@ public class AppointmentController {
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<?> getMyAppointments(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<List<AppointmentResponse>> getMyAppointments(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         int userId = Integer.parseInt(userPrincipal.getId());
         List<AppointmentResponse> appointments = appointmentService.getAppointmentsByUser(userId);
         return ResponseEntity.ok(appointments);
     }
+
 }

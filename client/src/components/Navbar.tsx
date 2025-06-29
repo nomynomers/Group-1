@@ -70,7 +70,7 @@ const Navbar: FC = () => {
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Courses</Link>
-        <Link to="/appointment" style={{ 
+        <Link to="/appointments/book" style={{ 
           color: 'white', 
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
