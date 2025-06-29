@@ -52,7 +52,12 @@ const Login: FC = () => {
           lastName: data.lastName,
           roleName: data.roleName
         });
-        navigate("/"); 
+        if (data.roleName === 'ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+
       } else {
         const error = await response.json();
         setMessage(error.message || "Login failed.");
