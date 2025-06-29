@@ -3,8 +3,6 @@ package com.example.auth_system.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
 @Entity
 @Table(name = "Consultants")
 @Data
@@ -15,18 +13,13 @@ public class Consultant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "consultantID")
-    private int consultantId;
+    private int consultantID;
 
-    @Column(name = "specialization")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userID", nullable = false)
+    private User user;
+
     private String specialization;
-
-    @Column(name = "qualification")
     private String qualification;
-
-    @Column(name = "yearsExperience")
     private int yearsExperience;
-
-    @OneToMany(mappedBy = "consultant")
-    private Set<Appointment> appointments;
 }

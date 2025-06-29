@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class Appointment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int appointmentID;
@@ -27,6 +28,7 @@ public class Appointment {
 
     private LocalDate appointmentDate;
     private LocalTime startTime;
-    private LocalTime endTime;
+    private String status;
+    private String meetingLink;
 }
 
