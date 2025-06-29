@@ -41,7 +41,7 @@ const AdminDashboard: FC = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Users data:', data);
-        console.log('First user:', data[0]); // Debug log for first user
+        console.log('First user:', data[0]);
         setUsers(data);
       } else if (response.status === 403) {
         console.log('Access forbidden');
@@ -107,11 +107,11 @@ const AdminDashboard: FC = () => {
         }}>
           <thead>
             <tr style={{ backgroundColor: '#f8f9fa' }}>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Email</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Phone</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Role</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
+              <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
+              <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Email</th>
+              <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Phone</th>
+              <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Role</th>
+              <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
