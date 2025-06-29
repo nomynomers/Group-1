@@ -1,11 +1,13 @@
 package com.example.auth_system.service;
 import com.example.auth_system.dto.EvaluationDTO;
+import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.CourseEvaluation;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.CourseEvaluationRepository;
 import com.example.auth_system.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,10 @@ public class EvaluationService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public List<CourseEvaluation> getAllEvaluations() {
+        return evaluationRepository.findAll();
+    }
 
     public List<EvaluationDTO> getEvaluationsByCourseId(int courseId) {
         List<CourseEvaluation> evaluations = evaluationRepository.findByCourseID(courseId);
