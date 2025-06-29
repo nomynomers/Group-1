@@ -89,6 +89,7 @@ public class AdminService {
                 .phoneNumber(request.getPhoneNumber())
                 .registrationDate(LocalDateTime.now())
                 .role(role)
+                .accountStatus(true)
                 .build();
 
         userRepository.save(newUser);
