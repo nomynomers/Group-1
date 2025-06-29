@@ -19,7 +19,7 @@ import AssessmentPage from './components/AssessmentPage'
 import QuestionPage from './components/QuestionPage'
 import { UserProvider } from './context/UserContext'
 import BookAppointment from './components/BookAppointment';
-
+import MyAppointments from './components/MyAppointments.tsx'
 
 
 import './App.css'
@@ -53,6 +53,7 @@ function App() {
             <Route path="/assessments" element={<AssessmentPage />} />
             <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
             <Route path="/appointment" element={<BookAppointment />} />
+            <Route path="/my-appointments" element={<MyAppointments />} />
           </Routes>
         </main>
         <Footer />
