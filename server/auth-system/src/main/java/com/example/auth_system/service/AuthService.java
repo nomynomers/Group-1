@@ -98,6 +98,7 @@ public class AuthService {
                 .phoneNumber(signUpRequest.getPhoneNumber())
                 .registrationDate(null) // will be set by @PrePersist
                 .role(userRole)
+                .accountStatus(true)
                 .build();
 
         userRepository.save(user);
