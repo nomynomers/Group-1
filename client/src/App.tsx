@@ -21,6 +21,7 @@ import AssessmentPage from './components/AssessmentPage'
 import QuestionPage from './components/QuestionPage'
 
 import BookAppointment from './components/BookAppointment'
+import MyAppointments from './components/MyAppointments'
 import './App.css'
 
 const AppContent = () => {
@@ -63,7 +64,8 @@ const AppContent = () => {
           <Route path="/learning/:courseId" element={<LearningPage />} />
           <Route path="/assessments" element={<AssessmentPage />} />
           <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
-          <Route path="/appointment" element={<BookAppointment />} />
+          <Route path="/appointments/book" element={<BookAppointment />} />
+          <Route path="/appointments/my" element={<MyAppointments />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}
