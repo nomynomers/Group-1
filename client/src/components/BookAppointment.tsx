@@ -1,29 +1,32 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
+import { Link, useNavigate } from 'react-router-dom';
 
 const BookAppointment: React.FC = () => {
   const { user } = useUser();
-  const [consultantID, setConsultantID] = useState('');
+  const navigate = useNavigate();
   const [appointmentDate, setAppointmentDate] = useState('');
   const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
   const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage('');
 
+    const token = localStorage.getItem('token');
+    if (!token || !user?.id) {
+      setMessage('Please log in to book an appointment.');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.post(
         'http://localhost:8080/api/appointments/book',
         {
-          userID: user?.id,
-          consultantID: parseInt(consultantID),
+          userID: parseInt(user.id, 10),
           appointmentDate,
-          startTime: `${startTime}:00`,
-          endTime: `${endTime}:00`,
+          startTime: startTime.length === 5 ? `${startTime}:00` : startTime,
         },
         {
           headers: {
@@ -32,7 +35,11 @@ const BookAppointment: React.FC = () => {
           },
         }
       );
+
       setMessage(response.data.message || 'Appointment booked successfully!');
+      setTimeout(() => {
+        navigate('/appointments/my');
+      }, 1500);
     } catch (error: any) {
       const errMsg = error.response?.data?.message || 'Booking failed.';
       setMessage(errMsg);
@@ -48,16 +55,6 @@ const BookAppointment: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-lg font-medium mb-1">Consultant ID</label>
-              <input
-                type="number"
-                value={consultantID}
-                onChange={(e) => setConsultantID(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
             <div>
               <label className="block text-lg font-medium mb-1">Appointment Date</label>
               <input
@@ -78,16 +75,6 @@ const BookAppointment: React.FC = () => {
                 required
               />
             </div>
-            <div>
-              <label className="block text-lg font-medium mb-1">End Time</label>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
           </div>
 
           <div className="text-center">
@@ -101,8 +88,14 @@ const BookAppointment: React.FC = () => {
         </form>
 
         {message && (
-          <div className="mt-6 text-center text-lg font-medium text-red-600">
+          <div className="mt-6 text-center text-lg font-medium text-green-600">
             {message}
+          </div>
+        )}
+
+        {user && (
+          <div className="mt-6 text-center">
+            <Link to="/appointments/my">View My Appointments</Link>
           </div>
         )}
       </div>
@@ -111,4 +104,3 @@ const BookAppointment: React.FC = () => {
 };
 
 export default BookAppointment;
-

@@ -1,6 +1,7 @@
 package com.example.auth_system.service;
 
 import com.example.auth_system.dto.AppointmentRequest;
+import com.example.auth_system.dto.AppointmentResponse;
 import com.example.auth_system.dto.MessageResponse;
 import com.example.auth_system.entity.Appointment;
 import com.example.auth_system.entity.Consultant;
@@ -14,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,41 +30,39 @@ public class AppointmentService {
     private final ConsultantRepository consultantRepository;
     private final EmailService emailService;
 
-    /**
-     * Create appointment if time slot is free.
-     */
     @Transactional
     public MessageResponse createAppointment(AppointmentRequest request) {
-        // Check for time conflict
+        List<Consultant> consultants = consultantRepository.findAll();
+        if (consultants.isEmpty()) {
+            throw new RuntimeException("No consultant available");
+        }
+
+        Consultant assignedConsultant = consultants.get(0);
+
         List<Appointment> conflicts = appointmentRepository.findConflictingAppointments(
-                request.getConsultantID(),
+                assignedConsultant.getConsultantID(),
                 request.getAppointmentDate(),
-                request.getStartTime(),
-                request.getEndTime()
+                request.getStartTime()
         );
 
         if (!conflicts.isEmpty()) {
             return new MessageResponse("Error: This time slot is already booked.");
         }
 
-        // Find user and consultant
         User user = userRepository.findById(request.getUserID())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Consultant consultant = consultantRepository.findById(request.getConsultantID())
-                .orElseThrow(() -> new RuntimeException("Consultant not found"));
 
-        // Build and save appointment
         Appointment appointment = Appointment.builder()
                 .user(user)
-                .consultant(consultant)
+                .consultant(assignedConsultant)
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
+                .status("Booked")
+                .meetingLink("https://meet.example.com/" + System.currentTimeMillis())
                 .build();
 
         appointmentRepository.save(appointment);
 
-        // Send confirmation email
         try {
             emailService.sendAppointmentConfirmation(
                     user.getEmail(),
@@ -75,31 +76,16 @@ public class AppointmentService {
         return new MessageResponse("Appointment booked successfully.");
     }
 
-    /**
-     * Cancel appointment by ID.
-     */
-    @Transactional
-    public MessageResponse cancelAppointment(int appointmentID) {
-        Optional<Appointment> optional = appointmentRepository.findById(appointmentID);
-        if (optional.isEmpty()) {
-            return new MessageResponse("Error: Appointment not found.");
-        }
+    public List<AppointmentResponse> getAppointmentsByUser(int userId) {
+        List<Appointment> appointments = appointmentRepository.findByUser_UserId(userId);
 
-        appointmentRepository.deleteById(appointmentID);
-        return new MessageResponse("Appointment canceled.");
+        return appointments.stream().map(a -> AppointmentResponse.builder()
+                .consultantName(a.getConsultant().getUser().getFirstName() + " " + a.getConsultant().getUser().getLastName())
+                .meetingLink(a.getMeetingLink())
+                .date(a.getAppointmentDate().toString())
+                .startTime(a.getStartTime().toString())
+                .build()
+        ).collect(Collectors.toList());
     }
 
-    /**
-     * Get appointments by user ID.
-     */
-    public List<Appointment> getAppointmentsByUser(int userID) {
-        return appointmentRepository.findByUser_UserId(userID);
-    }
-
-    /**
-     * Get consultant appointments on a specific date.
-     */
-    public List<Appointment> getAppointmentsForConsultantOnDate(int consultantId, LocalDate date) {
-        return appointmentRepository.findByConsultant_ConsultantIdAndAppointmentDate(consultantId, date);
-    }
 }

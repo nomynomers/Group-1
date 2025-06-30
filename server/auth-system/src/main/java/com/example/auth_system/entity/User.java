@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Users", schema = "dbo") //  matches table name in SQL Server
@@ -43,6 +44,10 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleID", nullable = false) //  matches FK column
     private Roles role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Appointment> appointments;
+
 
     @PrePersist
     public void prePersist() {
