@@ -55,5 +55,7 @@ public class User {
             registrationDate = LocalDateTime.now();
         }
     }
+
+    private boolean accountStatus;
 }
 

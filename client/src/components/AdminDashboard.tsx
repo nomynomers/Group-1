@@ -1,6 +1,8 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
 interface User {
   userId: number;
@@ -18,6 +20,8 @@ const AdminDashboard: FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user, setUser } = useUser();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -41,7 +45,7 @@ const AdminDashboard: FC = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Users data:', data);
-        console.log('First user:', data[0]); // Debug log for first user
+        console.log('First user:', data[0]);
         setUsers(data);
       } else if (response.status === 403) {
         console.log('Access forbidden');
@@ -81,6 +85,12 @@ const AdminDashboard: FC = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    navigate('/');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -90,98 +100,171 @@ const AdminDashboard: FC = () => {
   }
 
   return (
-    <div style={{ padding: '120px 2rem 2rem' }}>
-      <h1 style={{ color: '#272b69', marginBottom: '2rem' }}>User Management</h1>
-      
-      <div style={{ 
-        backgroundColor: 'white', 
-        borderRadius: '8px', 
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        overflow: 'hidden',
-        marginTop: '2rem'
-      }}>
-        <table style={{ 
-          width: '100%', 
-          borderCollapse: 'collapse',
-          color: '#333' // Ensure text is visible
+    <div style={{ display: 'flex', height: '100vh' }}>
+      <div
+        style={{
+          width: '220px',
+          backgroundColor: '#272b69',
+          color: 'white',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '20px 2rem 2rem',
         }}>
-          <thead>
-            <tr style={{ backgroundColor: '#f8f9fa' }}>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Email</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Phone</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Role</th>
-              <th style={{ padding: '1rem', textAlign: 'left', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users && users.length > 0 ? (
-              users.map(user => {
-                console.log('Rendering user:', user);
-                return (
-                  <tr key={user.userId} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
-                    <td style={{ padding: '1rem', color: '#333' }}>{user.firstName} {user.lastName}</td>
-                    <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
-                    <td style={{ padding: '1rem', color: '#333' }}>{user.phoneNumber || 'N/A'}</td>
-                    <td style={{ padding: '1rem', color: '#333' }}>{user.roleName || 'N/A'}</td>
-                <td style={{ padding: '1rem' }}>
-                  <button
-                    onClick={() => navigate(`/admin/users/${user.userId}`)}
-                    style={{
-                      backgroundColor: '#272b69',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '4px',
-                      marginRight: '0.5rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteUser(user.userId)}
-                    style={{
-                      backgroundColor: '#dc3545',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan={5} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
-                  No users found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <h2 style={{
+          textAlign: 'center',
+          marginBottom: '40px',
+        }}>DRUG PREVENT</h2>
+        <nav>
+          <ul style={{
+            listStyle: 'none',
+            textAlign: 'left',
+          }}>
+            <li style={{
+              margin: '10px 0',
+              cursor: 'pointer',
+              padding: '10px',
+              borderRadius: '8px',
+              width: '70%',
+            }}
+              onClick={() => navigate('/admin')}>
+              Dashboard</li>
+            <li style={{
+              margin: '10px 0',
+              cursor: 'pointer',
+              padding: '10px',
+              borderRadius: '8px',
+              width: '70%',
+            }}>Consultant</li>
+            <li style={{
+              margin: '10px 0',
+              cursor: 'pointer',
+              padding: '10px',
+              borderRadius: '8px',
+              width: '70%',
+              backgroundColor: location.pathname === '/admin' ? 'white' : 'transparent',
+              color: location.pathname === '/admin' ? '#272b69' : 'white',
+              fontWeight: location.pathname === '/admin' ? 'bold' : 'normal',
+            }}>User</li>
+            <li style={{
+              margin: '10px 0',
+              cursor: 'pointer',
+              padding: '10px',
+              borderRadius: '8px',
+              width: '70%',
+            }}>Settings</li>
+          </ul>
+        </nav>
       </div>
 
-      <button
-        onClick={() => navigate('/admin/users/create')}
-        style={{
-          backgroundColor: '#28a745',
-          color: 'white',
-          border: 'none',
-          padding: '0.75rem 1.5rem',
-          borderRadius: '4px',
-          marginTop: '1rem',
-          cursor: 'pointer',
-          fontSize: '1rem'
-        }}
-      >
-        Create New User
-      </button>
+      <div style={{ padding: '20px 2rem 2rem', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <button
+            onClick={() => navigate('/admin/users/create')}
+            style={{
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '4px',
+              marginTop: '1rem',
+              cursor: 'pointer',
+              fontSize: '1rem',
+            }}
+          >
+            Create New User
+          </button>
+          <button
+            onClick={handleLogout}
+            style={{
+              backgroundColor: 'white',
+              color: '#272b69',
+              border: 'none',
+              padding: '0.5rem 1.5rem',
+              borderRadius: '4px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            Logout
+          </button>
+        </div>
+        <h1 style={{ color: '#272b69', marginBottom: '2rem' }}>User Management</h1>
+
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          overflow: 'hidden',
+          marginTop: '2rem'
+        }}>
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            color: '#333' // Ensure text is visible
+          }}>
+            <thead>
+              <tr style={{ backgroundColor: '#f8f9fa' }}>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Email</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Phone</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Role</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users && users.length > 0 ? (
+                users.map(user => {
+                  console.log('Rendering user:', user);
+                  return (
+                    <tr key={user.userId} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
+                      <td style={{ padding: '1rem', color: '#333' }}>{user.firstName} {user.lastName}</td>
+                      <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
+                      <td style={{ padding: '1rem', color: '#333' }}>{user.phoneNumber || 'N/A'}</td>
+                      <td style={{ padding: '1rem', color: '#333' }}>{user.roleName || 'N/A'}</td>
+                      <td style={{ padding: '1rem' }}>
+                        <button
+                          onClick={() => navigate(`/admin/users/${user.userId}`)}
+                          style={{
+                            backgroundColor: '#272b69',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '4px',
+                            marginRight: '0.5rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user.userId)}
+                          style={{
+                            backgroundColor: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
+                    No users found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

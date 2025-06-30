@@ -49,7 +49,7 @@ const CreateUser: FC = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/admin/users', {
+      const response = await fetch('http://localhost:8080/api/admin/users/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,9 @@ const CreateUser: FC = () => {
                 padding: '0.75rem',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
@@ -130,7 +132,9 @@ const CreateUser: FC = () => {
                 padding: '0.75rem',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
@@ -150,7 +154,9 @@ const CreateUser: FC = () => {
                 padding: '0.75rem',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
@@ -170,7 +176,9 @@ const CreateUser: FC = () => {
                 padding: '0.75rem',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
@@ -189,7 +197,9 @@ const CreateUser: FC = () => {
                 padding: '0.75rem',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
@@ -209,7 +219,9 @@ const CreateUser: FC = () => {
                 padding: '0.75rem',
                 borderRadius: '4px',
                 border: '1px solid #ddd',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: 'white',
+                color: 'black',
               }}
             />
           </div>
