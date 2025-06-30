@@ -275,7 +275,7 @@ const CreateUser: FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => navigate('/admin')}
+              onClick={() => navigate('/admin/users')}
               style={{
                 backgroundColor: '#6c757d',
                 color: 'white',
