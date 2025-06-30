@@ -13,6 +13,7 @@ import CoursesPage from './components/CoursesPage'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
+import CourseManage from './components/CourseManage'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
 import CreateUser from './components/CreateUser'
@@ -57,7 +58,8 @@ const AppContent = () => {
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminDashboard />} />
+          <Route path="/admin/courses" element={<CourseManage />} />
           <Route path="/admin/users/create" element={<CreateUser />} />
           <Route path="/admin/users/:userId" element={<UpdateUser />} />
           <Route path="/courses/:id" element={<CoursesInfo />} />

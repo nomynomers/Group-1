@@ -4,18 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
-interface User {
-  userId: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  phoneNumber: string;
-  registrationDate: string;
-  roleName: string;
-}
-
-const AdminDashboard: FC = () => {
+const CourseManage: FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -181,7 +170,7 @@ const AdminDashboard: FC = () => {
               fontSize: '1rem',
             }}
           >
-            Create New User
+            Create New Course
           </button>
           <button
             onClick={handleLogout}
@@ -199,7 +188,7 @@ const AdminDashboard: FC = () => {
             Logout
           </button>
         </div>
-        <h1 style={{ color: '#272b69', marginBottom: '2rem' }}>User Management</h1>
+        <h1 style={{ color: '#272b69', marginBottom: '2rem' }}>Course Management</h1>
 
         <div style={{
           backgroundColor: 'white',
@@ -216,9 +205,11 @@ const AdminDashboard: FC = () => {
             <thead>
               <tr style={{ backgroundColor: '#f8f9fa' }}>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Email</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Phone</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Role</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Description</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Target Audience</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Duration</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Image Cover</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Author</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
               </tr>
             </thead>
@@ -279,4 +270,4 @@ const AdminDashboard: FC = () => {
   );
 };
 
-export default AdminDashboard; 
+export default CourseManage; 
