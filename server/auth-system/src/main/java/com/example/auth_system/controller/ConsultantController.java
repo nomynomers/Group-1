@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/consultants")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth") // 
+@SecurityRequirement(name = "bearerAuth") //
 @PreAuthorize("hasRole('ADMIN')") //
 public class ConsultantController {
 
