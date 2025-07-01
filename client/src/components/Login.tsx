@@ -53,7 +53,10 @@ const Login: FC = () => {
           roleName: data.roleName
         });
         if (data.roleName === 'ADMIN') {
+          navigate('/admin/users');}
+        else if (data.roleName === 'CONSULTANT') {
           navigate('/admin/users');
+        
         } else {
           navigate('/');
         }
