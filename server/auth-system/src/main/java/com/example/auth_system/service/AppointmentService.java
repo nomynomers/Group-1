@@ -9,15 +9,21 @@ import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.AppointmentRepository;
 import com.example.auth_system.repository.ConsultantRepository;
 import com.example.auth_system.repository.UserRepository;
+import com.google.api.services.calendar.model.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +35,58 @@ public class AppointmentService {
     private final UserRepository userRepository;
     private final ConsultantRepository consultantRepository;
     private final EmailService emailService;
+    private final GoogleCalendarService googleCalendarService;
+
+    private String createGoogleMeetLink(AppointmentRequest request) {
+        try {
+            com.google.api.services.calendar.Calendar service = googleCalendarService.getCalendarService();
+
+            // Lấy ngày giờ bắt đầu và kết thúc (có timezone)
+            ZonedDateTime startDateTime = ZonedDateTime.of(
+                    request.getAppointmentDate(),
+                    request.getStartTime(),
+                    ZoneId.of("Asia/Ho_Chi_Minh")
+            );
+
+            ZonedDateTime endDateTime = startDateTime.plusMinutes(30);
+
+            // Chuyển về định dạng RFC 3339
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+            String formattedStart = startDateTime.format(formatter);
+            String formattedEnd = endDateTime.format(formatter);
+
+            Event event = new Event()
+                    .setSummary("Consultation Appointment")
+                    .setStart(new EventDateTime()
+                            .setDateTime(new com.google.api.client.util.DateTime(formattedStart))
+                            .setTimeZone("Asia/Ho_Chi_Minh"))
+                    .setEnd(new EventDateTime()
+                            .setDateTime(new com.google.api.client.util.DateTime(formattedEnd))
+                            .setTimeZone("Asia/Ho_Chi_Minh"))
+                    .setConferenceData(new ConferenceData().setCreateRequest(
+                            new CreateConferenceRequest()
+                                    .setRequestId(UUID.randomUUID().toString())
+                                    .setConferenceSolutionKey(new ConferenceSolutionKey().setType("hangoutsMeet"))
+                    ));
+
+            Event createdEvent = service.events().insert("primary", event)
+                    .setConferenceDataVersion(1)
+                    .execute();
+
+            log.info("Created Event Response: {}", createdEvent.toPrettyString());
+
+            String link = createdEvent.getHangoutLink();
+            log.info("Google Meet Link: {}", link);
+
+            return link;
+
+        } catch (Exception e) {
+            log.error("Failed to create Google Meet link: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+
 
     @Transactional
     public MessageResponse createAppointment(AppointmentRequest request) {
@@ -58,7 +116,8 @@ public class AppointmentService {
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(request.getStartTime())
                 .status("Booked")
-                .meetingLink("https://meet.example.com/" + System.currentTimeMillis())
+//                .meetingLink("https://meet.example.com/" + System.currentTimeMillis())
+                .meetingLink(createGoogleMeetLink(request))
                 .build();
 
         appointmentRepository.save(appointment);
