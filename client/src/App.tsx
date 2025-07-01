@@ -17,7 +17,9 @@ import CourseManage from './components/CourseManage'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
 import CreateUser from './components/CreateUser'
+import CreateCourse from './components/CreateCourse'
 import UpdateUser from './components/UpdateUser'
+import UpdateCourse from './components/UpdateCourse.tsx'
 import AssessmentPage from './components/AssessmentPage'
 import QuestionPage from './components/QuestionPage'
 
@@ -61,7 +63,9 @@ const AppContent = () => {
           <Route path="/admin/users" element={<AdminDashboard />} />
           <Route path="/admin/courses" element={<CourseManage />} />
           <Route path="/admin/users/create" element={<CreateUser />} />
+          <Route path="/admin/courses/create" element={<CreateCourse />} />
           <Route path="/admin/users/:userId" element={<UpdateUser />} />
+          <Route path="/admin/courses/:courseId" element={<UpdateCourse />} />
           <Route path="/courses/:id" element={<CoursesInfo />} />
           <Route path="/learning/:courseId" element={<LearningPage />} />
           <Route path="/assessments" element={<AssessmentPage />} />
