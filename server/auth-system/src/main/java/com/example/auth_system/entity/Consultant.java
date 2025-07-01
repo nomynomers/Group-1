@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Consultant {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int consultantID;
@@ -22,4 +21,6 @@ public class Consultant {
     private String specialization;
     private String qualification;
     private int yearsExperience;
+    private boolean available;
+    private String imageCover;
 }
