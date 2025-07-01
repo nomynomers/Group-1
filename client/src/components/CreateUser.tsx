@@ -247,6 +247,7 @@ const CreateUser: FC = () => {
             >
               <option value="USER" style={{ color: '#333' }}>User</option>
               <option value="ADMIN" style={{ color: '#333' }}>Admin</option>
+              <option value="CONSULTANT" style={{ color: '#333' }}>Consultant</option>
             </select>
           </div>
 

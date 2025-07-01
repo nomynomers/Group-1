@@ -21,11 +21,6 @@ public class CourseRequest {
     @Min(value = 1, message = "Duration must be greater than 0")
     private int durationMinutes;
 
-
-    private int createdBy;
-
-    private boolean certificateAvailable;
-
     private String imageCover;
 
     @NotBlank()

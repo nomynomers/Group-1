@@ -4,8 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 
+interface Course {
+  courseID: number;
+  courseName: string;
+  description: string;
+  targetAudience: string;
+  durationMinutes: string;
+  imageCover: string;
+  author: string;
+}
+
+
 const CourseManage: FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -19,13 +30,14 @@ const CourseManage: FC = () => {
       return;
     }
 
-    fetchUsers();
+    fetchCourses();
   }, [navigate]);
 
-  const fetchUsers = async () => {
+
+  const fetchCourses = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/admin/users', {
+      const response = await fetch('http://localhost:8080/api/courses', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -33,31 +45,27 @@ const CourseManage: FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Users data:', data);
-        console.log('First user:', data[0]);
-        setUsers(data);
-      } else if (response.status === 403) {
-        console.log('Access forbidden');
-        navigate('/');
+        console.log('Courses data:', data);
+        setCourses(data);
       } else {
-        console.log('Failed to fetch users:', response.status);
-        setError('Failed to fetch users');
+        setError('Failed to fetch courses');
       }
     } catch (err) {
-      setError('An error occurred while fetching users');
+      setError('An error occurred while fetching courses');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteUser = async (userId: number) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
+
+  const handleDeleteCourse = async (courseID: number) => {
+    if (!window.confirm('Are you sure you want to delete this course?')) {
       return;
     }
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/admin/users/${userId}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/courses/${courseID}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -65,14 +73,15 @@ const CourseManage: FC = () => {
       });
 
       if (response.ok) {
-        setUsers(users.filter(user => user.userId !== userId));
+        setCourses(courses.filter(course => course.courseID !== courseID));
       } else {
-        setError('Failed to delete user');
+        setError('Failed to delete course');
       }
     } catch (err) {
-      setError('An error occurred while deleting user');
+      setError('An error occurred while deleting course');
     }
   };
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -124,7 +133,7 @@ const CourseManage: FC = () => {
               padding: '10px',
               borderRadius: '8px',
               width: '70%',
-              backgroundColor: location.pathname === '/admin/courses' ? 'white' : 'transparent',
+              backgroundColor: location.pathname=== '/admin/courses' ? 'white' : 'transparent',
               color: location.pathname === '/admin/courses' ? '#272b69' : 'white',
               fontWeight: location.pathname === '/admin/courses' ? 'bold' : 'normal',
             }}
@@ -158,7 +167,7 @@ const CourseManage: FC = () => {
       <div style={{ padding: '20px 2rem 2rem', width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <button
-            onClick={() => navigate('/admin/users/create')}
+            onClick={() => navigate('/admin/courses/create')}
             style={{
               backgroundColor: '#28a745',
               color: 'white',
@@ -207,61 +216,63 @@ const CourseManage: FC = () => {
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Name</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Description</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Target Audience</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Duration</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Duration Minutes</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Image Cover</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Author</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {users && users.length > 0 ? (
-                users.map(user => {
-                  console.log('Rendering user:', user);
-                  return (
-                    <tr key={user.userId} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
-                      <td style={{ padding: '1rem', color: '#333' }}>{user.firstName} {user.lastName}</td>
-                      <td style={{ padding: '1rem', color: '#333' }}>{user.email}</td>
-                      <td style={{ padding: '1rem', color: '#333' }}>{user.phoneNumber || 'N/A'}</td>
-                      <td style={{ padding: '1rem', color: '#333' }}>{user.roleName || 'N/A'}</td>
-                      <td style={{ padding: '1rem' }}>
-                        <button
-                          onClick={() => navigate(`/admin/users/${user.userId}`)}
-                          style={{
-                            backgroundColor: '#272b69',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '4px',
-                            marginRight: '0.5rem',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteUser(user.userId)}
-                          style={{
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
+              {courses && courses.length > 0 ? (
+                courses.map(course => (
+                  <tr key={course.courseID}>
+                    <td style={{ padding: '1rem' }}>{course.courseName}</td>
+                    <td style={{ padding: '1rem' }}>{course.description}</td>
+                    <td style={{ padding: '1rem' }}>{course.targetAudience}</td>
+                    <td style={{ padding: '1rem' }}>{course.durationMinutes}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <img src={course.imageCover} alt="cover" style={{ width: '80px', height: '50px', objectFit: 'cover' }} />
+                    </td>
+                    <td style={{ padding: '1rem' }}>{course.author}</td>
+                    <td style={{ padding: '1rem', display: 'flex' }}>
+                      <button
+                        onClick={() => navigate(`/admin/courses/${course.courseID}`)}
+                        style={{
+                          backgroundColor: '#272b69',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '4px',
+                          marginRight: '0.5rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCourse(course.courseID)}
+                        style={{
+                          backgroundColor: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
               ) : (
                 <tr>
-                  <td colSpan={5} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
-                    No users found
+                  <td colSpan={7} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
+                    No courses found
                   </td>
                 </tr>
               )}
+
             </tbody>
           </table>
         </div>
