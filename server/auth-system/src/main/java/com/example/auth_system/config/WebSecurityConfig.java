@@ -82,7 +82,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**"
+                                "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/auth/**", "/public/**"
                         ).permitAll()
                         .requestMatchers("/api/courses", "/api/courses/**", "/api/assessments",
                                 "/api/assessments/**", "api/evaluations/**").permitAll()
