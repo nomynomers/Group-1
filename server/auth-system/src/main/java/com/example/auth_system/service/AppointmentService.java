@@ -147,4 +147,22 @@ public class AppointmentService {
         ).collect(Collectors.toList());
     }
 
+    public boolean isConsultantAvailable(int consultantId, LocalDate date, LocalTime startTime) {
+        Consultant consultant = consultantRepository.findById(consultantId)
+                .orElseThrow(() -> new RuntimeException("Consultant not found"));
+
+        if (!consultant.isAvailable()) {
+            return false;
+        }
+
+        List<Appointment> conflicts = appointmentRepository.findConflictingAppointments(
+                consultantId, date, startTime
+        );
+
+        return conflicts.isEmpty();
+    }
+
+
+
+
 }
