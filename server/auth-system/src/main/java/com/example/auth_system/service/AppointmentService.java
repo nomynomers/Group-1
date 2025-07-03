@@ -139,7 +139,7 @@ public class AppointmentService {
         List<Appointment> appointments = appointmentRepository.findByUser_UserId(userId);
 
         return appointments.stream().map(a -> AppointmentResponse.builder()
-                .consultantName(a.getConsultant().getUser().getFirstName() + " " + a.getConsultant().getUser().getLastName())
+                .name(a.getConsultant().getUser().getFirstName() + " " + a.getConsultant().getUser().getLastName())
                 .meetingLink(a.getMeetingLink())
                 .date(a.getAppointmentDate().toString())
                 .startTime(a.getStartTime().toString())
@@ -162,7 +162,16 @@ public class AppointmentService {
         return conflicts.isEmpty();
     }
 
+    public List<AppointmentResponse> getAppointmentsByConsultant_ConsultantID(int consultantId) {
+        List<Appointment> appointments =  appointmentRepository.findByConsultant_ConsultantID(consultantId);
 
-
+        return appointments.stream().map(a -> AppointmentResponse.builder()
+                .name(a.getUser().getFirstName() + " " + a.getUser().getLastName())
+                .meetingLink(a.getMeetingLink())
+                .date(a.getAppointmentDate().toString())
+                .startTime(a.getStartTime().toString())
+                .build()
+        ).collect(Collectors.toList());
+    }
 
 }
