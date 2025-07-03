@@ -20,5 +20,5 @@ public class AppointmentRequest {
     @NotNull(message = "Start time is required")
     private LocalTime startTime;
 
-
+    private LocalTime endTime;
 }

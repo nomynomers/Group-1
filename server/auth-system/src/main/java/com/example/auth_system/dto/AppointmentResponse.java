@@ -14,4 +14,5 @@ public class AppointmentResponse {
     private String meetingLink;
     private String date;
     private String startTime;
+    private String endTime;
 }
