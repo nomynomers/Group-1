@@ -6,6 +6,7 @@ interface Appointment {
   meetingLink: string | null;
   date: string;
   startTime: string;
+  endTime: string;
 }
 
 const MyAppointments = () => {
@@ -60,7 +61,7 @@ const MyAppointments = () => {
                 )}
               </p>
               <p><strong>Date:</strong> {a.date}</p>
-              <p><strong>Time:</strong> {a.startTime}</p>
+              <p><strong>Time:</strong> {a.startTime}-{a.endTime}</p>
             </li>
           ))}
         </ul>

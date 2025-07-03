@@ -79,33 +79,33 @@ const LearningPage: FC = () => {
     }
   };
 
-  const onPlayerReady = (event: any) => {
-    playerRef.current = event.target;
+  // const onPlayerReady = (event: any) => {
+  //   playerRef.current = event.target;
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
+  //   if (intervalRef.current) {
+  //     clearInterval(intervalRef.current);
+  //   }
 
-    
 
-    intervalRef.current = setInterval(() => {
-      if (playerRef.current && playerRef.current.getCurrentTime) {
-        const currentTime = playerRef.current.getCurrentTime();
 
-        if (!isSeekingRef.current && currentTime > maxWatchTimeRef.current + 2) {
-          isSeekingRef.current = true;
-          playerRef.current.seekTo(maxWatchTimeRef.current, true);
-          setTimeout(() => {
-            isSeekingRef.current = false;
-          }, 1000);
-        } else if (currentTime > maxWatchTimeRef.current) {
-          maxWatchTimeRef.current = currentTime;
-        }
-      }
+  //   intervalRef.current = setInterval(() => {
+  //     if (playerRef.current && playerRef.current.getCurrentTime) {
+  //       const currentTime = playerRef.current.getCurrentTime();
 
-      // console.log(playerRef.current.getCurrentTime(), maxWatchTimeRef.current)
-    }, 1000);
-  };
+  //       if (!isSeekingRef.current && currentTime > maxWatchTimeRef.current + 2) {
+  //         isSeekingRef.current = true;
+  //         playerRef.current.seekTo(maxWatchTimeRef.current, true);
+  //         setTimeout(() => {
+  //           isSeekingRef.current = false;
+  //         }, 1000);
+  //       } else if (currentTime > maxWatchTimeRef.current) {
+  //         maxWatchTimeRef.current = currentTime;
+  //       }
+  //     }
+
+  //     console.log(playerRef.current.getCurrentTime(), maxWatchTimeRef.current)
+  //   }, 1000);
+  // };
 
   const onPlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.ENDED) {
@@ -113,16 +113,17 @@ const LearningPage: FC = () => {
     }
   };
 
-  const youtubeOpts = {
+  const getYoutubeOpts = () => ({
     width: '1120',
     height: '630',
     playerVars: {
       autoplay: 0,
-      controls: 1,
+      controls: isVideoCompleted ? 1 : 0,
       modestbranding: 1,
       rel: 0,
     },
-  };
+  });
+
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -260,11 +261,12 @@ const LearningPage: FC = () => {
               </p>
 
               <YouTube
+                key={selectedModule.moduleID}
                 videoId={getYouTubeVideoId(selectedModule.videoUrl)}
-                opts={youtubeOpts}
-                onReady={onPlayerReady}
+                opts={getYoutubeOpts()}
                 onStateChange={onPlayerStateChange}
               />
+
 
               <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: '1.6' }}>
                 {selectedModule.content}

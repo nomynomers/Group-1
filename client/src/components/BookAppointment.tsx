@@ -56,7 +56,7 @@ const BookAppointment: React.FC = () => {
         <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1.5rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.25rem', color: 'black' }}>Appointment Date</label>
+              <label style={{ display: 'block', fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.25rem', color: 'black', textAlign: 'left' }}>Appointment Date</label>
               <input
                 type="date"
                 value={appointmentDate}
@@ -65,16 +65,20 @@ const BookAppointment: React.FC = () => {
                 required
               />
             </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '1.125rem', fontWeight: '500', marginBottom: '0.25rem', color: 'black' }}>Start Time</label>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                style={{ width: '90%', padding: '0.75rem', border: '1px solid #d1d5db', borderRadius: '0.75rem', backgroundColor: 'white', color: '#1f2937', fontSize: '1rem' }}
-                required
-              />
-            </div>
+            <select
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              style={{ width: '90%', height: '50%', border: '1px solid #d1d5db', borderRadius: '0.75rem', backgroundColor: 'white', color: '#1f2937', fontSize: '1rem', marginTop: '30px' }}
+              required
+            >
+              <option value="">Select Time Slot</option>
+              <option value="08:00:00">08:00 – 09:00</option>
+              <option value="09:30:00">09:30 – 10:30</option>
+              <option value="14:00:00">14:00 – 15:00</option>
+              <option value="15:30:00">15:30 – 16:30</option>
+              <option value="20:00:00">20:00 – 21:00</option>
+            </select>
+
           </div>
 
           <div style={{ textAlign: 'center' }}>

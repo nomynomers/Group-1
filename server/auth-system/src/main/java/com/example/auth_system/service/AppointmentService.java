@@ -110,11 +110,15 @@ public class AppointmentService {
         User user = userRepository.findById(request.getUserID())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        LocalTime start = request.getStartTime();
+        LocalTime end = start.plusHours(1);
+
         Appointment appointment = Appointment.builder()
                 .user(user)
                 .consultant(assignedConsultant)
                 .appointmentDate(request.getAppointmentDate())
-                .startTime(request.getStartTime())
+                .startTime(start) // ensure it's "HH:mm" format
+                .endTime(end)
                 .status("Booked")
 //                .meetingLink("https://meet.example.com/" + System.currentTimeMillis())
                 .meetingLink(createGoogleMeetLink(request))
@@ -143,6 +147,7 @@ public class AppointmentService {
                 .meetingLink(a.getMeetingLink())
                 .date(a.getAppointmentDate().toString())
                 .startTime(a.getStartTime().toString())
+                .endTime(a.getStartTime().plusHours(1).toString())
                 .build()
         ).collect(Collectors.toList());
     }
