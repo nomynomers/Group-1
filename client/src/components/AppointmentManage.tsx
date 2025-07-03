@@ -7,10 +7,13 @@ import { useEffect } from 'react';
 import axios from 'axios';
 
 interface Appointment {
+  appointmentID: number;
   name: string;
   meetingLink: string;
   date: string;
   startTime: string;
+  endTime: string;
+  status: string;
 }
 
 const AppointmentManage: FC = () => {
@@ -25,26 +28,77 @@ const AppointmentManage: FC = () => {
     const fetchAppointments = async () => {
       try {
         setLoading(true);
-        const consultantId = user?.consultantID; // hoặc user?.id nếu đó là id của consultant
         const token = localStorage.getItem('token');
-        const response = await axios.get(
-          `http://localhost:8080/api/appointments/consultant/1`,
+        const user = JSON.parse(localStorage.getItem("user"));
+        const userId = user?.id;
+
+        if (!userId) {
+          console.error("Missing userId");
+          return;
+        }
+
+        // 1. Gọi API lấy consultantId dựa vào userId
+        const consultantRes = await axios.get(
+          `http://localhost:8080/api/consultants/user/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setAppointments(response.data);
+        const consultantId = consultantRes.data;
+
+        // 2. Dùng consultantId để lấy lịch hẹn
+        const appointmentRes = await axios.get(
+          `http://localhost:8080/api/appointments/consultant/${consultantId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setAppointments(appointmentRes.data);
       } catch (err: any) {
+        console.error(err);
         setError(err.message || 'Failed to fetch appointments');
       } finally {
         setLoading(false);
       }
     };
 
+
     fetchAppointments();
   }, [user]);
+
+
+  const updateStatus = async (appointmentId: number, status: string) => {
+    const token = localStorage.getItem('token');
+    console.log("Token", localStorage.getItem("token"));
+
+    try {
+      await axios.put(
+        `http://localhost:8080/api/appointments/${appointmentId}/status?status=${status}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Sau khi cập nhật, làm mới danh sách
+      setAppointments((prev) =>
+        prev.map((appt) =>
+          appt.appointmentID === appointmentId ? { ...appt, status } : appt
+        )
+      );
+    } catch (err: any) {
+      console.error('Update failed', err);
+      alert('Failed to update appointment status.');
+    }
+  };
 
 
   const handleLogout = () => {
@@ -164,8 +218,9 @@ const AppointmentManage: FC = () => {
               <tr style={{ backgroundColor: '#f8f9fa' }}>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Patient Name</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Date</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Start Time</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Time Slot</th>
                 <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Meeting Link</th>
+                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#272b69' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -174,12 +229,84 @@ const AppointmentManage: FC = () => {
                   <tr key={index}>
                     <td style={{ padding: '1rem' }}>{appt.name}</td>
                     <td style={{ padding: '1rem' }}>{appt.date}</td>
-                    <td style={{ padding: '1rem' }}>{appt.startTime}</td>
+                    <td style={{ padding: '1rem' }}>{appt.startTime}-{appt.endTime}</td>
                     <td style={{ padding: '1rem' }}>
                       <a href={appt.meetingLink} target="_blank" rel="noopener noreferrer">
                         {appt.meetingLink}
                       </a>
                     </td>
+                    <td style={{ padding: '1rem' }}>
+                      {appt.status === 'Confirmed' ? (
+                        <button
+                          disabled
+                          style={{
+                            backgroundColor: '#ccc',
+                            color: '#666',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '4px',
+                            cursor: 'not-allowed'
+                          }}
+                        >
+                          Accepted
+                        </button>
+                      ) : appt.status === 'Canceled' ? (
+                        <button
+                          disabled
+                          style={{
+                            backgroundColor: '#f5c6cb',
+                            color: '#721c24',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '4px',
+                            cursor: 'not-allowed'
+                          }}
+                        >
+                          Canceled
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to accept this appointment?')) {
+                                updateStatus(appt.appointmentID, 'Confirmed');
+                              }
+                            }}
+
+                            style={{
+                              backgroundColor: '#272b69',
+                              color: 'white',
+                              border: 'none',
+                              padding: '0.5rem 1rem',
+                              borderRadius: '4px',
+                              marginRight: '0.5rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Accept
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to cancel this appointment?')) {
+                                updateStatus(appt.appointmentID, 'Canceled');
+                              }
+                            }}
+
+                            style={{
+                              backgroundColor: '#dc3545',
+                              color: 'white',
+                              border: 'none',
+                              padding: '0.5rem 1rem',
+                              borderRadius: '4px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+                    </td>
+
                   </tr>
                 ))
               ) : (

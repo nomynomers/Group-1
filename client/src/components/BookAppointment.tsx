@@ -9,6 +9,10 @@ const BookAppointment: React.FC = () => {
   const [appointmentDate, setAppointmentDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [message, setMessage] = useState('');
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const minDate = tomorrow.toISOString().split('T')[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +65,7 @@ const BookAppointment: React.FC = () => {
                 type="date"
                 value={appointmentDate}
                 onChange={(e) => setAppointmentDate(e.target.value)}
+                min={minDate} 
                 style={{ width: '90%', padding: '0.75rem', paddingRight: '2.5rem', border: '1px solid #d1d5db', borderRadius: '0.75rem', backgroundColor: 'white', color: '#1f2937', fontSize: '1rem', marginBottom: '1rem' }}
                 required
               />

@@ -16,11 +16,12 @@ import java.util.List;
 @RequestMapping("/api/consultants")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth") //
-@PreAuthorize("hasRole('ADMIN')") //
+//
 public class ConsultantController {
 
     private final ConsultantService consultantService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ConsultantRequest request) {
         try {
@@ -31,6 +32,7 @@ public class ConsultantController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody ConsultantRequest request) {
         try {
@@ -41,6 +43,7 @@ public class ConsultantController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable int id) {
         try {
@@ -51,6 +54,7 @@ public class ConsultantController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable int id) {
         try {
@@ -61,6 +65,7 @@ public class ConsultantController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         List<Consultant> consultants = consultantService.getAll();
@@ -69,4 +74,11 @@ public class ConsultantController {
                 .toList();
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Integer> getConsultantIdByUserId(@PathVariable int userId) {
+        int consultantId = consultantService.getConsultantIdByUserId(userId);
+        return ResponseEntity.ok(consultantId);
+    }
+
 }
