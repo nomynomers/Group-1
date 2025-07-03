@@ -48,7 +48,7 @@ const MyAppointments = () => {
         <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {appointments.map((a, idx) => (
             <li key={idx} style={{ border: '1px solid #E5E7EB', padding: '1rem', borderRadius: '0.5rem' }}>
-              <p><strong>Consultant:</strong> {a.consultantName}</p>
+              <p><strong>Consultant:</strong> {a.name}</p>
               <p>
                 <strong>Meeting Link:</strong>{' '}
                 {a.meetingLink ? (

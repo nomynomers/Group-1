@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('CONSULTANT')")
 @RequestMapping("/api/appointments")
 @RequiredArgsConstructor
 
@@ -58,5 +58,11 @@ public class AppointmentController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MessageResponse("Invalid time format. Expected format: HH:mm:ss"));
         }
+    }
+
+    @GetMapping("/consultant/{consultantId}")
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByConsultant_ConsultantID(@PathVariable int consultantId) {
+        List<AppointmentResponse> appointments = appointmentService.getAppointmentsByConsultant_ConsultantID(consultantId);
+        return ResponseEntity.ok(appointments);
     }
 }

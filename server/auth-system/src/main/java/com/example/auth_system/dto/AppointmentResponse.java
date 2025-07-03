@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppointmentResponse {
-    private String consultantName;
+    private String name;
     private String meetingLink;
     private String date;
     private String startTime;

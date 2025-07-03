@@ -14,6 +14,7 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CourseManage from './components/CourseManage'
+import AppointmentManage from './components/AppointmentManage'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
 import CreateUser from './components/CreateUser'
@@ -30,11 +31,11 @@ import './App.css'
 const AppContent = () => {
   const location = useLocation();
   
-  // List of routes that should not display Navbar or Footer
   const noLayoutRoutes = [
     '/admin',
     '/admin/users/create',
-    '/admin/users/:userId' // you may handle dynamic routes differently
+    '/admin/users/:userId',
+    "/consultant/appointments"
   ];
 
   const hideLayout = noLayoutRoutes.some((path) =>
@@ -62,6 +63,7 @@ const AppContent = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin/users" element={<AdminDashboard />} />
           <Route path="/admin/courses" element={<CourseManage />} />
+          <Route path="/consultant/appointments" element={<AppointmentManage />} />
           <Route path="/admin/users/create" element={<CreateUser />} />
           <Route path="/admin/courses/create" element={<CreateCourse />} />
           <Route path="/admin/users/:userId" element={<UpdateUser />} />
