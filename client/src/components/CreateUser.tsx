@@ -59,7 +59,7 @@ const CreateUser: FC = () => {
       });
 
       if (response.ok) {
-        navigate('/admin');
+        navigate('/admin/users');
       } else {
         const error = await response.json();
         setMessage(error.message || 'Failed to create user');

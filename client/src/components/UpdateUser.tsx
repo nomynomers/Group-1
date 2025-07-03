@@ -92,7 +92,7 @@ const UpdateUser: FC = () => {
             }
 
             setMessage('User updated successfully!');
-            navigate('/admin');
+            navigate('/admin/users');
         } catch (error: any) {
             setMessage(error.message || 'Something went wrong');
         } finally {
