@@ -148,6 +148,7 @@ public class AppointmentService {
                 .date(a.getAppointmentDate().toString())
                 .startTime(a.getStartTime().toString())
                 .endTime(a.getStartTime().plusHours(1).toString())
+                .status(a.getStatus())
                 .build()
         ).collect(Collectors.toList());
     }
@@ -171,12 +172,24 @@ public class AppointmentService {
         List<Appointment> appointments =  appointmentRepository.findByConsultant_ConsultantID(consultantId);
 
         return appointments.stream().map(a -> AppointmentResponse.builder()
+                .appointmentID(a.getAppointmentID())
                 .name(a.getUser().getFirstName() + " " + a.getUser().getLastName())
                 .meetingLink(a.getMeetingLink())
                 .date(a.getAppointmentDate().toString())
                 .startTime(a.getStartTime().toString())
+                .endTime(a.getStartTime().plusHours(1).toString())
+                .status(a.getStatus())
                 .build()
         ).collect(Collectors.toList());
     }
+
+    public void updateStatus(int appointmentId, String status) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        appointment.setStatus(status); // giả sử có trường `status` trong entity
+        appointmentRepository.save(appointment);
+    }
+
 
 }

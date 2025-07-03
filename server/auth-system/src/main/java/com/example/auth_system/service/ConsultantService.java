@@ -82,4 +82,10 @@ public class ConsultantService {
         });
         return consultants;
     }
+
+    public int getConsultantIdByUserId(int userId) {
+        Consultant consultant = consultantRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new RuntimeException("Consultant not found with userId: " + userId));
+        return consultant.getConsultantID();
+    }
 }

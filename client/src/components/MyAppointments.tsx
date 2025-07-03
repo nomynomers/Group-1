@@ -7,6 +7,7 @@ interface Appointment {
   date: string;
   startTime: string;
   endTime: string;
+  status: string;
 }
 
 const MyAppointments = () => {
@@ -62,6 +63,7 @@ const MyAppointments = () => {
               </p>
               <p><strong>Date:</strong> {a.date}</p>
               <p><strong>Time:</strong> {a.startTime}-{a.endTime}</p>
+              <p><strong>Status:</strong> {a.status}</p>
             </li>
           ))}
         </ul>

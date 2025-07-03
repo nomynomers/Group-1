@@ -65,4 +65,14 @@ public class AppointmentController {
         List<AppointmentResponse> appointments = appointmentService.getAppointmentsByConsultant_ConsultantID(consultantId);
         return ResponseEntity.ok(appointments);
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateAppointmentStatus(
+            @PathVariable int id,
+            @RequestParam("status") String status
+    ) {
+        appointmentService.updateStatus(id, status);
+        return ResponseEntity.ok(new MessageResponse("Appointment status updated"));
+    }
+
 }
