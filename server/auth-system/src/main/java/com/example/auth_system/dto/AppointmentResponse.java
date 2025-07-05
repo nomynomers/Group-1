@@ -16,4 +16,5 @@ public class AppointmentResponse {
     private String startTime;
     private String endTime;
     private String status;
+    private String note;
 }

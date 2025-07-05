@@ -50,7 +50,6 @@ public class AppointmentService {
 
             ZonedDateTime endDateTime = startDateTime.plusMinutes(30);
 
-            // Chuyển về định dạng RFC 3339
             DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
             String formattedStart = startDateTime.format(formatter);
             String formattedEnd = endDateTime.format(formatter);
@@ -119,9 +118,9 @@ public class AppointmentService {
                 .appointmentDate(request.getAppointmentDate())
                 .startTime(start) // ensure it's "HH:mm" format
                 .endTime(end)
-                .status("Booked")
+                .status("Pending")
 //                .meetingLink("https://meet.example.com/" + System.currentTimeMillis())
-                .meetingLink(createGoogleMeetLink(request))
+//                .meetingLink(createGoogleMeetLink(request))
                 .build();
 
         appointmentRepository.save(appointment);
@@ -149,6 +148,7 @@ public class AppointmentService {
                 .startTime(a.getStartTime().toString())
                 .endTime(a.getStartTime().plusHours(1).toString())
                 .status(a.getStatus())
+                .note(a.getNote())
                 .build()
         ).collect(Collectors.toList());
     }
@@ -179,6 +179,7 @@ public class AppointmentService {
                 .startTime(a.getStartTime().toString())
                 .endTime(a.getStartTime().plusHours(1).toString())
                 .status(a.getStatus())
+                .note(a.getNote())
                 .build()
         ).collect(Collectors.toList());
     }
@@ -187,9 +188,31 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        appointment.setStatus(status); // giả sử có trường `status` trong entity
+        appointment.setStatus(status);
+
+        if ("Confirmed".equalsIgnoreCase(status) && (appointment.getMeetingLink() == null || appointment.getMeetingLink().isEmpty())) {
+            AppointmentRequest request = AppointmentRequest.builder()
+                    .userID(appointment.getUser().getUserId())
+                    .appointmentDate(appointment.getAppointmentDate())
+                    .startTime(appointment.getStartTime())
+                    .build();
+
+            String link = createGoogleMeetLink(request);
+            appointment.setMeetingLink(link);
+        }
+
         appointmentRepository.save(appointment);
     }
 
+
+    public void cancelAppointment(int id, String note) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        appointment.setStatus("Canceled");
+        appointment.setNote(note);  // đảm bảo cột note đã có trong entity
+
+        appointmentRepository.save(appointment);
+    }
 
 }

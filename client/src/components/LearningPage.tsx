@@ -119,6 +119,7 @@ const LearningPage: FC = () => {
     playerVars: {
       autoplay: 0,
       controls: isVideoCompleted ? 1 : 0,
+      // controls: 1,
       modestbranding: 1,
       rel: 0,
     },
