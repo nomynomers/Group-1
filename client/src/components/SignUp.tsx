@@ -39,7 +39,7 @@ const SignUp: FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords don't match");
       return;
@@ -59,12 +59,16 @@ const SignUp: FC = () => {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        navigate("/");
+        console.log("Signup successful, navigating to login...");
+        navigate("/login");
       } else {
-        const error = await response.json();
-        setMessage(error.message || "Sign up failed.");
+        console.error("Signup failed response:", data);
+        setMessage(data.message || "Sign up failed.");
       }
+
     } catch (err) {
       setMessage("An error occurred. Please try again.");
     }
@@ -100,7 +104,7 @@ const SignUp: FC = () => {
         <form style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }} onSubmit={handleSubmit}>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div style={{ flex: 1 }}>
-              <label 
+              <label
                 htmlFor="firstName"
                 style={{
                   display: 'block',
@@ -138,7 +142,7 @@ const SignUp: FC = () => {
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label 
+              <label
                 htmlFor="lastName"
                 style={{
                   display: 'block',
@@ -178,7 +182,7 @@ const SignUp: FC = () => {
           </div>
 
           <div>
-            <label 
+            <label
               htmlFor="email"
               style={{
                 display: 'block',
@@ -217,7 +221,7 @@ const SignUp: FC = () => {
           </div>
 
           <div>
-            <label 
+            <label
               htmlFor="phoneNumber"
               style={{
                 display: 'block',
@@ -256,7 +260,7 @@ const SignUp: FC = () => {
           </div>
 
           <div>
-            <label 
+            <label
               htmlFor="dateOfBirth"
               style={{
                 display: 'block',
@@ -294,7 +298,7 @@ const SignUp: FC = () => {
           </div>
 
           <div>
-            <label 
+            <label
               htmlFor="password"
               style={{
                 display: 'block',
@@ -333,7 +337,7 @@ const SignUp: FC = () => {
           </div>
 
           <div>
-            <label 
+            <label
               htmlFor="confirmPassword"
               style={{
                 display: 'block',
@@ -380,8 +384,8 @@ const SignUp: FC = () => {
             fontSize: '0.9rem',
             color: '#666'
           }}>
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               id="terms"
               required
               style={{ cursor: 'pointer', backgroundColor: 'white' }}
