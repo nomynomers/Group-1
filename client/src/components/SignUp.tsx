@@ -60,7 +60,7 @@ const SignUp: FC = () => {
       });
 
       if (response.ok) {
-        navigate("/login");
+        navigate("/");
       } else {
         const error = await response.json();
         setMessage(error.message || "Sign up failed.");

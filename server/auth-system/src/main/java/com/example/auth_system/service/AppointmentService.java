@@ -129,7 +129,8 @@ public class AppointmentService {
             emailService.sendAppointmentConfirmation(
                     user.getEmail(),
                     request.getAppointmentDate(),
-                    request.getStartTime()
+                    request.getStartTime(),
+                    request.getEndTime()
             );
         } catch (Exception e) {
             log.error("Failed to send confirmation email: {}", e.getMessage());
@@ -190,19 +191,35 @@ public class AppointmentService {
 
         appointment.setStatus(status);
 
-        if ("Confirmed".equalsIgnoreCase(status) && (appointment.getMeetingLink() == null || appointment.getMeetingLink().isEmpty())) {
-            AppointmentRequest request = AppointmentRequest.builder()
-                    .userID(appointment.getUser().getUserId())
-                    .appointmentDate(appointment.getAppointmentDate())
-                    .startTime(appointment.getStartTime())
-                    .build();
+        if ("Confirmed".equalsIgnoreCase(status)) {
+            if (appointment.getMeetingLink() == null || appointment.getMeetingLink().isEmpty()) {
+                AppointmentRequest request = AppointmentRequest.builder()
+                        .userID(appointment.getUser().getUserId())
+                        .appointmentDate(appointment.getAppointmentDate())
+                        .startTime(appointment.getStartTime())
+                        .endTime(appointment.getEndTime())
+                        .build();
 
-            String link = createGoogleMeetLink(request);
-            appointment.setMeetingLink(link);
+                String link = createGoogleMeetLink(request);
+                appointment.setMeetingLink(link);
+
+                try {
+                    emailService.sendMeetingLinkEmail(
+                            appointment.getUser().getEmail(),
+                            appointment.getAppointmentDate(),
+                            appointment.getStartTime(),
+                            appointment.getEndTime(),
+                            link
+                    );
+                } catch (Exception e) {
+                    log.error("Failed to send meeting link email: {}", e.getMessage());
+                }
+            }
         }
 
         appointmentRepository.save(appointment);
     }
+
 
 
     public void cancelAppointment(int id, String note) {
@@ -210,9 +227,20 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
         appointment.setStatus("Canceled");
-        appointment.setNote(note);  // đảm bảo cột note đã có trong entity
-
+        appointment.setNote(note);
         appointmentRepository.save(appointment);
+
+        try {
+            emailService.sendCancellationEmail(
+                    appointment.getUser().getEmail(),
+                    appointment.getAppointmentDate(),
+                    appointment.getStartTime(),
+                    appointment.getStatus(),
+                    note
+            );
+        } catch (Exception e) {
+            log.error("Failed to send cancellation email: {}", e.getMessage());
+        }
     }
 
 }
