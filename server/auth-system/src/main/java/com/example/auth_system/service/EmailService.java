@@ -37,7 +37,7 @@ public class EmailService {
         }
     }
 
-    public void sendAppointmentConfirmation(String email, LocalDate date, LocalTime startTime) {
+    public void sendAppointmentConfirmation(String email, LocalDate date, LocalTime startTime, LocalTime endTime) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -45,13 +45,49 @@ public class EmailService {
             helper.setTo(email);
             helper.setSubject("Appointment Confirmation");
 
-            String htmlContent = buildConfirmationEmailContent(date, startTime);
+            String htmlContent = buildConfirmationEmailContent(date, startTime, endTime);
             helper.setText(htmlContent, true);
 
             emailSender.send(message);
             log.info("Appointment confirmation email sent to: {}", email);
         } catch (Exception e) {
             log.error("Failed to send appointment confirmation email to {}: {}", email, e.getMessage());
+        }
+    }
+
+    public void sendMeetingLinkEmail(String email, LocalDate date, LocalTime startTime, LocalTime endTime, String link) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject("Your Appointment Has Been Confirmed");
+
+            String htmlContent = buildMeetingLinkEmailContent(date, startTime, endTime, link);
+            helper.setText(htmlContent, true);
+
+            emailSender.send(message);
+            log.info("Meeting link email sent to: {}", email);
+        } catch (Exception e) {
+            log.error("Failed to send meeting link email to {}: {}", email, e.getMessage());
+        }
+    }
+    
+    public void sendCancellationEmail(String email, LocalDate date, LocalTime startTime, String status, String note) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(email);
+            helper.setSubject("Appointment Canceled");
+
+            String htmlContent = buildCancellationEmailContent(date, startTime, status, note);
+            helper.setText(htmlContent, true);
+
+            emailSender.send(message);
+            log.info("Cancellation email sent to: {}", email);
+        } catch (Exception e) {
+            log.error("Failed to send cancellation email to {}: {}", email, e.getMessage());
         }
     }
 
@@ -67,7 +103,7 @@ public class EmailService {
         """.formatted(firstName);
     }
 
-    private String buildConfirmationEmailContent(LocalDate date, LocalTime time) {
+    private String buildConfirmationEmailContent(LocalDate date, LocalTime startTime, LocalTime endTime) {
         return """
         <html>
         <body style="font-family: Arial, sans-serif;">
@@ -75,13 +111,53 @@ public class EmailService {
                 <h2 style="color: #4CAF50;">Appointment Confirmed!</h2>
                 <p>Your appointment has been successfully booked.</p>
                 <p><strong>Date:</strong> %s</p>
-                <p><strong>Time:</strong> %s</p>
-                <p>Please make sure to be available at the scheduled time.</p>
+                <p><strong>Time:</strong> %s - %s</p>
+                <p>Please wait your consultant to confirmed.</p>
                 <br/>
                 <p>Best regards,<br/>Support Team</p>
             </div>
         </body>
         </html>
-        """.formatted(date.toString(), time.toString());
+        """.formatted(date.toString(), startTime.toString(), endTime.toString());
     }
+
+    private String buildMeetingLinkEmailContent(LocalDate date, LocalTime startTime, LocalTime endTime, String link) {
+        return """
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #4CAF50;">Appointment Confirmed with Google Meet</h2>
+                <p>Your consultation appointment has been confirmed.</p>
+                <p><strong>Date:</strong> %s</p>
+                <p><strong>Time:</strong> %s - %s</p>
+                <p><strong>Meeting Link:</strong> <a href="%s">%s</a></p>
+                <p>Please join the meeting on time.</p>
+                <br/>
+                <p>Best regards,<br/>Support Team</p>
+            </div>
+        </body>
+        </html>
+        """.formatted(date.toString(), startTime.toString(), endTime.toString(), link, link);
+    }
+
+    private String buildCancellationEmailContent(LocalDate date, LocalTime time, String status, String note) {
+        return """
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #f44336;">Appointment Canceled</h2>
+                <p>We regret to inform you that your consultation appointment has been canceled.</p>
+                <p><strong>Date:</strong> %s</p>
+                <p><strong>Time:</strong> %s</p>
+                <p><strong>Status:</strong> %s</p>
+                <p><strong>Reason:</strong> %s</p>
+                <p>If you have any questions, please contact support.</p>
+                <br/>
+                <p>Best regards,<br/>Support Team</p>
+            </div>
+        </body>
+        </html>
+        """.formatted(date.toString(), time.toString(), status, note);
+    }
+
 }
