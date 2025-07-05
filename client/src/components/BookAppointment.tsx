@@ -13,14 +13,17 @@ const BookAppointment: React.FC = () => {
   tomorrow.setDate(tomorrow.getDate() + 1);
 
   const minDate = tomorrow.toISOString().split('T')[0];
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMessage('');
+    setLoading(true);
 
     const token = localStorage.getItem('token');
     if (!token || !user?.id) {
       setMessage('Please log in to book an appointment.');
+      setLoading(false);
       return;
     }
 
@@ -47,6 +50,7 @@ const BookAppointment: React.FC = () => {
     } catch (error: any) {
       const errMsg = error.response?.data?.message || 'Booking failed.';
       setMessage(errMsg);
+      setLoading(false);
     }
   };
 
@@ -65,7 +69,7 @@ const BookAppointment: React.FC = () => {
                 type="date"
                 value={appointmentDate}
                 onChange={(e) => setAppointmentDate(e.target.value)}
-                min={minDate} 
+                min={minDate}
                 style={{ width: '90%', padding: '0.75rem', paddingRight: '2.5rem', border: '1px solid #d1d5db', borderRadius: '0.75rem', backgroundColor: 'white', color: '#1f2937', fontSize: '1rem', marginBottom: '1rem' }}
                 required
               />
@@ -89,12 +93,28 @@ const BookAppointment: React.FC = () => {
           <div style={{ textAlign: 'center' }}>
             <button
               type="submit"
-              style={{ backgroundColor: '#2563eb', color: 'white', fontSize: '1.125rem', padding: '0.75rem 1.5rem', borderRadius: '0.75rem', transition: 'background-color 0.3s', border: 'none', cursor: 'pointer' }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#1d4ed8')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#2563eb')}
+              disabled={loading}
+              style={{
+                backgroundColor: '#2563eb',
+                color: 'white',
+                fontSize: '1.125rem',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.75rem',
+                transition: 'background-color 0.3s',
+                border: 'none',
+                cursor: loading ? 'not-allowed' : 'pointer', 
+                opacity: loading ? 0.6 : 1,
+              }}
+              onMouseOver={(e) => {
+                if (!loading) e.currentTarget.style.backgroundColor = '#1d4ed8';
+              }}
+              onMouseOut={(e) => {
+                if (!loading) e.currentTarget.style.backgroundColor = '#2563eb';
+              }}
             >
-              Book Appointment
+              {loading ? 'Booking...' : 'Book Appointment'}
             </button>
+
           </div>
         </form>
 

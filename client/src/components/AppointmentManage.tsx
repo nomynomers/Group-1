@@ -14,6 +14,7 @@ interface Appointment {
   startTime: string;
   endTime: string;
   status: string;
+  note: string;
 }
 
 const AppointmentManage: FC = () => {
@@ -23,6 +24,10 @@ const AppointmentManage: FC = () => {
   const location = useLocation();
   const { user, setUser } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelNote, setCancelNote] = useState('');
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
+
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -37,7 +42,6 @@ const AppointmentManage: FC = () => {
           return;
         }
 
-        // 1. Gọi API lấy consultantId dựa vào userId
         const consultantRes = await axios.get(
           `http://localhost:8080/api/consultants/user/${userId}`,
           {
@@ -48,7 +52,6 @@ const AppointmentManage: FC = () => {
         );
         const consultantId = consultantRes.data;
 
-        // 2. Dùng consultantId để lấy lịch hẹn
         const appointmentRes = await axios.get(
           `http://localhost:8080/api/appointments/consultant/${consultantId}`,
           {
@@ -71,34 +74,94 @@ const AppointmentManage: FC = () => {
     fetchAppointments();
   }, [user]);
 
+  const handleCancel = (appointmentId: number) => {
+    setSelectedAppointmentId(appointmentId);
+    setCancelNote('');
+    setShowCancelModal(true);
+  };
 
-  const updateStatus = async (appointmentId: number, status: string) => {
-    const token = localStorage.getItem('token');
-    console.log("Token", localStorage.getItem("token"));
+  const submitCancelNote = async () => {
+    if (!cancelNote.trim()) {
+      alert('Please enter a note for cancellation.');
+      return;
+    }
 
     try {
+      const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:8080/api/appointments/${appointmentId}/status?status=${status}`,
-        {},
+        `http://localhost:8080/api/appointments/${selectedAppointmentId}/cancel`,
+        { note: cancelNote },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }
       );
 
-      // Sau khi cập nhật, làm mới danh sách
+      // Update status locally
       setAppointments((prev) =>
         prev.map((appt) =>
-          appt.appointmentID === appointmentId ? { ...appt, status } : appt
+          appt.appointmentID === selectedAppointmentId
+            ? { ...appt, status: 'Canceled', note: cancelNote }
+            : appt
         )
       );
-    } catch (err: any) {
-      console.error('Update failed', err);
-      alert('Failed to update appointment status.');
+
+      setShowCancelModal(false);
+    } catch (err) {
+      console.error('Failed to cancel appointment:', err);
+      alert('Error cancelling appointment.');
     }
   };
+
+
+const updateStatus = async (appointmentId: number, status: string) => {
+  const token = localStorage.getItem('token');
+
+  try {
+    await axios.put(
+      `http://localhost:8080/api/appointments/${appointmentId}/status?status=${status}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    // ✅ Fetch lại toàn bộ appointment sau khi update
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userId = user?.id;
+
+    const consultantRes = await axios.get(
+      `http://localhost:8080/api/consultants/user/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const consultantId = consultantRes.data;
+
+    const appointmentRes = await axios.get(
+      `http://localhost:8080/api/appointments/consultant/${consultantId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setAppointments(appointmentRes.data);
+
+  } catch (err: any) {
+    console.error('Update failed', err);
+    alert('Failed to update appointment status.');
+  }
+};
+
 
 
   const handleLogout = () => {
@@ -231,9 +294,13 @@ const AppointmentManage: FC = () => {
                     <td style={{ padding: '1rem' }}>{appt.date}</td>
                     <td style={{ padding: '1rem' }}>{appt.startTime}-{appt.endTime}</td>
                     <td style={{ padding: '1rem' }}>
+                      {appt.status === "Confirmed" ? (
                       <a href={appt.meetingLink} target="_blank" rel="noopener noreferrer">
                         {appt.meetingLink}
                       </a>
+                      ):(
+                        <span style={{ color: '#9CA3AF', fontStyle: 'italic' }}>Accept to get meeting link</span>
+                      )}
                     </td>
                     <td style={{ padding: '1rem' }}>
                       {appt.status === 'Confirmed' ? (
@@ -286,23 +353,19 @@ const AppointmentManage: FC = () => {
                             Accept
                           </button>
                           <button
-                            onClick={() => {
-                              if (window.confirm('Are you sure you want to cancel this appointment?')) {
-                                updateStatus(appt.appointmentID, 'Canceled');
-                              }
-                            }}
-
+                            onClick={() => handleCancel(appt.appointmentID)}
                             style={{
                               backgroundColor: '#dc3545',
                               color: 'white',
                               border: 'none',
                               padding: '0.5rem 1rem',
                               borderRadius: '4px',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
                             }}
                           >
                             Cancel
                           </button>
+
                         </>
                       )}
                     </td>
@@ -323,7 +386,44 @@ const AppointmentManage: FC = () => {
           </table>
         </div>
       </div>
+      {showCancelModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            backgroundColor: 'white', padding: '2rem', borderRadius: '8px',
+            width: '400px', boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+          }}>
+            <h3 style={{ marginBottom: '1rem', color: '#272b69' }}>Cancel Appointment</h3>
+            <textarea
+              rows={4}
+              value={cancelNote}
+              onChange={(e) => setCancelNote(e.target.value)}
+              placeholder="Enter reason for cancellation..."
+              style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem', color: 'black', backgroundColor: 'white' }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowCancelModal(false)}
+                style={{ marginRight: '1rem', padding: '0.5rem 1rem' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitCancelNote}
+                style={{ backgroundColor: '#dc3545', color: 'white', padding: '0.5rem 1rem', border: 'none' }}
+              >
+                Confirm Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+
   );
 };
 

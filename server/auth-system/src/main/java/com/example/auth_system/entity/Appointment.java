@@ -34,5 +34,6 @@ public class Appointment {
     private LocalTime endTime;
     private String status;
     private String meetingLink;
+    private String note;
 }
 

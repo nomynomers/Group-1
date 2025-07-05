@@ -27,15 +27,15 @@ const MyAppointments = () => {
         Authorization: `Bearer ${token}`
       }
     })
-    .then(res => {
-      setAppointments(res.data);
-    })
-    .catch(err => {
-      console.error('Error fetching appointments', err);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
+      .then(res => {
+        setAppointments(res.data);
+      })
+      .catch(err => {
+        console.error('Error fetching appointments', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -51,19 +51,28 @@ const MyAppointments = () => {
           {appointments.map((a, idx) => (
             <li key={idx} style={{ border: '1px solid #E5E7EB', padding: '1rem', borderRadius: '0.5rem' }}>
               <p><strong>Consultant:</strong> {a.name}</p>
-              <p>
-                <strong>Meeting Link:</strong>{' '}
-                {a.meetingLink ? (
-                  <a href={a.meetingLink} target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB', textDecoration: 'underline' }}>
-                    {a.meetingLink}
-                  </a>
-                ) : (
-                  <span style={{ color: '#9CA3AF', fontStyle: 'italic' }}>No link</span>
-                )}
-              </p>
+              {a.status === "Confirmed" ? (
+                <p>
+                  <strong>Meeting Link:</strong>{' '}
+                  {a.meetingLink ? (
+                    <a href={a.meetingLink} target="_blank" rel="noopener noreferrer" style={{ color: '#2563EB', textDecoration: 'underline' }}>
+                      {a.meetingLink}
+                    </a>
+                  ) : (
+                    <span style={{ color: '#9CA3AF', fontStyle: 'italic' }}>No link</span>
+                  )}
+                </p>
+              ) : (
+                <p></p>
+              )}
               <p><strong>Date:</strong> {a.date}</p>
               <p><strong>Time:</strong> {a.startTime}-{a.endTime}</p>
               <p><strong>Status:</strong> {a.status}</p>
+              {a.note ? (
+              <p><strong>Respone from consultant:</strong> {a.note}</p>
+              ) : (
+                <p></p>
+              )}
             </li>
           ))}
         </ul>

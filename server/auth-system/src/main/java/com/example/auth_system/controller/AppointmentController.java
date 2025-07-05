@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @SecurityRequirement(name = "bearerAuth")
@@ -73,6 +74,16 @@ public class AppointmentController {
     ) {
         appointmentService.updateStatus(id, status);
         return ResponseEntity.ok(new MessageResponse("Appointment status updated"));
+    }
+
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelAppointment(
+            @PathVariable int id,
+            @RequestBody Map<String, String> body) {
+
+        String note = body.get("note");
+        appointmentService.cancelAppointment(id, note);
+        return ResponseEntity.ok().build();
     }
 
 }
