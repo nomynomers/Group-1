@@ -118,6 +118,7 @@ CREATE TABLE Appointments (
   endTime TIME,
   status VARCHAR(50),
   meetingLink VARCHAR(255),
+  note NVARCHAR(MAX),
   FOREIGN KEY (userID) REFERENCES Users(userID),
   FOREIGN KEY (consultantID) REFERENCES Consultants(consultantID)
 );
