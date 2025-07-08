@@ -71,3 +71,29 @@ VALUES
  3
 );
 
+INSERT INTO Assessments (
+    assessmentName,
+    description,
+    targetAudience,
+    estimatedTimeMinutes,
+    createdDate,
+    imageCover
+) VALUES
+(
+    'ASSIST Test',
+    'The Alcohol, Smoking and Substance Involvement Screening Test (ASSIST) helps identify substance use and related risks among youth and adults.',
+    'Youth, Adults',
+    10,
+    GETDATE(),
+    'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1750134176/assist_liry9n.webp'
+),
+(
+    'CRAFFT Test',
+    'The CRAFFT screening tool is designed specifically for adolescents to assess high-risk alcohol and drug behaviors.',
+    'Adolescents, Teens',
+    8,
+    GETDATE(),
+    'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1750138728/craftt_tq1f8d.jpg'
+);
+
+
