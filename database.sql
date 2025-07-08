@@ -128,6 +128,7 @@ CREATE TABLE QuestionOptions (
   questionID INT,
   optionValue VARCHAR(255),
   score INT,
+  nextQuestionID INT,
   FOREIGN KEY (questionID) REFERENCES AssessmentQuestions(questionID)
 );
 

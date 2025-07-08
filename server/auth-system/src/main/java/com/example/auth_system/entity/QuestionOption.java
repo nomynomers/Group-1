@@ -21,5 +21,5 @@ public class QuestionOption {
     @JoinColumn(name = "questionID")
     private AssessmentQuestion question;
 
-    // getters/setters
+    private int nextQuestionID;
 }

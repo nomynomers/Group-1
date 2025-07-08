@@ -1,13 +1,18 @@
 package com.example.auth_system.controller;
 
 
+import com.example.auth_system.config.UserPrincipal;
+import com.example.auth_system.dto.AssessmentSubmissionDTO;
 import com.example.auth_system.dto.QuestionDTO;
 import com.example.auth_system.entity.Assessment;
+import com.example.auth_system.entity.AssessmentQuestion;
 import com.example.auth_system.service.AssessmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +36,17 @@ public class AssessmentController {
         return service.getAllAssessments();
     }
 
+    @GetMapping("/q1")
+    public QuestionDTO getQ1() {
+        return service.getQ1DTO();
+    }
+
+    @GetMapping("/q2to7")
+    public List<QuestionDTO> getTemplates() {
+        return service.getQ2ToQ7TemplateDTOs();
+    }
+
+
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
@@ -49,5 +65,15 @@ public class AssessmentController {
         int score = service.calculateScore(selectedOptionIds);
         return Map.of("totalScore", score);
     }
+
+    @PostMapping("/submit")
+    public ResponseEntity<?> submitAssessment(
+            @RequestBody AssessmentSubmissionDTO dto,
+            @AuthenticationPrincipal UserPrincipal user
+    ) {
+        service.saveAssessment(dto, Integer.parseInt(user.getId()));
+        return ResponseEntity.ok(Map.of("message", "Assessment submitted successfully"));
+    }
+
 
 }
