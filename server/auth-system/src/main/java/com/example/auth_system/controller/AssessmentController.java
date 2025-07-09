@@ -71,8 +71,18 @@ public class AssessmentController {
             @RequestBody AssessmentSubmissionDTO dto,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        service.saveAssessment(dto, Integer.parseInt(user.getId()));
-        return ResponseEntity.ok(Map.of("message", "Assessment submitted successfully"));
+        int id = service.saveAssessment(dto, Integer.parseInt(user.getId())); // sửa kiểu trả về là int
+        return ResponseEntity.ok(Map.of(
+                "message", "Assessment submitted successfully",
+                "assessmentId", id
+        ));
+    }
+
+
+    @GetMapping("/result/{id}")
+    public ResponseEntity<?> getResult(@PathVariable int id) {
+        Map<String, Object> result = service.getResultByAssessmentId(id);
+        return ResponseEntity.ok(result);
     }
 
 

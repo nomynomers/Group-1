@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AssistForm() {
   const [q1, setQ1] = useState(null);
@@ -7,6 +8,8 @@ export default function AssistForm() {
   const [currentStep, setCurrentStep] = useState(0); // 0 = Q1, >=1 = Q2→Q7
   const [answers, setAnswers] = useState([]);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
 
   // Load Q1
   useEffect(() => {
@@ -43,71 +46,77 @@ export default function AssistForm() {
   };
 
   // Handle answer selection for one substance in current question
-const handleAnswer = (substance, questionText, option, questionID) => {
-  setAnswers(prev => {
-    const filtered = prev.filter(
-      a => !(a.substance === substance && a.questionText === questionText)
-    );
-    return [...filtered, {
-      substance,
-      questionText,
-      answer: option.optionValue,
-      score: option.score,
-      questionID: questionID,    
-      optionID: option.optionID     
-    }];
-  });
-};
-
-
-const handleNextQuestion = () => {
-  const currentTemplate = templates[currentStep - 1];
-  const currentQuestionText = currentTemplate.questionText;
-
-  const hasAllAnswers = selectedSubstances.every(sub =>
-    answers.some(ans => ans.substance === sub && ans.questionText === currentQuestionText.replace("[SUBSTANCE]", sub))
-  );
-
-  if (!hasAllAnswers) {
-    alert("Please answer for all substances.");
-    return;
-  }
-
-  if (currentStep === templates.length) {
-    alert("Assessment complete!");
-
-    const rawAnswers = answers.map(ans => ({
-      questionID: ans.questionID,  
-      optionID: ans.optionID       
-    }));
-
-    const submission = {
-      assessmentID: 1, // or dynamic if needed
-      answers: rawAnswers
-    };
-
-    fetch("http://localhost:8080/api/assessments/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(submission)
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Submitted:", data);
-      alert("Your responses have been submitted!");
-    })
-    .catch(err => {
-      console.error("Submit failed", err);
-      alert("Something went wrong.");
+  const handleAnswer = (substance, questionText, option, questionID) => {
+    setAnswers(prev => {
+      const filtered = prev.filter(
+        a => !(a.substance === substance && a.questionText === questionText)
+      );
+      return [...filtered, {
+        substance,
+        questionText,
+        answer: option.optionValue,
+        score: option.score,
+        questionID: questionID,
+        optionID: option.optionID
+      }];
     });
+  };
 
-  } else {
-    setCurrentStep(currentStep + 1);
-  }
-};
+
+  const handleNextQuestion = () => {
+    const currentTemplate = templates[currentStep - 1];
+    const currentQuestionText = currentTemplate.questionText;
+
+    const hasAllAnswers = selectedSubstances.every(sub =>
+      answers.some(ans => ans.substance === sub && ans.questionText === currentQuestionText.replace("[SUBSTANCE]", sub))
+    );
+
+    if (!hasAllAnswers) {
+      alert("Please answer for all substances.");
+      return;
+    }
+
+    if (currentStep === templates.length) {
+      alert("Assessment complete!");
+
+      const rawAnswers = answers.map(ans => ({
+        questionID: ans.questionID,
+        optionID: ans.optionID,
+        substance: ans.substance,
+        questionTemplate: ans.questionText.replace(ans.substance, "[SUBSTANCE]") 
+      }));
+
+      const submission = {
+        assessmentID: 1, // or dynamic if needed
+        answers: rawAnswers
+      };
+
+      fetch("http://localhost:8080/api/assessments/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(submission)
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log("Submitted:", data);
+          localStorage.setItem("assessmentId", data.assessmentId);
+          navigate("/assessments/result");
+        })
+
+
+
+        .catch(err => {
+          console.error("Submit failed", err);
+          alert("Something went wrong.");
+        });
+
+    } else {
+      setCurrentStep(currentStep + 1);
+    }
+  };
 
 
   if (!q1 || templates.length === 0) return <p>Loading...</p>;
@@ -121,7 +130,7 @@ const handleNextQuestion = () => {
           .map(opt => {
             const substance = opt.optionValue.split(" - ")[0];
             return (
-              <div key={opt.optionID} style = {{display: 'flex', marginLeft: '33vw'}}>
+              <div key={opt.optionID} style={{ display: 'flex', marginLeft: '33vw' }}>
                 <label>
                   <input
                     type="checkbox"

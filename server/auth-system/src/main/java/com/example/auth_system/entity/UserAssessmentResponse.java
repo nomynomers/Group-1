@@ -19,4 +19,9 @@ public class UserAssessmentResponse {
 
     private Integer questionID;
     private Integer optionID;
+
+    private String substance;
+
+    @Column(columnDefinition = "text")
+    private String questionTemplate;
 }

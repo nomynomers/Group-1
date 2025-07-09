@@ -4,19 +4,15 @@ package com.example.auth_system.service;
 import com.example.auth_system.dto.AssessmentSubmissionDTO;
 import com.example.auth_system.dto.OptionDTO;
 import com.example.auth_system.dto.QuestionDTO;
-import com.example.auth_system.entity.Assessment;
-import com.example.auth_system.entity.AssessmentQuestion;
-import com.example.auth_system.entity.UserAssessment;
-import com.example.auth_system.entity.UserAssessmentResponse;
+import com.example.auth_system.entity.*;
 import com.example.auth_system.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AssessmentService {
@@ -98,28 +94,36 @@ public class AssessmentService {
                 .stream().map(this::convertToDTO).toList();
     }
 
-    public void saveAssessment(AssessmentSubmissionDTO dto, Integer userId) {
-        int totalScore = dto.answers.stream()
+    public int saveAssessment(AssessmentSubmissionDTO dto, Integer userId) {
+        // Group answers theo substance
+        Map<String, List<AssessmentSubmissionDTO.AnswerDTO>> answersBySubstance = dto.answers.stream()
+                .collect(Collectors.groupingBy(ans -> ans.substance));
+
+        Map.Entry<String, List<AssessmentSubmissionDTO.AnswerDTO>> maxEntry = answersBySubstance.entrySet().stream()
+                .max(Comparator.comparingInt(entry ->
+                        entry.getValue().stream()
+                                .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
+                                .mapToInt(Integer::intValue)
+                                .sum()
+                ))
+                .orElseThrow(() -> new RuntimeException("No substance answered"));
+
+        String topSubstance = maxEntry.getKey();
+        int topScore = maxEntry.getValue().stream()
                 .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
                 .mapToInt(Integer::intValue)
                 .sum();
 
-        String recommendation;
-        if (totalScore >= 27) {
-            recommendation = "Refer to specialist immediately";
-        } else if (totalScore >= 4) {
-            recommendation = "Provide brief intervention";
-        } else {
-            recommendation = "No intervention needed";
-        }
+        String topRisk = determineRisk(topScore);
+        String topRecommendation = determineRecommendation(topScore);
 
         UserAssessment ua = new UserAssessment();
         ua.setUserID(userId);
         ua.setAssessmentID(dto.assessmentID);
         ua.setCompletionDate(LocalDateTime.now());
-        ua.setTotalScore(totalScore);
-        ua.setRiskLevel(determineRisk(totalScore)); // optional
-        ua.setRecommendationProvided(recommendation);
+        ua.setTotalScore(topScore);
+        ua.setRiskLevel(topRisk);
+        ua.setRecommendationProvided(topRecommendation);
         ua = userAssessmentRepo.save(ua);
 
         final UserAssessment finalUA = ua;
@@ -130,18 +134,79 @@ public class AssessmentService {
                     r.setUserAssessment(finalUA);
                     r.setQuestionID(ans.questionID);
                     r.setOptionID(ans.optionID);
+                    r.setSubstance(ans.substance);
+                    r.setQuestionTemplate(ans.questionTemplate);
                     return r;
                 })
                 .toList();
 
-
         userAssessmentResponseRepo.saveAll(responses);
+        return ua.getUserAssessmentID();
     }
+
 
     private String determineRisk(int totalScore) {
         if (totalScore >= 27) return "High";
         else if (totalScore >= 11) return "Moderate";
         else return "Low";
     }
+
+    private String determineRecommendation(int score) {
+        if (score >= 27) return "Refer to specialist immediately";
+        else if (score >= 4) return "Provide brief intervention";
+        else return "No intervention needed";
+    }
+
+
+    public Map<String, Object> getResultByAssessmentId(int id) {
+        UserAssessment ua = userAssessmentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+
+        List<UserAssessmentResponse> responses = userAssessmentResponseRepo.findByUserAssessment_UserAssessmentID(id);
+
+        Map<String, List<UserAssessmentResponse>> grouped = responses.stream()
+                .collect(Collectors.groupingBy(UserAssessmentResponse::getSubstance));
+
+        List<Map<String, Object>> substanceResults = new ArrayList<>();
+
+        for (String substance : grouped.keySet()) {
+            List<UserAssessmentResponse> subResponses = grouped.get(substance);
+
+            int subScore = subResponses.stream()
+                    .map(r -> optionRepo.findById(r.getOptionID()).orElse(null))
+                    .filter(Objects::nonNull)
+                    .mapToInt(opt -> opt.getScore() != null ? opt.getScore() : 0)
+                    .sum();
+
+            String recommendation = determineRecommendation(subScore);
+            String riskLevel = determineRisk(subScore);
+
+            List<Map<String, Object>> answers = subResponses.stream().map(r -> {
+                QuestionOption option = optionRepo.findById(r.getOptionID()).orElse(null);
+                String question = r.getQuestionTemplate().replace("[SUBSTANCE]", r.getSubstance());
+
+                return Map.<String, Object>of( 
+                        "question", question,
+                        "answer", option != null ? option.getOptionValue() : "N/A",
+                        "score", option != null ? option.getScore() : 0
+                );
+            }).collect(Collectors.toList());
+
+            substanceResults.add(Map.of(
+                    "substance", substance,
+                    "totalScore", subScore,
+                    "riskLevel", riskLevel,
+                    "recommendation", recommendation,
+                    "answers", answers
+            ));
+        }
+
+        return Map.of(
+                "assessmentId", ua.getUserAssessmentID(),
+                "results", substanceResults
+        );
+
+    }
+
 
 }
