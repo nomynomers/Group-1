@@ -9,6 +9,8 @@ public class AssessmentSubmissionDTO {
     public static class AnswerDTO {
         public Integer questionID;
         public Integer optionID;
+        public String substance;
+        public String questionTemplate;
     }
 }
 
