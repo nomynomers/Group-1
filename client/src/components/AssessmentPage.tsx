@@ -136,7 +136,7 @@ const AssessmentPage: FC = () => {
                                 }}>
                                     <button
                                         onClick={(e) => {
-                                            e.stopPropagation(); // Prevent card click
+                                            e.stopPropagation();
                                             navigate(`/assessments/${assessment.assessmentID}`);
                                         }}
                                         style={{

@@ -37,45 +37,45 @@ const Navbar: FC = () => {
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)', // Subtle shadow for depth
       boxSizing: 'border-box'
     }}>
-      <div style={{ 
-        fontSize: '1.5rem', 
+      <div style={{
+        fontSize: '1.5rem',
         fontWeight: 'bold',
         letterSpacing: '0.5px'
       }}>
         Medical Portal
       </div>
       <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-        <Link to="/" style={{ 
-          color: 'white', 
+        <Link to="/" style={{
+          color: 'white',
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Home</Link>
-        <Link to="/about" style={{ 
-          color: 'white', 
+        <Link to="/about" style={{
+          color: 'white',
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>About</Link>
-        <Link to="/assessments" style={{ 
-          color: 'white', 
+        <Link to="/assessments" style={{
+          color: 'white',
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Assessments</Link>
-        <Link to="/articles" style={{ 
-          color: 'white', 
+        <Link to="/articles" style={{
+          color: 'white',
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Articles</Link>
-        <Link to="/courses" style={{ 
-          color: 'white', 
+        <Link to="/courses" style={{
+          color: 'white',
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Courses</Link>
-        <Link to="/appointments/book" style={{ 
-          color: 'white', 
+        <Link to="/appointments/book" style={{
+          color: 'white',
           textDecoration: 'none',
           transition: 'opacity 0.2s ease'
         }}>Appointment</Link>
-        
+
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {(user.roleName === 'ADMIN' || user.roleName === 'ROLE_ADMIN') && (
@@ -99,9 +99,19 @@ const Navbar: FC = () => {
                 Admin Dashboard
               </Link>
             )}
-            <span style={{ color: 'white' }}>
+            <span
+              style={{
+                color: 'white',
+                cursor: 'pointer',
+                transition: 'opacity 0.2s ease'
+              }}
+              onClick={() => navigate('/profile')}
+              onMouseOver={(e) => (e.currentTarget.style.opacity = '0.8')}
+              onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
+            >
               {user.firstName} {user.lastName}
             </span>
+
             <button
               onClick={handleLogout}
               style={{
