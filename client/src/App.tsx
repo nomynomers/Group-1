@@ -28,6 +28,9 @@ import ResultPage from './components/ResultPage.tsx';
 
 import BookAppointment from './components/BookAppointment'
 import MyAppointments from './components/MyAppointments'
+
+import ProfilePage from './components/ProfilePage'
+
 import './App.css'
 
 const AppContent = () => {
@@ -77,6 +80,7 @@ const AppContent = () => {
           <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
           <Route path="/appointments/book" element={<BookAppointment />} />
           <Route path="/appointments/my" element={<MyAppointments />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}

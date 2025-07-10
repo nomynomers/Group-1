@@ -46,7 +46,6 @@ public class AssessmentController {
         return service.getQ2ToQ7TemplateDTOs();
     }
 
-
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")

@@ -5,13 +5,11 @@ export default function AssistForm() {
   const [q1, setQ1] = useState(null);
   const [templates, setTemplates] = useState([]);
   const [selectedSubstances, setSelectedSubstances] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0); // 0 = Q1, >=1 = Q2→Q7
+  const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState([]);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-
-  // Load Q1
   useEffect(() => {
     fetch("http://localhost:8080/api/assessments/q1")
       .then(res => res.json())
@@ -29,9 +27,9 @@ export default function AssistForm() {
   const handleQ1Answer = (substance, isChecked) => {
     setSelectedSubstances(prev => {
       if (isChecked) {
-        return [...new Set([...prev, substance])]; // Add if not present
+        return [...new Set([...prev, substance])]; 
       } else {
-        return prev.filter(item => item !== substance); // Remove if unchecked
+        return prev.filter(item => item !== substance); 
       }
     });
   };
