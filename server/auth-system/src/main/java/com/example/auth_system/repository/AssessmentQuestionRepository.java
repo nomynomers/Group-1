@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AssessmentQuestionRepository extends JpaRepository<AssessmentQuestion, Integer> {
     List<AssessmentQuestion> findByAssessmentID(Integer assessmentID);
+    List<AssessmentQuestion> findByAssessmentIDAndIsInitialQuestionTrue(Integer assessmentID);
 }
