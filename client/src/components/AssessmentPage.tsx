@@ -17,6 +17,14 @@ const AssessmentPage: FC = () => {
     const navigate = useNavigate();
     const [assessments, setAssessments] = useState<Assessment[]>([]);
 
+    const handleNavigate = (id: number) => {
+        const path = id === 1
+            ? '/assessments/assist'
+            : `/assessments/${id}`;
+        navigate(path);
+    };
+
+
     useEffect(() => {
         window.scrollTo(0, 0);
 
@@ -58,7 +66,7 @@ const AssessmentPage: FC = () => {
                     {assessments.map((assessment, index) => (
                         <div
                             key={index}
-                            onClick={() => navigate(`/assessments/${assessment.assessmentID}`)}
+                            onClick={() => handleNavigate(assessment.assessmentID)}
                             style={{
                                 backgroundColor: 'white',
                                 borderRadius: '8px',
@@ -135,10 +143,7 @@ const AssessmentPage: FC = () => {
                                     justifyContent: 'center',
                                 }}>
                                     <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            navigate(`/assessments/${assessment.assessmentID}`);
-                                        }}
+                                        onClick={() => handleNavigate(assessment.assessmentID)}
                                         style={{
                                             padding: '0.5rem 1rem',
                                             backgroundColor: '#272b69',
