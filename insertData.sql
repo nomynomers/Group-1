@@ -71,6 +71,8 @@ VALUES
  3
 );
 
+------------------------------ASSESSMENTS----------------------------
+
 INSERT INTO Assessments (
     assessmentName,
     description,
@@ -96,4 +98,65 @@ INSERT INTO Assessments (
     'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1750138728/craftt_tq1f8d.jpg'
 );
 
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText])
+VALUES (1, 1, 1, 'During the PAST 12 MONTHS, on how many days did you drink more than a few sips of beer, wine, or any drink containing alcohol?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (1, 4, 1, '0', 0), (1, 5, 2, 'More than 0', 1);
+GO
 
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 2, 1, 'During the PAST 12 MONTHS, on how many days did you use any marijuana (weed, oil, or hash, by smoking, vaping, or in food) or  synthetic marijuana  (like  K2,   Spice ) or  vaping  THC oil?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (2, 4, 1, '0', 0), (2, 5, 2, 'More than 0', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 3, 1, 'During the PAST 12 MONTHS, on how many days did you use anything else to get high (like other illegal drugs, prescription or over-the-counter medications, and things that you sniff, huff, or vape )?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (3, 4, 1, '0', 0), (3, 5, 2, 'More than 0', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 4, 1, 'Have you ever ridden in a CAR driven by someone (including yourself) who was  high  or had been using alcohol or drugs?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (4, NULL, 1, 'No', 0), (4, NULL, 2, 'Yes', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 5, 0, 'Do you ever use alcohol or drugs to RELAX, feel better about yourself, or fit in?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (5, 6, 1, 'No', 0), (5, 6, 2, 'Yes', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 6, 0,  'Do you ever use alcohol or drugs while you are by yourself, or ALONE?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (6, 7, 1, 'No', 0), (6, 7, 2, 'Yes', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 7, 0, 'Do you ever FORGET things you did while using alcohol or drugs?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (7, 8, 1, 'No', 0), (7, 8, 2, 'Yes', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 8, 0, 'Do your FAMILY or FRIENDS ever tell you that you should cut down on your drinking or drug use? ');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (8, 9, 1, 'No', 0), (8, 9, 2, 'Yes', 1);
+GO
+
+INSERT INTO [AssessmentQuestions] ([assessmentID], [questionOrder], [isInitialQuestion], [questionText]) 
+VALUES (1, 9, 0, 'Have you ever gotten into TROUBLE while you were using alcohol or drugs?');
+GO
+INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
+VALUES (9, NULL, 1, 'No', 0), (9, NULL, 2, 'Yes', 1);
+GO

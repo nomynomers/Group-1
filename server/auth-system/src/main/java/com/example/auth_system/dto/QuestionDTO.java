@@ -6,4 +6,6 @@ public class QuestionDTO {
     public Integer questionID;
     public String questionText;
     public List<OptionDTO> options;
+    public Integer questionOrder;
+    public Boolean isInitialQuestion;
 }

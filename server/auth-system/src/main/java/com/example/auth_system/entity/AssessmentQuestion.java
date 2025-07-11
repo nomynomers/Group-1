@@ -24,5 +24,8 @@ public class AssessmentQuestion {
     @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
     private List<QuestionOption> options;
 
+    private int questionOrder;
+    private boolean isInitialQuestion;
+
     // getters/setters
 }
