@@ -51,11 +51,15 @@ public class AssessmentService {
             QuestionDTO dto = new QuestionDTO();
             dto.questionID = q.getQuestionID();
             dto.questionText = q.getQuestionText();
+            dto.questionOrder = q.getQuestionOrder();
+            dto.isInitialQuestion = q.isInitialQuestion();
             dto.options = q.getOptions() != null ? q.getOptions().stream().map(o -> {
                 OptionDTO opt = new OptionDTO();
                 opt.optionID = o.getOptionID();
-                opt.optionValue = o.getOptionValue();
+                opt.optionText = o.getOptionText();
                 opt.score = o.getScore();
+                opt.nextQuestionID = o.getNextQuestionID();
+                opt.optionOrder = o.getOptionOrder();
                 return opt;
             }).toList() : new ArrayList<>();
             return dto;
@@ -75,11 +79,15 @@ public class AssessmentService {
         QuestionDTO dto = new QuestionDTO();
         dto.questionID = q.getQuestionID();
         dto.questionText = q.getQuestionText();
+        dto.questionOrder = q.getQuestionOrder();
+        dto.isInitialQuestion = q.isInitialQuestion();
         dto.options = q.getOptions() != null ? q.getOptions().stream().map(o -> {
             OptionDTO opt = new OptionDTO();
             opt.optionID = o.getOptionID();
-            opt.optionValue = o.getOptionValue();
+            opt.optionText = o.getOptionText();
             opt.score = o.getScore();
+            opt.nextQuestionID = o.getNextQuestionID();
+            opt.optionOrder = o.getOptionOrder();
             return opt;
         }).toList() : new ArrayList<>();
         return dto;
@@ -187,7 +195,7 @@ public class AssessmentService {
 
                 return Map.<String, Object>of( 
                         "question", question,
-                        "answer", option != null ? option.getOptionValue() : "N/A",
+                        "answer", option != null ? option.getOptionText() : "N/A",
                         "score", option != null ? option.getScore() : 0
                 );
             }).collect(Collectors.toList());

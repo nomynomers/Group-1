@@ -15,11 +15,13 @@ public class QuestionOption {
 
     private Integer score;
 
-    private String optionValue;
+    private String optionText;
 
     @ManyToOne
     @JoinColumn(name = "questionID")
     private AssessmentQuestion question;
 
     private int nextQuestionID;
+
+    private Integer optionOrder;
 }

@@ -70,6 +70,8 @@ CREATE TABLE CourseModules (
 CREATE TABLE AssessmentQuestions (
   questionID INT IDENTITY(1,1) PRIMARY KEY,
   assessmentID INT,
+  questionOrder INT,
+  isInitialQuestion BIT,
   questionText VARCHAR(MAX),
   FOREIGN KEY (assessmentID) REFERENCES Assessments(assessmentID)
 );
@@ -126,7 +128,8 @@ CREATE TABLE Appointments (
 CREATE TABLE QuestionOptions (
   optionID INT IDENTITY(1,1) PRIMARY KEY,
   questionID INT,
-  optionValue VARCHAR(255),
+  optionOrder INT,
+  optionText VARCHAR(255),
   score INT,
   nextQuestionID INT,
   FOREIGN KEY (questionID) REFERENCES AssessmentQuestions(questionID)
@@ -163,4 +166,3 @@ CREATE TABLE ModuleCompletions (
   FOREIGN KEY (enrollmentID) REFERENCES Enrollments(enrollmentID),
   FOREIGN KEY (moduleID) REFERENCES CourseModules(moduleID)
 );
-
