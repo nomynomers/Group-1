@@ -216,5 +216,9 @@ public class AssessmentService {
 
     }
 
+    public List<QuestionDTO> getInitialQuestionsForAssessment(Integer assessmentID) {
+        List<AssessmentQuestion> questions = questionRepo.findByAssessmentIDAndIsInitialQuestionTrue(assessmentID);
+        return questions.stream().map(this::convertToDTO).toList();
+    }
 
 }

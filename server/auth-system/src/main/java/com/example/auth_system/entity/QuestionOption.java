@@ -21,7 +21,7 @@ public class QuestionOption {
     @JoinColumn(name = "questionID")
     private AssessmentQuestion question;
 
-    private int nextQuestionID;
+    private Integer nextQuestionID;
 
     private Integer optionOrder;
 }

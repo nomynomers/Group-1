@@ -84,5 +84,9 @@ public class AssessmentController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/{assessmentID}/initial-questions")
+    public List<QuestionDTO> getInitialQuestions(@PathVariable Integer assessmentID) {
+        return service.getInitialQuestionsForAssessment(assessmentID);
+    }
 
 }
