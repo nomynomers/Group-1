@@ -7,20 +7,29 @@ export default function AssistForm() {
   const [selectedSubstances, setSelectedSubstances] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const [error, setError] = useState("");
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8080/api/assessments/q1")
-      .then(res => res.json())
-      .then(setQ1);
+      .then(res => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then(setQ1)
+      .catch(() => setError("Failed to load assessment. Please try again."));
   }, []);
 
   // Load Q2–Q7 templates
   useEffect(() => {
     fetch("http://localhost:8080/api/assessments/q2to7")
-      .then(res => res.json())
-      .then(setTemplates);
+      .then(res => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then(setTemplates)
+      .catch(() => setError("Failed to load assessment. Please try again."));
   }, []);
 
   // Handle Q1 checkbox change
@@ -117,6 +126,7 @@ export default function AssistForm() {
   };
 
 
+  if (error) return <div style={{marginTop: '100px', color: 'red', textAlign: 'center'}}>{error}</div>;
   if (!q1 || templates.length === 0) return <p>Loading...</p>;
 
   if (currentStep === 0) {
