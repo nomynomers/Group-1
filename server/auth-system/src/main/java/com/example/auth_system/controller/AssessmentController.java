@@ -36,14 +36,14 @@ public class AssessmentController {
         return service.getAllAssessments();
     }
 
-    @GetMapping("/q1")
-    public QuestionDTO getQ1() {
-        return service.getQ1DTO();
+    @GetMapping("/{assessmentID}/q1")
+    public QuestionDTO getQ1(@PathVariable Integer assessmentID) {
+        return service.getQ1DTO(assessmentID);
     }
 
-    @GetMapping("/q2to7")
-    public List<QuestionDTO> getTemplates() {
-        return service.getQ2ToQ7TemplateDTOs();
+    @GetMapping("/{assessmentID}/q2to7")
+    public List<QuestionDTO> getQ2ToQ7Templates(@PathVariable Integer assessmentID) {
+        return service.getQ2ToQ7TemplateDTOs(assessmentID);
     }
 
     @SecurityRequirement(name = "bearerAuth")

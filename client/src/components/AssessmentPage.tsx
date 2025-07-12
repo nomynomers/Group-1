@@ -19,7 +19,7 @@ const AssessmentPage: FC = () => {
 
     const handleNavigate = (id: number) => {
         const path = id === 1
-            ? '/assessments/assist'
+            ? `/assessments/${id}/assist`
             : `/assessments/${id}`;
         navigate(path);
     };
