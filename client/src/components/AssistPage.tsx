@@ -82,7 +82,6 @@ export default function AssistForm() {
                 questionID: ans.questionID,
                 optionID: ans.optionID,
                 substance: ans.substance,
-                questionTemplate: ans.questionText.replace(ans.substance, "[SUBSTANCE]")
             }));
 
             const submission = {
