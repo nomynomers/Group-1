@@ -22,6 +22,4 @@ public class UserAssessmentResponse {
 
     private String substance;
 
-    @Column(columnDefinition = "text")
-    private String questionTemplate;
 }

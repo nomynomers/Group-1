@@ -143,7 +143,6 @@ public class AssessmentService {
                     r.setQuestionID(ans.questionID);
                     r.setOptionID(ans.optionID);
                     r.setSubstance(ans.substance);
-                    r.setQuestionTemplate(ans.questionTemplate);
                     return r;
                 })
                 .toList();
@@ -172,6 +171,14 @@ public class AssessmentService {
 
         List<UserAssessmentResponse> responses = userAssessmentResponseRepo.findByUserAssessment_UserAssessmentID(id);
 
+        Set<Integer> questionIds = responses.stream()
+                .map(UserAssessmentResponse::getQuestionID)
+                .collect(Collectors.toSet());
+
+        Map<Integer, AssessmentQuestion> questionMap = questionRepo.findAllById(questionIds).stream()
+                .collect(Collectors.toMap(AssessmentQuestion::getQuestionID, q -> q));
+
+
         Map<String, List<UserAssessmentResponse>> grouped = responses.stream()
                 .collect(Collectors.groupingBy(UserAssessmentResponse::getSubstance));
 
@@ -191,10 +198,14 @@ public class AssessmentService {
 
             List<Map<String, Object>> answers = subResponses.stream().map(r -> {
                 QuestionOption option = optionRepo.findById(r.getOptionID()).orElse(null);
-                String question = r.getQuestionTemplate().replace("[SUBSTANCE]", r.getSubstance());
+                AssessmentQuestion question = questionMap.get(r.getQuestionID());
 
-                return Map.<String, Object>of( 
-                        "question", question,
+                String questionText = question != null
+                        ? question.getQuestionText().replace("[SUBSTANCE]", r.getSubstance())
+                        : "Unknown question";
+
+                return Map.<String, Object>of(
+                        "question", questionText,
                         "answer", option != null ? option.getOptionText() : "N/A",
                         "score", option != null ? option.getScore() : 0
                 );
@@ -213,8 +224,8 @@ public class AssessmentService {
                 "assessmentId", ua.getUserAssessmentID(),
                 "results", substanceResults
         );
-
     }
+
 
     public List<QuestionDTO> getInitialQuestionsForAssessment(Integer assessmentID) {
         List<AssessmentQuestion> questions = questionRepo.findByAssessmentIDAndIsInitialQuestionTrue(assessmentID);

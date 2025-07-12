@@ -141,7 +141,6 @@ CREATE TABLE UserAssessmentResponses (
   questionID INT,
   optionID INT,
   substance NVARCHAR(100),
-  questionTemplate NVARCHAR(MAX),
   FOREIGN KEY (userAssessmentID) REFERENCES UserAssessments(userAssessmentID),
   FOREIGN KEY (optionID) REFERENCES QuestionOptions(optionID),
   FOREIGN KEY (questionID) REFERENCES AssessmentQuestions(questionID)
