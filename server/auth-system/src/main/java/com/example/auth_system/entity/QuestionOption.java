@@ -14,7 +14,7 @@ public class QuestionOption {
     private Integer optionID;
 
     private Integer score;
-
+    
     private String optionText;
 
     @ManyToOne
