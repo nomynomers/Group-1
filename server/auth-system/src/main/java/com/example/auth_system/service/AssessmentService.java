@@ -93,14 +93,19 @@ public class AssessmentService {
         return dto;
     }
 
-    public QuestionDTO getQ1DTO() {
-        return convertToDTO(questionRepo.findById(1002).orElseThrow());
+    public QuestionDTO getQ1DTO(int assessmentId) {
+        return convertToDTO(
+                questionRepo.findFirstByAssessmentIDAndIsInitialQuestionTrue(assessmentId)
+                        .orElseThrow(() -> new RuntimeException("Q1 not found"))
+        );
     }
 
-    public List<QuestionDTO> getQ2ToQ7TemplateDTOs() {
-        return questionRepo.findAllById(List.of(1003, 1004, 1005,1006, 1007, 1008))
+
+    public List<QuestionDTO> getQ2ToQ7TemplateDTOs(int assessmentId) {
+        return questionRepo.findByAssessmentIDAndIsInitialQuestionFalseOrderByQuestionOrder(assessmentId)
                 .stream().map(this::convertToDTO).toList();
     }
+
 
     public int saveAssessment(AssessmentSubmissionDTO dto, Integer userId) {
         // Group answers theo substance

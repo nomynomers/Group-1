@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function AssistForm() {
     const [q1, setQ1] = useState(null);
@@ -7,24 +7,24 @@ export default function AssistForm() {
     const [selectedSubstances, setSelectedSubstances] = useState([]);
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState([]);
+    const { assessmentID } = useParams();
 
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/assessments/q1")
+        fetch(`http://localhost:8080/api/assessments/${assessmentID}/q1`)
             .then(res => res.json())
             .then(setQ1);
-    }, []);
+    }, [assessmentID]);
 
-    // Load Q2–Q7 templates
     useEffect(() => {
-        fetch("http://localhost:8080/api/assessments/q2to7")
+        fetch(`http://localhost:8080/api/assessments/${assessmentID}/q2to7`)
             .then(res => res.json())
             .then(setTemplates);
-    }, []);
+    }, [assessmentID]);
 
-    // Handle Q1 checkbox change
+
     const handleQ1Answer = (substance, isChecked) => {
         setSelectedSubstances(prev => {
             if (isChecked) {
@@ -35,7 +35,6 @@ export default function AssistForm() {
         });
     };
 
-    // Proceed to Q2
     const handleQ1Submit = () => {
         if (selectedSubstances.length === 0) {
             alert("Please select at least one substance.");
@@ -44,7 +43,6 @@ export default function AssistForm() {
         setCurrentStep(1);
     };
 
-    // Handle answer selection for one substance in current question
     const handleAnswer = (substance, questionText, option, questionID) => {
         setAnswers(prev => {
             const filtered = prev.filter(
@@ -85,7 +83,7 @@ export default function AssistForm() {
             }));
 
             const submission = {
-                assessmentID: 1, // or dynamic if needed
+                assessmentID: 1,
                 answers: rawAnswers
             };
 
@@ -101,7 +99,7 @@ export default function AssistForm() {
                 .then(data => {
                     console.log("Submitted:", data);
                     localStorage.setItem("assessmentId", data.assessmentId);
-                    navigate("/assessments/result");
+                    navigate(`/assessments/${assessmentID}/result`);
                 })
 
 
@@ -123,7 +121,7 @@ export default function AssistForm() {
             <div style={{ marginTop: '100px', color: 'black' }}>
                 <h3>{q1.questionText}</h3>
                 {q1.options
-                    .filter(opt => opt.optionText.includes("Yes"))
+                    .filter(opt => opt.optionText.includes("Q1"))
                     .map(opt => {
                         const substance = opt.optionText.split(" - ")[0];
                         return (
@@ -144,8 +142,6 @@ export default function AssistForm() {
         );
     }
 
-    // -------------------------
-    // Q2–Q7 screen per template, showing all substances
     const currentTemplate = templates[currentStep - 1];
 
     return (
