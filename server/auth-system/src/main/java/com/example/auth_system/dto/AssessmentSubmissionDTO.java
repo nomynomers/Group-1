@@ -10,7 +10,6 @@ public class AssessmentSubmissionDTO {
         public Integer questionID;
         public Integer optionID;
         public String substance;
-        public String questionTemplate;
     }
 }
 

@@ -108,13 +108,15 @@ public class AssessmentService {
 
 
     public int saveAssessment(AssessmentSubmissionDTO dto, Integer userId) {
-        // Group answers theo substance
+
         Map<String, List<AssessmentSubmissionDTO.AnswerDTO>> answersBySubstance = dto.answers.stream()
                 .collect(Collectors.groupingBy(ans -> ans.substance));
+
 
         Map.Entry<String, List<AssessmentSubmissionDTO.AnswerDTO>> maxEntry = answersBySubstance.entrySet().stream()
                 .max(Comparator.comparingInt(entry ->
                         entry.getValue().stream()
+                                .filter(ans -> !(ans.substance.equalsIgnoreCase("Tobacco products")))
                                 .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
                                 .mapToInt(Integer::intValue)
                                 .sum()
@@ -122,7 +124,9 @@ public class AssessmentService {
                 .orElseThrow(() -> new RuntimeException("No substance answered"));
 
         String topSubstance = maxEntry.getKey();
+
         int topScore = maxEntry.getValue().stream()
+                .filter(ans -> !(ans.substance.equalsIgnoreCase("Tobacco products")  && ans.questionID == 1006))
                 .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
                 .mapToInt(Integer::intValue)
                 .sum();
@@ -157,6 +161,7 @@ public class AssessmentService {
     }
 
 
+
     private String determineRisk(int totalScore) {
         if (totalScore >= 27) return "High";
         else if (totalScore >= 11) return "Moderate";
@@ -183,7 +188,6 @@ public class AssessmentService {
         Map<Integer, AssessmentQuestion> questionMap = questionRepo.findAllById(questionIds).stream()
                 .collect(Collectors.toMap(AssessmentQuestion::getQuestionID, q -> q));
 
-
         Map<String, List<UserAssessmentResponse>> grouped = responses.stream()
                 .collect(Collectors.groupingBy(UserAssessmentResponse::getSubstance));
 
@@ -193,6 +197,7 @@ public class AssessmentService {
             List<UserAssessmentResponse> subResponses = grouped.get(substance);
 
             int subScore = subResponses.stream()
+                    .filter(r -> !(r.getSubstance().equalsIgnoreCase("Tobacco products") && r.getQuestionID() == 1006))
                     .map(r -> optionRepo.findById(r.getOptionID()).orElse(null))
                     .filter(Objects::nonNull)
                     .mapToInt(opt -> opt.getScore() != null ? opt.getScore() : 0)
@@ -230,6 +235,7 @@ public class AssessmentService {
                 "results", substanceResults
         );
     }
+
 
 
     public List<QuestionDTO> getInitialQuestionsForAssessment(Integer assessmentID) {
