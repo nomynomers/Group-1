@@ -114,22 +114,25 @@ public class AssessmentService {
 
 
         Map.Entry<String, List<AssessmentSubmissionDTO.AnswerDTO>> maxEntry = answersBySubstance.entrySet().stream()
-                .max(Comparator.comparingInt(entry ->
-                        entry.getValue().stream()
-                                .filter(ans -> !(ans.substance.equalsIgnoreCase("Tobacco products")))
-                                .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
-                                .mapToInt(Integer::intValue)
-                                .sum()
-                ))
+                .max(Comparator.comparingInt(entry -> {
+                    String substance = entry.getKey();
+                    return entry.getValue().stream()
+                            .filter(ans -> !(substance.equalsIgnoreCase("Tobacco products") && isQuestion5(ans.questionID)))
+                            .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
+                            .mapToInt(Integer::intValue)
+                            .sum();
+                }))
                 .orElseThrow(() -> new RuntimeException("No substance answered"));
+
 
         String topSubstance = maxEntry.getKey();
 
         int topScore = maxEntry.getValue().stream()
-                .filter(ans -> !(ans.substance.equalsIgnoreCase("Tobacco products")  && ans.questionID == 1006))
+                .filter(ans -> !(topSubstance.equalsIgnoreCase("Tobacco products") && isQuestion5(ans.questionID)))
                 .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
                 .mapToInt(Integer::intValue)
                 .sum();
+
 
         String topRisk = determineRisk(topScore);
         String topRecommendation = determineRecommendation(topScore);
@@ -160,6 +163,11 @@ public class AssessmentService {
         return ua.getUserAssessmentID();
     }
 
+    private boolean isQuestion5(int questionID) {
+        return questionRepo.findById(questionID)
+                .map(q -> q.getQuestionOrder() == 5)
+                .orElse(false);
+    }
 
 
     private String determineRisk(int totalScore) {
