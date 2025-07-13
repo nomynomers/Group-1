@@ -251,4 +251,19 @@ public class AssessmentService {
         return questions.stream().map(this::convertToDTO).toList();
     }
 
+    public Map<String, Object> getCrafftResultSummary(int userAssessmentId) {
+        UserAssessment ua = userAssessmentRepo.findById(userAssessmentId)
+                .orElseThrow(() -> new RuntimeException("Assessment not found"));
+        Assessment assessment = repository.findById(ua.getAssessmentID())
+                .orElse(null);
+        return Map.of(
+                "assessmentId", ua.getUserAssessmentID(),
+                "assessmentName", assessment != null ? assessment.getAssessmentName() : "",
+                "completionDate", ua.getCompletionDate(),
+                "riskLevel", ua.getRiskLevel(),
+                "totalScore", ua.getTotalScore(),
+                "recommendation", ua.getRecommendationProvided()
+        );
+    }
+
 }
