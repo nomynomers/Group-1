@@ -89,4 +89,9 @@ public class AssessmentController {
         return service.getInitialQuestionsForAssessment(assessmentID);
     }
 
+    @GetMapping("/crafft/result/{userAssessmentID}")
+    public ResponseEntity<?> getCrafftResultSummary(@PathVariable int userAssessmentID) {
+        return ResponseEntity.ok(service.getCrafftResultSummary(userAssessmentID));
+    }
+
 }

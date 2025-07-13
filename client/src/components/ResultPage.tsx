@@ -1,7 +1,25 @@
 import { useEffect, useState } from "react";
 
+interface Answer {
+  question: string;
+  answer: string;
+  score: number;
+}
+
+interface SubstanceResult {
+  substance: string;
+  totalScore: number;
+  riskLevel: string;
+  recommendation: string;
+  answers: Answer[];
+}
+
+interface AssessmentResult {
+  results: SubstanceResult[];
+}
+
 export default function ResultPage() {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<AssessmentResult | null>(null);
 
   useEffect(() => {
     const id = localStorage.getItem("assessmentId");
@@ -27,9 +45,6 @@ export default function ResultPage() {
         console.error("Error fetching result:", err);
       });
   }, []);
-
-
-
 
   if (!result) return <p>Loading...</p>;
 
