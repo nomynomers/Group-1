@@ -24,7 +24,6 @@ export default function AssistForm() {
             .then(setTemplates);
     }, [assessmentID]);
 
-
     const handleQ1Answer = (substance, isChecked) => {
         setSelectedSubstances(prev => {
             if (isChecked) {
@@ -59,14 +58,18 @@ export default function AssistForm() {
         });
     };
 
-
     const handleNextQuestion = () => {
         const currentTemplate = templates[currentStep - 1];
         const currentQuestionText = currentTemplate.questionText;
 
-        const hasAllAnswers = selectedSubstances.every(sub =>
-            answers.some(ans => ans.substance === sub && ans.questionText === currentQuestionText.replace("[SUBSTANCE]", sub))
-        );
+        const hasAllAnswers = selectedSubstances.every(sub => {
+            if (sub === "Tobacco products" && currentTemplate.questionOrder === 5) {
+                return true; // bỏ qua yêu cầu Q5 nếu là Tobacco
+            }
+            return answers.some(ans =>
+                ans.substance === sub && ans.questionText === currentQuestionText.replace("[SUBSTANCE]", sub)
+            );
+        });
 
         if (!hasAllAnswers) {
             alert("Please answer for all substances.");
@@ -101,9 +104,6 @@ export default function AssistForm() {
                     localStorage.setItem("assessmentId", data.assessmentId);
                     navigate(`/assessments/${assessmentID}/result`);
                 })
-
-
-
                 .catch(err => {
                     console.error("Submit failed", err);
                     alert("Something went wrong.");
@@ -116,6 +116,7 @@ export default function AssistForm() {
 
     if (!q1 || templates.length === 0) return <p>Loading...</p>;
 
+    // Show Q1 (Initial substance selection)
     if (currentStep === 0) {
         return (
             <div style={{ marginTop: '100px', color: 'black' }}>
@@ -136,22 +137,34 @@ export default function AssistForm() {
                             </div>
                         );
                     })}
-
                 <button onClick={handleQ1Submit}>Continue</button>
             </div>
         );
     }
 
+    // Skip rendering Q5 if substance is Tobacco
     const currentTemplate = templates[currentStep - 1];
+    const isQ5 = currentTemplate.questionOrder === 5;
+
+    // Nếu tất cả selected substances là Tobacco thì skip Q5 luôn
+    const isTobaccoOnly = selectedSubstances.every(s => s === "Tobacco products");
+    if (isQ5 && isTobaccoOnly) {
+        setTimeout(() => setCurrentStep(currentStep + 1), 0);
+        return null;
+    }
 
     return (
         <div style={{ marginTop: '100px', color: 'black' }}>
             <h3>{currentTemplate.questionText}</h3>
             {selectedSubstances.map(substance => {
+                if (currentTemplate.questionOrder === 5 && substance === "Tobacco products") {
+                    return null; // Bỏ qua Q5 với Tobacco
+                }
+
                 const questionText = currentTemplate.questionText.replace("[SUBSTANCE]", substance);
                 const selected = answers.find(ans => ans.substance === substance && ans.questionText === questionText);
                 return (
-                    <div key={substance} style={{ marginBottom: "10px" }}>
+                    <div key={substance + currentTemplate.questionID} style={{ marginBottom: "10px" }}>
                         <p><strong>{substance}</strong></p>
                         {currentTemplate.options.map(opt => (
                             <button
