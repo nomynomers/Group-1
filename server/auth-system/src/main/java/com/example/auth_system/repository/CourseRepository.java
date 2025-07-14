@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     List<Course> findTop3ByOrderByCreationDateDesc();
+    List<Course> findByTargetAudience(String targetAudience);
+    List<Course> findByCourseNameContainingIgnoreCase(String keyword);
+    List<Course> findByTargetAudienceAndCourseNameContainingIgnoreCase(String audience, String keyword);
 }

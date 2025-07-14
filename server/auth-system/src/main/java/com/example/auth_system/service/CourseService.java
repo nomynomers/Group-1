@@ -28,4 +28,28 @@ public class CourseService {
         return courseRepository.findTop3ByOrderByCreationDateDesc();
     }
 
+    public List<Course> getCoursesByAudience(String audience) {
+        if ("All Levels".equalsIgnoreCase(audience)) {
+            return getAllCourses();
+        }
+        return courseRepository.findByTargetAudience(audience);
+    }
+
+    public List<Course> filterCourses(String audience, String keyword) {
+        if ((audience == null || audience.equalsIgnoreCase("All Levels")) && (keyword == null || keyword.isEmpty())) {
+            return courseRepository.findAll();
+        }
+
+        if ((audience == null || audience.equalsIgnoreCase("All Levels"))) {
+            return courseRepository.findByCourseNameContainingIgnoreCase(keyword);
+        }
+
+        if (keyword == null || keyword.isEmpty()) {
+            return courseRepository.findByTargetAudience(audience);
+        }
+
+        return courseRepository.findByTargetAudienceAndCourseNameContainingIgnoreCase(audience, keyword);
+    }
+
+
 }

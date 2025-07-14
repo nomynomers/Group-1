@@ -34,4 +34,13 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getTop3Courses());
     }
 
+    @GetMapping("/filter")
+    public List<Course> filterCourses(
+            @RequestParam(required = false) String audience,
+            @RequestParam(required = false) String keyword
+    ) {
+        return courseService.filterCourses(audience, keyword);
+    }
+
+
 }
