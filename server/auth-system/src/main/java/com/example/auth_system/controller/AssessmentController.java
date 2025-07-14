@@ -46,6 +46,11 @@ public class AssessmentController {
         return service.getQ2ToQ7TemplateDTOs(assessmentID);
     }
 
+    @GetMapping("/q8")
+    public QuestionDTO getQ8() {
+        return service.getQ8Question();
+    }
+
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")

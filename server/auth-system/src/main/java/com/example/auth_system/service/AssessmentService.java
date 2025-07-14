@@ -103,8 +103,19 @@ public class AssessmentService {
 
     public List<QuestionDTO> getQ2ToQ7TemplateDTOs(int assessmentId) {
         return questionRepo.findByAssessmentIDAndIsInitialQuestionFalseOrderByQuestionOrder(assessmentId)
-                .stream().map(this::convertToDTO).toList();
+                .stream()
+                .filter(q -> q.getQuestionOrder() >= 2 && q.getQuestionOrder() <= 7)
+                .map(this::convertToDTO)
+                .toList();
     }
+
+    public QuestionDTO getQ8Question() {
+        AssessmentQuestion q = questionRepo.findById(2002)
+                .orElseThrow(() -> new RuntimeException("Q8 not found"));
+
+        return convertToDTO(q);
+    }
+
 
 
     public int saveAssessment(AssessmentSubmissionDTO dto, Integer userId) {
