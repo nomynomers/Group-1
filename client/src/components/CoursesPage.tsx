@@ -17,25 +17,37 @@ const CoursesPage: FC = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedLevel, setSelectedLevel] = useState<string>('All Levels');
+  const [searchTerm, setSearchTerm] = useState('');
 
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    axios.get<Course[]>('http://localhost:8080/api/courses')
-      .then(res => {
+
+    const fetchCourses = async () => {
+      try {
+        const baseUrl = 'http://localhost:8080/api/courses/filter';
+        const params = new URLSearchParams();
+
+        if (selectedLevel !== 'All Levels') {
+          params.append('audience', selectedLevel);
+        }
+        if (searchTerm.trim()) {
+          params.append('keyword', searchTerm.trim());
+        }
+
+        const res = await axios.get<Course[]>(`${baseUrl}?${params.toString()}`);
         setCourses(res.data);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Error fetching courses:", err);
-      });
-  }, []);
+      }
+    };
+
+    fetchCourses();
+  }, [selectedLevel, searchTerm]);
+
+
 
   const levels = ["All Levels", "Youth", "Adults", "Teachers", "Parents"];
-
-  const filteredCourses = selectedLevel === 'All Levels'
-  ? courses
-  : courses.filter(course => course.targetAudience === selectedLevel);
 
   return (
     <div style={{
@@ -57,6 +69,25 @@ const CoursesPage: FC = () => {
         }}>
           Medical Courses
         </h1>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <input
+            type="text"
+            placeholder="Search courses..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              padding: '0.5rem 1rem',
+              fontSize: '1rem',
+              width: '100%',
+              maxWidth: '400px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              backgroundColor: 'white',
+              color: '#272b69'
+            }}
+          />
+        </div>
+
 
         <div style={{
           display: 'flex',
@@ -112,27 +143,27 @@ const CoursesPage: FC = () => {
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
           gap: '2rem'
         }}>
-          {filteredCourses.map((course, index) => (
-            <div 
-            key={index} 
-            onClick={() => navigate(`/courses/${course.courseID}`)}
-            style={{
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s ease',
-              cursor: 'pointer',
-              width: '370px'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={course.imageCover} 
+          {courses.map((course, index) => (
+            <div
+              key={index}
+              onClick={() => navigate(`/courses/${course.courseID}`)}
+              style={{
+                backgroundColor: 'white',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                transition: 'transform 0.2s ease',
+                cursor: 'pointer',
+                width: '370px'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}>
+              <img
+                src={course.imageCover}
                 alt={course.courseName}
                 style={{
                   width: '100%',
