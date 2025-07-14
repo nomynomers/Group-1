@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function AssistForm() {
     const [q1, setQ1] = useState(null);
+    const [q8, setQ8] = useState(null);
+    const [q8Answer, setQ8Answer] = useState(null);
+
     const [templates, setTemplates] = useState([]);
     const [selectedSubstances, setSelectedSubstances] = useState([]);
     const [currentStep, setCurrentStep] = useState(0);
@@ -16,12 +19,14 @@ export default function AssistForm() {
         fetch(`http://localhost:8080/api/assessments/${assessmentID}/q1`)
             .then(res => res.json())
             .then(setQ1);
-    }, [assessmentID]);
 
-    useEffect(() => {
         fetch(`http://localhost:8080/api/assessments/${assessmentID}/q2to7`)
             .then(res => res.json())
             .then(setTemplates);
+
+        fetch(`http://localhost:8080/api/assessments/q8`)
+            .then(res => res.json())
+            .then(setQ8);
     }, [assessmentID]);
 
     const handleQ1Answer = (substance, isChecked) => {
@@ -52,7 +57,7 @@ export default function AssistForm() {
                 questionText,
                 answer: option.optionText,
                 score: option.score,
-                questionID: questionID,
+                questionID,
                 optionID: option.optionID
             }];
         });
@@ -64,7 +69,7 @@ export default function AssistForm() {
 
         const hasAllAnswers = selectedSubstances.every(sub => {
             if (sub === "Tobacco products" && currentTemplate.questionOrder === 5) {
-                return true; // bỏ qua yêu cầu Q5 nếu là Tobacco
+                return true;
             }
             return answers.some(ans =>
                 ans.substance === sub && ans.questionText === currentQuestionText.replace("[SUBSTANCE]", sub)
@@ -77,77 +82,110 @@ export default function AssistForm() {
         }
 
         if (currentStep === templates.length) {
-            alert("Assessment complete!");
+            setCurrentStep(currentStep + 1); // move to Q8
+            return;
+        }
 
-            const rawAnswers = answers.map(ans => ({
+        setCurrentStep(currentStep + 1);
+    };
+
+    const handleSubmitAssessment = () => {
+        const rawAnswers = [
+            ...answers.map(ans => ({
                 questionID: ans.questionID,
                 optionID: ans.optionID,
                 substance: ans.substance,
-            }));
+            })),
+            ...(q8Answer ? [q8Answer] : [])
+        ];
 
-            const submission = {
-                assessmentID: 1,
-                answers: rawAnswers
-            };
+        const submission = {
+            assessmentID: Number(assessmentID),
+            answers: rawAnswers
+        };
 
-            fetch("http://localhost:8080/api/assessments/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(submission)
+        fetch("http://localhost:8080/api/assessments/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(submission)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Submitted:", data);
+                localStorage.setItem("assessmentId", data.assessmentId);
+                navigate(`/assessments/${assessmentID}/result`);
             })
-                .then(res => res.json())
-                .then(data => {
-                    console.log("Submitted:", data);
-                    localStorage.setItem("assessmentId", data.assessmentId);
-                    navigate(`/assessments/${assessmentID}/result`);
-                })
-                .catch(err => {
-                    console.error("Submit failed", err);
-                    alert("Something went wrong.");
-                });
-
-        } else {
-            setCurrentStep(currentStep + 1);
-        }
+            .catch(err => {
+                console.error("Submit failed", err);
+                alert("Something went wrong.");
+            });
     };
 
-    if (!q1 || templates.length === 0) return <p>Loading...</p>;
+    if (!q1 || templates.length === 0 || !q8) return <p>Loading...</p>;
 
-    // Show Q1 (Initial substance selection)
     if (currentStep === 0) {
         return (
             <div style={{ marginTop: '100px', color: 'black' }}>
                 <h3>{q1.questionText}</h3>
-                {q1.options
-                    .filter(opt => opt.optionText.includes("Q1"))
-                    .map(opt => {
-                        const substance = opt.optionText.split(" - ")[0];
-                        return (
-                            <div key={opt.optionID} style={{ display: 'flex', marginLeft: '33vw' }}>
-                                <label>
-                                    <input
-                                        type="checkbox"
-                                        onChange={e => handleQ1Answer(substance, e.target.checked)}
-                                    />
-                                    {substance}
-                                </label>
-                            </div>
-                        );
-                    })}
+                {q1.options.filter(opt => opt.optionText.includes("Q1")).map(opt => {
+                    const substance = opt.optionText.split(" - ")[0];
+                    return (
+                        <div key={opt.optionID} style={{ display: 'flex', marginLeft: '33vw' }}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    onChange={e => handleQ1Answer(substance, e.target.checked)}
+                                />
+                                {substance}
+                            </label>
+                        </div>
+                    );
+                })}
                 <button onClick={handleQ1Submit}>Continue</button>
             </div>
         );
     }
 
-    // Skip rendering Q5 if substance is Tobacco
+    if (currentStep === templates.length + 1) {
+        return (
+            <div style={{ marginTop: "100px", color: "black" }}>
+                <h3>{q8.questionText}</h3>
+                <div style={{ marginBottom: "20px" }}>
+                    {q8.options.map(opt => (
+                        <button
+                            key={opt.optionID}
+                            style={{
+                                marginRight: "10px",
+                                backgroundColor: q8Answer?.optionID === opt.optionID ? "#444" : "#eee",
+                                color: q8Answer?.optionID === opt.optionID ? "white" : "black",
+                                padding: "5px 10px",
+                                borderRadius: "8px",
+                                border: "1px solid #ccc",
+                                cursor: "pointer"
+                            }}
+                            onClick={() => setQ8Answer({
+                                questionID: q8.questionID,
+                                optionID: opt.optionID,
+                                substance: "Injection Drug Use"
+                            })}
+                        >
+                            {opt.optionText}
+                        </button>
+                    ))}
+                </div>
+                <button onClick={handleSubmitAssessment}>Finish</button>
+            </div>
+        );
+    }
+
+
     const currentTemplate = templates[currentStep - 1];
     const isQ5 = currentTemplate.questionOrder === 5;
-
-    // Nếu tất cả selected substances là Tobacco thì skip Q5 luôn
     const isTobaccoOnly = selectedSubstances.every(s => s === "Tobacco products");
+
     if (isQ5 && isTobaccoOnly) {
         setTimeout(() => setCurrentStep(currentStep + 1), 0);
         return null;
@@ -157,12 +195,11 @@ export default function AssistForm() {
         <div style={{ marginTop: '100px', color: 'black' }}>
             <h3>{currentTemplate.questionText}</h3>
             {selectedSubstances.map(substance => {
-                if (currentTemplate.questionOrder === 5 && substance === "Tobacco products") {
-                    return null; // Bỏ qua Q5 với Tobacco
-                }
+                if (isQ5 && substance === "Tobacco products") return null;
 
                 const questionText = currentTemplate.questionText.replace("[SUBSTANCE]", substance);
                 const selected = answers.find(ans => ans.substance === substance && ans.questionText === questionText);
+
                 return (
                     <div key={substance + currentTemplate.questionID} style={{ marginBottom: "10px" }}>
                         <p><strong>{substance}</strong></p>
