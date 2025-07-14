@@ -1,4 +1,5 @@
 import React from 'react';
+import Sidebar from './Sidebar';
 
 const styles = {
   container: {
@@ -84,31 +85,7 @@ const ProfilePage = () => {
   return (
     <div style={styles.container}>
       {/* Sidebar */}
-
-      <aside style={styles.sidebar}>
-        <div style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
-          <img src="https://i.pravatar.cc/80?img=12" style={{ borderRadius: '9999px', width: '4rem', height: '4rem' }} />
-          <h1 style={{ fontWeight: 'bold', fontSize: '0.875rem', marginTop: '1rem' }}>DRUG PREVENT</h1>
-        </div>
-        <nav style={{ width: '100%', paddingLeft: '1.5rem' }}>
-          <a href="#" style={{ ...styles.navLink, ...styles.activeLink }}>
-            <span className="material-icons">person</span>
-            <span>Profile</span>
-          </a>
-          <a href="#" style={styles.navLink}>
-            <span className="material-icons">school</span>
-            <span>Courses</span>
-          </a>
-          <a href="#" style={styles.navLink}>
-            <span className="material-icons">event</span>
-            <span>Appointment</span>
-          </a>
-          <a href="#" style={styles.navLink}>
-            <span className="material-icons">settings</span>
-            <span>Settings</span>
-          </a>
-        </nav>
-      </aside>
+      <Sidebar /> 
 
       {/* Main Content */}
       <main style={styles.main}>

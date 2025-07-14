@@ -45,6 +45,7 @@ const Login: FC = () => {
         const data: LoginResponse = await response.json();
         console.log('Login response:', data);
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userID", data.id);
         setUser({
           id: data.id,
           email: data.email,
