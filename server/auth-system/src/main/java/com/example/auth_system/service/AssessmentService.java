@@ -145,8 +145,9 @@ public class AssessmentService {
                 .sum();
 
 
-        String topRisk = determineRisk(topScore);
-        String topRecommendation = determineRecommendation(topScore);
+        String topRisk = determineRisk(topSubstance, topScore);
+        String topRecommendation = determineRecommendation(topSubstance, topScore);
+
 
         UserAssessment ua = new UserAssessment();
         ua.setUserID(userId);
@@ -181,17 +182,36 @@ public class AssessmentService {
     }
 
 
-    private String determineRisk(int totalScore) {
-        if (totalScore >= 27) return "High";
-        else if (totalScore >= 11) return "Moderate";
-        else return "Low";
+    private String determineRisk(String substance, int score) {
+        if (score >= 27) {
+            return "High";
+        }
+
+        if ("Alcoholic beverages".equalsIgnoreCase(substance)) {
+            return score >= 11 ? "Moderate" : "Low";
+        }
+
+        return score >= 4 ? "Moderate" : "Low";
     }
 
-    private String determineRecommendation(int score) {
-        if (score >= 27) return "Refer to specialist immediately";
-        else if (score >= 4) return "Provide brief intervention";
-        else return "No intervention needed";
+
+    private String determineRecommendation(String substance, int score) {
+        if (score >= 27) {
+            return "Please make an appointment with an expert via the appointment link.";
+        }
+
+        if ("Alcoholic beverages".equals(substance)) {
+            if (score >= 11) return "Please join the recommended courses at the following link.";
+            else return "No intervention needed";
+        }
+
+        if (score >= 4) {
+            return "Please join the recommended courses at the following link.";
+        }
+
+        return "No intervention needed";
     }
+
 
 
     public Map<String, Object> getResultByAssessmentId(int id) {
@@ -222,8 +242,9 @@ public class AssessmentService {
                     .mapToInt(opt -> opt.getScore() != null ? opt.getScore() : 0)
                     .sum();
 
-            String recommendation = determineRecommendation(subScore);
-            String riskLevel = determineRisk(subScore);
+            String recommendation = determineRecommendation(substance, subScore);
+
+            String riskLevel = determineRisk(substance, subScore);
 
             List<Map<String, Object>> answers = subResponses.stream().map(r -> {
                 QuestionOption option = optionRepo.findById(r.getOptionID()).orElse(null);

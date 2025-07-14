@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface Answer {
   question: string;
@@ -82,6 +83,17 @@ export default function ResultPage() {
         </p>
         <p><strong>Risk Level:</strong> {maxScoredSubstance.riskLevel}</p>
         <p><strong>Recommendation:</strong> {maxScoredSubstance.recommendation}</p>
+                {maxScoredSubstance.riskLevel === "Moderate" && (
+          <Link to="/courses" style={{ color: "blue", textDecoration: "underline" }}>
+            → View recommended online course
+          </Link>
+        )}
+
+        {maxScoredSubstance.riskLevel === "High" && (
+          <Link to="/appointments/book" style={{ color: "red", textDecoration: "underline" }}>
+            → Book a specialist appointment
+          </Link>
+        )}
       </ul>
     </div>
   );
