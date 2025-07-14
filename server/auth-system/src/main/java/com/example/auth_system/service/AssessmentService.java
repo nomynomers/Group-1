@@ -197,16 +197,16 @@ public class AssessmentService {
 
     private String determineRecommendation(String substance, int score) {
         if (score >= 27) {
-            return "Please make an appointment with an expert via the appointment link.";
+            return "Please book an appointment with an expert.";
         }
 
         if ("Alcoholic beverages".equals(substance)) {
-            if (score >= 11) return "Please join the recommended courses at the following link.";
+            if (score >= 11) return "Please join our recommended courses.";
             else return "No intervention needed";
         }
 
         if (score >= 4) {
-            return "Please join the recommended courses at the following link.";
+            return "Please join our recommended courses.";
         }
 
         return "No intervention needed";

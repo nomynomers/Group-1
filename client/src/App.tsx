@@ -25,12 +25,14 @@ import UpdateCourse from './components/UpdateCourse.tsx'
 import AssessmentPage from './components/AssessmentPage'
 import AssistPage from './components/AssistPage'
 import QuestionPage from './components/QuestionPage'
-import ResultPage from './components/ResultPage.tsx';
+import ResultPage from './components/ResultPage.tsx'
 
 import BookAppointment from './components/BookAppointment'
 import MyAppointments from './components/MyAppointments'
 
+import Sidebar from './components/Sidebar'
 import ProfilePage from './components/ProfilePage'
+import UserAssessment from './components/UserAssessment'
 
 import './App.css'
 
@@ -82,7 +84,8 @@ const AppContent = () => {
           <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
           <Route path="/appointments/book" element={<BookAppointment />} />
           <Route path="/appointments/my" element={<MyAppointments />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/member/profile" element={<ProfilePage />} />
+          <Route path="/member/assessment" element={<UserAssessment />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}

@@ -87,7 +87,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/courses", "/api/courses/**", "/api/assessments",
                                 "/api/assessments/**", "api/evaluations/**", "api/consultants/user/**").permitAll()
                         .requestMatchers("/api/admin/**", "/api/modules/create", "/api/assessments/create").hasRole("ADMIN")
-                        .requestMatchers("/api/appointments/**").hasAnyRole("USER", "ADMIN", "CONSULTANT")
+                        .requestMatchers("/api/appointments/**", "/api/user-assessments/**").hasAnyRole("USER", "ADMIN", "CONSULTANT")
                         .anyRequest().authenticated()
                 );
 

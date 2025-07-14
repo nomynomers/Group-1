@@ -105,7 +105,7 @@ const Navbar: FC = () => {
                 cursor: 'pointer',
                 transition: 'opacity 0.2s ease'
               }}
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/member/profile')}
               onMouseOver={(e) => (e.currentTarget.style.opacity = '0.8')}
               onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
             >
