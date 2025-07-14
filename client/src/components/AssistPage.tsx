@@ -81,13 +81,32 @@ export default function AssistForm() {
             return;
         }
 
+        if (currentStep === 1) {
+            const currentQuestionTextWithSub = (sub: string) =>
+                currentTemplate.questionText.replace("[SUBSTANCE]", sub);
+
+            const allScoreZero = selectedSubstances.every(sub => {
+                const answer = answers.find(
+                    ans =>
+                        ans.substance === sub &&
+                        ans.questionText === currentQuestionTextWithSub(sub)
+                );
+                return answer?.score === 0;
+            });
+
+            if (allScoreZero) {
+                setCurrentStep(5); 
+                return;
+            }
+        }
         if (currentStep === templates.length) {
-            setCurrentStep(currentStep + 1); // move to Q8
+            setCurrentStep(currentStep + 1);
             return;
         }
 
         setCurrentStep(currentStep + 1);
     };
+
 
     const handleSubmitAssessment = () => {
         const rawAnswers = [
