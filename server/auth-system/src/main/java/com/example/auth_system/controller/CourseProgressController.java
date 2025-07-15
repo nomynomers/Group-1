@@ -30,10 +30,15 @@ public class CourseProgressController {
         progress.setEnrollId(dto.getEnrollId());
         progress.setModuleID(dto.getModuleId());
         progress.setCompletionStatus(true);
-
         repo.save(progress);
+
+        Integer courseId = progressService.getCourseIdByModuleId(dto.getModuleId());
+
+        progressService.updateProgressPercentage(dto.getEnrollId(), courseId);
+
         return ResponseEntity.ok("Marked as completed");
     }
+
 
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> getCompletionStatus(

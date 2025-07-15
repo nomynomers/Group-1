@@ -52,7 +52,7 @@ const Sidebar: React.FC = () => {
           <span className="material-icons">person</span>
           <span>Profile</span>
         </Link>
-        <Link to="/member/courses" style={styles.navLink}>
+        <Link to="/member/courses" style={{ ...styles.navLink, ...(isActive('/member/courses') && styles.activeLink) }}>
           <span className="material-icons">school</span>
           <span>Courses</span>
         </Link>

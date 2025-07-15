@@ -1,6 +1,7 @@
 package com.example.auth_system.controller;
 
 import com.example.auth_system.dto.EnrollmentRequest;
+import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/enroll")
@@ -37,5 +40,14 @@ public class EnrollmentController {
         boolean enrolled = enrollmentService.isUserEnrolled(userDetails.getUsername(), courseID);
         return ResponseEntity.ok(enrolled);
     }
+
+    // Controller
+    @GetMapping("/user")
+    public ResponseEntity<List<Course>> getUserEnrolledCourses(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        List<Course> courses = enrollmentService.getCoursesByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(courses);
+    }
+
 
 }

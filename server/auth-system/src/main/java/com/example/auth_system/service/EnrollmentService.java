@@ -1,6 +1,7 @@
 package com.example.auth_system.service;
 
 import com.example.auth_system.dto.EnrollmentRequest;
+import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.Enrollment;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.UserRepository;
@@ -10,9 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,4 +56,12 @@ public class EnrollmentService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return enrollmentRepository.existsByUserIDAndCourseID(user.getUserId(), courseID);
     }
+
+    public List<Course> getCoursesByUsername(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return enrollmentRepository.findCoursesByUserID(user.getUserId());
+    }
+
+
 }

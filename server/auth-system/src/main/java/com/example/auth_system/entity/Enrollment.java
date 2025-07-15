@@ -21,4 +21,8 @@ public class Enrollment {
     private int courseID;
 
     private LocalDateTime enrolledAt;
+
+    private int progressPercentage;
+
+    private LocalDateTime completeDate;
 }
