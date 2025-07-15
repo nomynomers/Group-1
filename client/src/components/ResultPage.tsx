@@ -19,18 +19,25 @@ interface AssessmentResult {
   results: SubstanceResult[];
 }
 
+interface AssessmentSummary {
+  assessmentId: number;
+  assessmentName: string;
+  completionDate: string;
+  riskLevel: string;
+  totalScore: number;
+  recommendation: string;
+}
+
 export default function ResultPage() {
-  const [result, setResult] = useState<AssessmentResult | null>(null);
+  const [summary, setSummary] = useState<AssessmentSummary | null>(null);
 
   useEffect(() => {
-    const id = localStorage.getItem("assessmentId");
-
+    const id = localStorage.getItem("userAssessmentId");
     if (!id) {
-      console.warn("No assessmentId in localStorage");
+      console.warn("No userAssessmentId in localStorage");
       return;
     }
-
-    fetch(`http://localhost:8080/api/assessments/result/${id}`, {
+    fetch(`http://localhost:8080/api/assessments/crafft/result/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -40,61 +47,63 @@ export default function ResultPage() {
         return res.json();
       })
       .then(data => {
-        setResult(data);
+        setSummary(data);
       })
       .catch(err => {
         console.error("Error fetching result:", err);
       });
   }, []);
 
-  if (!result) return <p>Loading...</p>;
-
-  const maxScoredSubstance = result.results.reduce((prev, current) =>
-    (current.totalScore > prev.totalScore) ? current : prev
-  );
+  if (!summary) return <p>Loading...</p>;
 
   return (
-    <div style={{ marginTop: "80px", color: "black" }}>
-      <h2>Assessment Completed</h2>
-
-      <h3 style={{ marginTop: "40px" }}>Your Responses</h3>
-      <ul style={{textAlign: 'left'}}>
-        {result.results.map((res, index) => (
-          <div key={index} style={{ marginBottom: "30px" }}>
-            <h3>Substance: {res.substance}</h3>
-            <p><strong>Total Score:</strong> {res.totalScore}</p>
-            <ul>
-              {res.answers.map((a, i) => (
-                <li key={i}>
-                  <p><strong>Q:</strong> {a.question}</p>
-                  <p><strong>Answer:</strong> {a.answer}</p>
-                  <p><strong>Score:</strong> {a.score}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-
-        <hr />
-        <h3>Recommendation</h3>
-        <p>
-          Based on your highest scoring substance:
-          <strong> {maxScoredSubstance.substance}</strong>
-        </p>
-        <p><strong>Risk Level:</strong> {maxScoredSubstance.riskLevel}</p>
-        <p><strong>Recommendation:</strong> {maxScoredSubstance.recommendation}</p>
-                {maxScoredSubstance.riskLevel === "Moderate" && (
-          <Link to="/courses" style={{ color: "blue", textDecoration: "underline" }}>
+    <div style={{ marginTop: "80px", color: "black", display: 'flex', justifyContent: 'center' }}>
+      <div style={{
+        background: '#fff',
+        borderRadius: 12,
+        boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+        padding: '2.5rem 2rem',
+        maxWidth: 420,
+        width: '100%',
+        textAlign: 'center',
+        border: '1px solid #e0e0e0'
+      }}>
+        <h2 style={{ color: '#272b69', marginBottom: '1.5rem' }}>Assessment Result</h2>
+        <h3 style={{ marginBottom: '0.5rem' }}>{summary.assessmentName}</h3>
+        <p style={{ color: '#888', marginBottom: '1.5rem' }}>Completed on: {new Date(summary.completionDate).toLocaleString()}</p>
+        <div style={{
+          background: summary.riskLevel === 'High' ? '#ffeaea' : summary.riskLevel === 'Moderate' ? '#fffbe6' : '#eaffea',
+          color: summary.riskLevel === 'High' ? '#d32f2f' : summary.riskLevel === 'Moderate' ? '#bfa100' : '#388e3c',
+          borderRadius: 8,
+          padding: '1rem',
+          marginBottom: '1.5rem',
+          fontWeight: 600,
+          fontSize: '1.2rem',
+        }}>
+          Risk Level: {summary.riskLevel}
+        </div>
+        <p style={{ fontSize: '1.1rem', marginBottom: '1.2rem' }}><strong>Total Score:</strong> {summary.totalScore}</p>
+        <div style={{
+          background: '#f0f1ff',
+          borderRadius: 8,
+          padding: '1.2rem',
+          marginBottom: '1.5rem',
+          color: '#272b69',
+          fontWeight: 500
+        }}>
+          {summary.recommendation}
+        </div>
+        {summary.riskLevel === "Moderate" && (
+          <Link to="/courses" style={{ color: "#272b69", textDecoration: "underline", fontWeight: 600 }}>
             → View recommended online course
           </Link>
         )}
-
-        {maxScoredSubstance.riskLevel === "High" && (
-          <Link to="/appointments/book" style={{ color: "red", textDecoration: "underline" }}>
+        {summary.riskLevel === "High" && (
+          <Link to="/appointments/book" style={{ color: "#d32f2f", textDecoration: "underline", fontWeight: 600 }}>
             → Book a specialist appointment
           </Link>
         )}
-      </ul>
+      </div>
     </div>
   );
 }

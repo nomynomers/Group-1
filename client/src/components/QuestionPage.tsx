@@ -30,7 +30,11 @@ export default function InitialQuestionsPage() {
       setLoading(false);
       return;
     }
-    fetch(`http://localhost:8080/api/assessments/${assessmentID}/questions`)
+    fetch(`http://localhost:8080/api/assessments/${assessmentID}/questions`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
       .then(res => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
@@ -63,10 +67,42 @@ export default function InitialQuestionsPage() {
 
   const allAnswered = displayedQuestions.length > 0 && displayedQuestions.every(q => selectedOptions[q.questionID]);
 
+  const handleSubmit = () => {
+    if (!assessmentID) return;
+    // Build answers array for backend (CRAFFT: no substance field)
+    const answers = displayedQuestions.map(q => ({
+      questionID: q.questionID,
+      optionID: selectedOptions[q.questionID]
+    }));
+    fetch("http://localhost:8080/api/assessments/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        assessmentID: Number(assessmentID),
+        answers
+      })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("API error: " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        localStorage.setItem("userAssessmentId", data.userAssessmentId);
+        navigate(`/assessments/${assessmentID}/result`);
+      })
+      .catch(err => {
+        alert("Failed to submit assessment. Please try again.");
+        console.error("Submit error:", err);
+      });
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <div style={{marginTop: '100px', color: 'red', textAlign: 'center'}}>{error}</div>;
 
-  return (
+    return (
     <div style={{ marginTop: '100px', color: 'black', maxWidth: 600, marginLeft: 'auto', marginRight: 'auto' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Assessment Questions</h2>
       {displayedQuestions.length === 0 ? (
@@ -97,7 +133,7 @@ export default function InitialQuestionsPage() {
                     position: 'relative',
                     transition: 'background 0.2s, border 0.2s'
                   }}>
-                    <input
+                  <input
                       type="radio"
                       name={`question-${q.questionID}`}
                       value={opt.optionID}
@@ -111,19 +147,19 @@ export default function InitialQuestionsPage() {
                         pointerEvents: 'none',
                         margin: 0
                       }}
-                    />
+                  />
                     {opt.optionText}
-                  </label>
+                </label>
                 ))}
               </div>
             ) : (
               <p>No options available.</p>
             )}
-          </div>
+      </div>
         ))
       )}
-      <button
-        style={{
+              <button
+                style={{
           width: '100%',
           padding: '0.75rem',
           background: allAnswered ? '#272b69' : '#aaa',
@@ -136,12 +172,12 @@ export default function InitialQuestionsPage() {
           marginTop: '1rem',
           marginBottom: '2rem',
           transition: 'background 0.2s'
-        }}
+                }}
         disabled={!allAnswered}
-        onClick={() => alert('Submit logic goes here!')}
-      >
+        onClick={handleSubmit}
+              >
         Submit
-      </button>
+              </button>
     </div>
   );
 }

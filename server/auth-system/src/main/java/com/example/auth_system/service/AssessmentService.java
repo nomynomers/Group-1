@@ -119,58 +119,62 @@ public class AssessmentService {
 
 
     public int saveAssessment(AssessmentSubmissionDTO dto, Integer userId) {
-
-        Map<String, List<AssessmentSubmissionDTO.AnswerDTO>> answersBySubstance = dto.answers.stream()
-                .collect(Collectors.groupingBy(ans -> ans.substance));
-
-
-        Map.Entry<String, List<AssessmentSubmissionDTO.AnswerDTO>> maxEntry = answersBySubstance.entrySet().stream()
-                .max(Comparator.comparingInt(entry -> {
-                    String substance = entry.getKey();
-                    return entry.getValue().stream()
-                            .filter(ans -> !(substance.equalsIgnoreCase("Tobacco products") && isQuestion5(ans.questionID)))
-                            .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
-                            .mapToInt(Integer::intValue)
-                            .sum();
-                }))
-                .orElseThrow(() -> new RuntimeException("No substance answered"));
-
-
-        String topSubstance = maxEntry.getKey();
-
-        int topScore = maxEntry.getValue().stream()
-                .filter(ans -> !(topSubstance.equalsIgnoreCase("Tobacco products") && isQuestion5(ans.questionID)))
-                .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
-                .mapToInt(Integer::intValue)
-                .sum();
-
-
-        String topRisk = determineRisk(topSubstance, topScore);
-        String topRecommendation = determineRecommendation(topSubstance, topScore);
-
-
+        // Determine if this is CRAFFT (no substance field in answers)
+        boolean isCrafft = dto.answers.stream().allMatch(ans -> ans.substance == null || ans.substance.isEmpty());
         UserAssessment ua = new UserAssessment();
         ua.setUserID(userId);
         ua.setAssessmentID(dto.assessmentID);
         ua.setCompletionDate(LocalDateTime.now());
-        ua.setTotalScore(topScore);
-        ua.setRiskLevel(topRisk);
-        ua.setRecommendationProvided(topRecommendation);
+        int totalScore;
+        String riskLevel;
+        String recommendation;
+        if (isCrafft) {
+            // CRAFFT: flat answers, no grouping
+            totalScore = dto.answers.stream()
+                .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
+                .mapToInt(Integer::intValue)
+                .sum();
+            // Use generic risk/recommendation logic for CRAFFT
+            riskLevel = determineRisk("CRAFFT", totalScore);
+            recommendation = determineRecommendation("CRAFFT", totalScore);
+        } else {
+            // ASSIST: group by substance
+            Map<String, List<AssessmentSubmissionDTO.AnswerDTO>> answersBySubstance = dto.answers.stream()
+                .collect(Collectors.groupingBy(ans -> ans.substance));
+            Map.Entry<String, List<AssessmentSubmissionDTO.AnswerDTO>> maxEntry = answersBySubstance.entrySet().stream()
+                .max(Comparator.comparingInt(entry -> {
+                    String substance = entry.getKey();
+                    return entry.getValue().stream()
+                        .filter(ans -> !(substance.equalsIgnoreCase("Tobacco products") && isQuestion5(ans.questionID)))
+                        .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
+                        .mapToInt(Integer::intValue)
+                        .sum();
+                }))
+                .orElseThrow(() -> new RuntimeException("No substance answered"));
+            String topSubstance = maxEntry.getKey();
+            totalScore = maxEntry.getValue().stream()
+                .filter(ans -> !(topSubstance.equalsIgnoreCase("Tobacco products") && isQuestion5(ans.questionID)))
+                .map(ans -> optionRepo.findById(ans.optionID).orElseThrow().getScore())
+                .mapToInt(Integer::intValue)
+                .sum();
+            riskLevel = determineRisk(topSubstance, totalScore);
+            recommendation = determineRecommendation(topSubstance, totalScore);
+        }
+        ua.setTotalScore(totalScore);
+        ua.setRiskLevel(riskLevel);
+        ua.setRecommendationProvided(recommendation);
         ua = userAssessmentRepo.save(ua);
-
         final UserAssessment finalUA = ua;
-
         List<UserAssessmentResponse> responses = dto.answers.stream()
-                .map(ans -> {
-                    UserAssessmentResponse r = new UserAssessmentResponse();
-                    r.setUserAssessment(finalUA);
-                    r.setQuestionID(ans.questionID);
-                    r.setOptionID(ans.optionID);
-                    r.setSubstance(ans.substance);
-                    return r;
-                })
-                .toList();
-
+            .map(ans -> {
+                UserAssessmentResponse r = new UserAssessmentResponse();
+                r.setUserAssessment(finalUA);
+                r.setQuestionID(ans.questionID);
+                r.setOptionID(ans.optionID);
+                r.setSubstance(isCrafft ? null : ans.substance);
+                return r;
+            })
+            .toList();
         userAssessmentResponseRepo.saveAll(responses);
         return ua.getUserAssessmentID();
     }

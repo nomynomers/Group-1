@@ -75,10 +75,10 @@ public class AssessmentController {
             @RequestBody AssessmentSubmissionDTO dto,
             @AuthenticationPrincipal UserPrincipal user
     ) {
-        int id = service.saveAssessment(dto, Integer.parseInt(user.getId())); // sửa kiểu trả về là int
+        int userAssessmentId = service.saveAssessment(dto, Integer.parseInt(user.getId()));
         return ResponseEntity.ok(Map.of(
                 "message", "Assessment submitted successfully",
-                "assessmentId", id
+                "userAssessmentId", userAssessmentId
         ));
     }
 
