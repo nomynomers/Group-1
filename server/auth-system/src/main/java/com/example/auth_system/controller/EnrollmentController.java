@@ -1,5 +1,6 @@
 package com.example.auth_system.controller;
 
+import com.example.auth_system.dto.EnrolledCourseDTO;
 import com.example.auth_system.dto.EnrollmentRequest;
 import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.User;
@@ -43,11 +44,13 @@ public class EnrollmentController {
 
     // Controller
     @GetMapping("/user")
-    public ResponseEntity<List<Course>> getUserEnrolledCourses(
+    public ResponseEntity<List<EnrolledCourseDTO>> getUserEnrolledCourses(
             @AuthenticationPrincipal UserDetails userDetails) {
-        List<Course> courses = enrollmentService.getCoursesByUsername(userDetails.getUsername());
+        List<EnrolledCourseDTO> courses = enrollmentService.getEnrolledCoursesDTOByUsername(userDetails.getUsername());
         return ResponseEntity.ok(courses);
     }
+
+
 
 
 }
