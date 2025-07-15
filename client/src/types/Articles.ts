@@ -6,6 +6,6 @@ export interface Article {
   imageCover: string;
   durationMinutes: number;
   creationDate: string;
-  content: string;
-  authorName: string;
+  content?: string;
+  authorName?: string;
 }
