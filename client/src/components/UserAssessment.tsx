@@ -142,7 +142,7 @@ const UserAppointment = () => {
                                         <td>{assess.recommendationProvided}</td>
                                         <td>  <a
                                             style={{ color: '#0891b2', cursor: 'pointer', textDecoration: 'underline' }}
-                                            onClick={() => navigate(`/assessments/${assess.userAssessmentID}/result`)}
+                                            onClick={() => navigate(`/assessments/${assess.userAssessmentID}/assist/result`)}
                                         >
                                             View
                                         </a></td>

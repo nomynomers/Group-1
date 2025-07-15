@@ -135,7 +135,7 @@ export default function AssistForm() {
             .then(data => {
                 console.log("Submitted:", data);
                 localStorage.setItem("assessmentId", data.assessmentId);
-                navigate(`/assessments/${assessmentID}/result`);
+                navigate(`/assessments/${assessmentID}/assist/result`);
             })
             .catch(err => {
                 console.error("Submit failed", err);

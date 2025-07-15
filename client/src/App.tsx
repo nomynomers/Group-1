@@ -20,12 +20,13 @@ import LearningPage from './components/LearningPage'
 import CreateUser from './components/CreateUser'
 import CreateCourse from './components/CreateCourse'
 import UpdateUser from './components/UpdateUser'
-import UpdateCourse from './components/UpdateCourse.tsx'
+import UpdateCourse from './components/UpdateCourse'
 
 import AssessmentPage from './components/AssessmentPage'
 import AssistPage from './components/AssistPage'
 import QuestionPage from './components/QuestionPage'
-import ResultPage from './components/ResultPage.tsx'
+import ResultPage from './components/ResultPage'
+import ResultAssist from './components/ResultAssist'
 
 import BookAppointment from './components/BookAppointment'
 import MyAppointments from './components/MyAppointments'
@@ -81,6 +82,7 @@ const AppContent = () => {
           <Route path="/assessments" element={<AssessmentPage />} />
           <Route path="/assessments/:assessmentID/assist" element={<AssistPage />} />
           <Route path="/assessments/:assessmentID/result" element={<ResultPage />} />
+          <Route path="/assessments/:assessmentID/assist/result" element={<ResultAssist />} />
           <Route path="/assessments/:assessmentID" element={<QuestionPage />} />
           <Route path="/appointments/book" element={<BookAppointment />} />
           <Route path="/appointments/my" element={<MyAppointments />} />
