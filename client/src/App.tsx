@@ -30,9 +30,9 @@ import ResultPage from './components/ResultPage.tsx'
 import BookAppointment from './components/BookAppointment'
 import MyAppointments from './components/MyAppointments'
 
-import Sidebar from './components/Sidebar'
 import ProfilePage from './components/ProfilePage'
 import UserAssessment from './components/UserAssessment'
+import UserCourse from './components/UserCourse'
 
 import './App.css'
 
@@ -86,6 +86,7 @@ const AppContent = () => {
           <Route path="/appointments/my" element={<MyAppointments />} />
           <Route path="/member/profile" element={<ProfilePage />} />
           <Route path="/member/assessment" element={<UserAssessment />} />
+          <Route path="/member/courses" element={<UserCourse />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}
