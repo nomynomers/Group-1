@@ -38,25 +38,30 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String jwt = parseJwt(request);
-        log.debug("JWT from header: {}", jwt);
+        log.info("==== AuthTokenFilter ====");
+        log.info("Request URI: {}", request.getRequestURI());
+        log.info("Authorization Header: {}", request.getHeader("Authorization"));
+        log.info("Parsed JWT: {}", jwt);
 
         if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
             String email = jwtUtils.getEmailFromJwtToken(jwt);
-            log.debug("Authenticated user email: {}", email);
+            log.info("Token valid. Email: {}", email);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            log.info("UserDetails: {}", userDetails.getUsername());
+
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
-            log.debug("Invalid or missing JWT token.");
+            log.warn("Invalid or missing JWT token.");
         }
 
         filterChain.doFilter(request, response);
     }
+
 
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");

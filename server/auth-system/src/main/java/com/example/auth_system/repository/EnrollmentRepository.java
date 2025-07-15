@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Integer> {
     boolean existsByUserIDAndCourseID(int userID, int courseID);
     Optional<Enrollment> findByUserIDAndCourseID(Integer userID, Integer courseID);
-    List<Course> findCoursesByUserID(@Param("userID") Integer userID);
+    List<Enrollment> findByUserID(Integer userID);
 }

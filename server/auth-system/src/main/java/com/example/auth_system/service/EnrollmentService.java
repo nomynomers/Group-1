@@ -1,9 +1,11 @@
 package com.example.auth_system.service;
 
+import com.example.auth_system.dto.EnrolledCourseDTO;
 import com.example.auth_system.dto.EnrollmentRequest;
 import com.example.auth_system.entity.Course;
 import com.example.auth_system.entity.Enrollment;
 import com.example.auth_system.entity.User;
+import com.example.auth_system.repository.CourseRepository;
 import com.example.auth_system.repository.UserRepository;
 import com.example.auth_system.repository.EnrollmentRepository;
 
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,8 @@ public class EnrollmentService {
     private UserRepository userRepository;
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
     public Integer enrollUser(EnrollmentRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -57,11 +63,25 @@ public class EnrollmentService {
         return enrollmentRepository.existsByUserIDAndCourseID(user.getUserId(), courseID);
     }
 
-    public List<Course> getCoursesByUsername(String email) {
-        User user = userRepository.findByEmail(email)
+    public List<EnrolledCourseDTO> getEnrolledCoursesDTOByUsername(String username) {
+        User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return enrollmentRepository.findCoursesByUserID(user.getUserId());
+
+        List<Enrollment> enrollments = enrollmentRepository.findByUserID(user.getUserId());
+
+        return enrollments.stream().map(enrollment -> {
+            Course course = courseRepository.findById(enrollment.getCourseID())
+                    .orElse(null);
+            if (course == null) return null;
+
+            return new EnrolledCourseDTO(
+                    course.getCourseID(),
+                    course.getCourseName(),
+                    course.getDescription(),
+                    course.getImageCover(),
+                    enrollment.getProgressPercentage(),
+                    enrollment.getCompleteDate()
+            );
+        }).filter(dto -> dto != null).collect(Collectors.toList());
     }
-
-
 }
