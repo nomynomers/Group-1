@@ -160,3 +160,67 @@ GO
 INSERT INTO [QuestionOptions] ([questionID], [nextQuestionID], [optionOrder], [optionText], [score]) 
 VALUES (9, NULL, 1, 'No', 0), (9, NULL, 2, 'Yes', 1);
 GO
+
+INSERT INTO AssessmentQuestions (assessmentID, questionOrder, isInitialQuestion, questionText)
+VALUES 
+(1, 1, 1, '1. In your life, which of the following substances have you ever used?'),
+(1, 2, 0, '2. In the past three months, how often have you used [SUBSTANCE]?'),
+(1, 3, 0, '3. During the past three months, how often have you had a strong desire or urge to use [SUBSTANCE]?'),
+(1, 4, 0, '4. During the past three months, how often has your use of [SUBSTANCE] led to health, social, legal, or financial problems?'),
+(1, 5, 0, '5. During the past three months, how often have you failed to do what was normally expected of you because of your use of [SUBSTANCE]?'),
+(1, 6, 0, '6. Has a friend or relative or anyone else ever expressed concern about your use of [SUBSTANCE]?'),
+(1, 7, 0, '7. Have you ever tried and failed to control, cut down, or stop using [SUBSTANCE]?'),
+(1, 8, 0, '8. Have you ever used any drug by injection? (NON-MEDICAL USE ONLY)');
+
+INSERT INTO QuestionOptions (questionID, optionText, score, nextQuestionID, optionOrder)
+VALUES 
+(1003, 'Never', 0, 1004, 1),
+(1003, 'Once or twice', 2, 1004, 2),
+(1003, 'Monthly', 3, 1004, 3),
+(1003, 'Weekly', 4, 1004, 4),
+(1003, 'Daily or almost daily', 6, 1004, 5),
+
+(1004, 'Never', 0, 1005, 6),
+(1004, 'Once or twice', 3, 1005, 7),
+(1004, 'Monthly', 4, 1005, 8),
+(1004, 'Weekly', 5, 1005, 9),
+(1004, 'Daily or almost daily', 6, 1005, 10),
+
+(1005, 'Never', 0, 1006, 11),
+(1005, 'Once or twice', 4, 1006, 12),
+(1005, 'Monthly', 5, 1006, 13),
+(1005, 'Weekly', 6, 1006, 14),
+(1005, 'Daily or almost daily', 7, 1006, 15),
+
+(1006, 'Never', 0, 1007, 16),
+(1006, 'Once or twice', 5, 1007, 17),
+(1006, 'Monthly', 6, 1007, 18),
+(1006, 'Weekly', 7, 1007, 19),
+(1006, 'Daily or almost daily', 8, 1007, 20),
+
+(1007, 'No, never', 0, 1008, 21),
+(1007, 'Yes, but not in the past 3 months', 3, 1008, 22),
+(1007, 'Yes, in the past 3 months', 6, 1008, 23),
+
+(1008, 'No, never', 0, 2002, 24),
+(1008, 'Yes, but not in the past 3 months', 3, 2002, 25),
+(1008, 'Yes, in the past 3 months', 6, 2002, 26),
+
+-- Q1 Substances list
+(1002, 'Tobacco products - Q1', 3, 1003, 27),
+(1002, 'Alcoholic beverages - Q1', 3, 1003, 28),
+(1002, 'Cannabis - Q1', 3, 1003, 29),
+(1002, 'Cocaine - Q1', 3, 1003, 30),
+(1002, 'Amphetamine type stimulants - Q1', 3, 1003, 31),
+(1002, 'Inhalants - Q1', 3, 1003, 32),
+(1002, 'Sedatives or Sleeping Pills - Q1', 3, 1003, 33),
+(1002, 'Hallucinogens - Q1', 3, 1003, 34),
+(1002, 'Opioids - Q1', 3, 1003, 35),
+(1002, 'Other (specify) - Q1', 3, 1003, 36),
+
+-- Q8 options
+(2002, 'No, never', 0, 0, 37),
+(2002, 'Yes, but not in the past 3 months', 1, 0, 38),
+(2002, 'Yes, in the past 3 months', 2, 0, 39);
+
+
