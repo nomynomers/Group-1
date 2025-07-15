@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 interface Answer {
     question: string;
@@ -18,16 +18,18 @@ interface SubstanceResult {
 interface AssessmentResult {
     results: SubstanceResult[];
 }
-export default function ResultPage() {
+export default function ResultAssist() {
     const [result, setResult] = useState<AssessmentResult | null>(null);
+    const { assessmentID } = useParams();
     useEffect(() => {
-        const id = localStorage.getItem("assessmentId");
-        if (!id) {
+        // const id = localStorage.getItem("assessmentId");
+        
+        if (!assessmentID) {
             console.warn("No assessmentId in localStorage");
             return;
         }
 
-        fetch(`http://localhost:8080/api/assessments/result/${id}`, {
+        fetch(`http://localhost:8080/api/assessments/result/${assessmentID}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
