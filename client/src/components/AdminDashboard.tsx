@@ -115,20 +115,11 @@ const AdminDashboard: FC = () => {
           marginBottom: '40px',
         }}>DRUG PREVENT</h2>
         <nav>
-          <ul style={{
-            listStyle: 'none',
-            textAlign: 'left',
-          }}>
-            <li style={{
-              margin: '10px 0',
-              cursor: 'pointer',
-              padding: '10px',
-              borderRadius: '8px',
-              width: '70%',
-            }}
+          <ul style={{ listStyle: 'none', textAlign: 'left' }}>
+            <li style={{ margin: '10px 0', cursor: 'pointer', padding: '10px', borderRadius: '8px', width: '70%' }}
               onClick={() => navigate('/admin')}>
-              Dashboard</li>
-
+              Dashboard
+            </li>
             <li style={{
               margin: '10px 0',
               cursor: 'pointer',
@@ -140,8 +131,8 @@ const AdminDashboard: FC = () => {
               fontWeight: location.pathname === '/admin/courses' ? 'bold' : 'normal',
             }}
               onClick={() => navigate('/admin/courses')}>
-              Courses</li>
-
+              Courses
+            </li>
             <li style={{
               margin: '10px 0',
               cursor: 'pointer',
@@ -152,18 +143,34 @@ const AdminDashboard: FC = () => {
               color: location.pathname === '/admin/users' ? '#272b69' : 'white',
               fontWeight: location.pathname === '/admin/users' ? 'bold' : 'normal',
             }}
-              onClick={() => navigate('/admin/users')}
-            >Users</li>
-
+              onClick={() => navigate('/admin/users')}>
+              Users
+            </li>
             <li style={{
               margin: '10px 0',
               cursor: 'pointer',
               padding: '10px',
               borderRadius: '8px',
               width: '70%',
-            }}>Settings</li>
+              backgroundColor: location.pathname === '/admin/articles' ? 'white' : 'transparent',
+              color: location.pathname === '/admin/articles' ? '#272b69' : 'white',
+              fontWeight: location.pathname === '/admin/articles' ? 'bold' : 'normal',
+            }}
+              onClick={() => navigate('/admin/articles')}>
+              Articles
+            </li>
+            <li style={{
+              margin: '10px 0',
+              cursor: 'pointer',
+              padding: '10px',
+              borderRadius: '8px',
+              width: '70%',
+            }}>
+              Settings
+            </li>
           </ul>
         </nav>
+
       </div>
 
       <div style={{ padding: '20px 2rem 2rem', width: '100%' }}>
