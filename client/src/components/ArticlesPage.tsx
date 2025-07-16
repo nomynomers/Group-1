@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Article } from '../types/Articles';
+import { Link } from 'react-router-dom';
 
 const ArticlesPage: FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -63,48 +64,55 @@ const ArticlesPage: FC = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
           {filteredArticles.map((article) => (
-            <div key={article.articleID} style={{
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s ease',
-              cursor: 'pointer'
-            }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
+            <Link
+              key={article.articleID}
+              to={`/articles/${article.articleID}`}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <div style={{
+                backgroundColor: 'white',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                transition: 'transform 0.2s ease',
+                cursor: 'pointer'
               }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}>
-              <img
-                src={article.imageCover}
-                alt={article.articleName}
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-              />
-              <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', minHeight: '300px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                  <span style={{ fontSize: '0.9rem', color: '#272b69', fontWeight: '500', backgroundColor: '#f0f1ff', padding: '0.25rem 0.75rem', borderRadius: '4px' }}>
-                    {article.category}
-                  </span>
-                  <span style={{ fontSize: '0.9rem', color: '#666' }}>
-                    {article.durationMinutes} min read
-                  </span>
-                </div>
-                <h3 style={{ fontSize: '1.3rem', color: '#272b69', margin: '0 0 0.75rem', fontWeight: '600', lineHeight: '1.4' }}>
-                  {article.articleName}
-                </h3>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: '1rem', color: '#666', margin: '0 0 1rem', lineHeight: '1.5' }}>
-                    {article.description}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}>
+                <img
+                  src={article.imageCover}
+                  alt={article.articleName}
+                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                />
+                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', minHeight: '300px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '0.9rem', color: '#272b69', fontWeight: '500', backgroundColor: '#f0f1ff', padding: '0.25rem 0.75rem', borderRadius: '4px' }}>
+                      {article.category}
+                    </span>
+                    <span style={{ fontSize: '0.9rem', color: '#666' }}>
+                      {article.durationMinutes} min read
+                    </span>
+                  </div>
+                  <h3 style={{ fontSize: '1.3rem', color: '#272b69', margin: '0 0 0.75rem', fontWeight: '600', lineHeight: '1.4' }}>
+                    {article.articleName}
+                  </h3>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '1rem', color: '#666', margin: '0 0 1rem', lineHeight: '1.5' }}>
+                      {article.description}
+                    </p>
+                  </div>
+                  <p style={{ fontSize: '0.9rem', color: '#666', margin: 0, paddingTop: '1rem' }}>
+                    {new Date(article.creationDate).toLocaleDateString()}
                   </p>
                 </div>
-                <p style={{ fontSize: '0.9rem', color: '#666', margin: 0, paddingTop: '1rem' }}>
-                  {new Date(article.creationDate).toLocaleDateString()}
-                </p>
               </div>
-            </div>
+            </Link>
           ))}
+
         </div>
       </div>
     </div>
