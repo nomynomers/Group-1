@@ -45,9 +45,7 @@ const CoursesPage: FC = () => {
     fetchCourses();
   }, [selectedLevel, searchTerm]);
 
-
-
-  const levels = ["All Levels", "Youth", "Adults", "Teachers", "Parents"];
+  const levels = ['All Levels', ...Array.from(new Set(courses.map(a => a.targetAudience)))];
 
   return (
     <div style={{
