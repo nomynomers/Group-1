@@ -223,4 +223,40 @@ VALUES
 (2002, 'Yes, but not in the past 3 months', 1, 0, 38),
 (2002, 'Yes, in the past 3 months', 2, 0, 39);
 
+-- Blog 1: The Power of Education in Preventing Drug Abuse
+INSERT INTO Articles (createdBy, articleName, description, category, durationMinutes, imageCover, content)
+VALUES (
+  1,
+  'The Power of Education in Preventing Drug Abuse',
+  'Exploring how education plays a vital role in drug prevention, especially among youth.',
+  'Drug Prevention',
+  5,
+  'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1752656308/a602396d52ecc607b1f6fb26707b3b96_wf05pk.jpg',
+  'Drug prevention begins with awareness. By educating youth about the dangers of drug use, we can reduce curiosity and experimentation. Schools, parents, and communities must collaborate to deliver age-appropriate, factual information. When young people understand the real consequences of drug abuse — both physical and social — they are better equipped to make healthy choices. Programs that include life skills training, peer support, and open discussions often have the most lasting impact.'
+);
+
+-- Blog 2: Community Involvement: A Key to Drug-Free Living
+INSERT INTO Articles (createdBy, articleName, description, category, durationMinutes, imageCover, content)
+VALUES (
+  1,
+  'Community Involvement: A Key to Drug-Free Living',
+  'How community action and support can help prevent substance abuse.',
+  'Drug Prevention',
+  4,
+  'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1752656416/549fba5bfda220c0e15a08e7bd17c357_wd3nrc.jpg',
+  'Communities are the front line in the fight against drug abuse. From neighborhood watch groups to local health centers, everyone has a role. Events like drug-free campaigns, sports tournaments, and workshops help spread awareness. Moreover, when at-risk individuals feel supported and valued by their community, they’re less likely to turn to substances for comfort or escape. Community-driven initiatives can make a lasting difference in building a drug-free environment.'
+);
+
+-- Blog 3: Early Signs of Drug Use and How to Respond
+INSERT INTO Articles (createdBy, articleName, description, category, durationMinutes, imageCover, content)
+VALUES (
+  1,
+  'Early Signs of Drug Use and How to Respond',
+  'Identifying early warning signs of drug use and steps to take for early intervention.',
+  'Drug Prevention',
+  6,
+  'https://res.cloudinary.com/ddtm7dvwo/image/upload/v1752656471/d4008b3a2c4da496afce0ef69abd640e_wxctrf.jpg',
+  'Recognizing the early signs of drug use can prevent long-term harm. These signs include sudden behavior changes, withdrawal from family, declining academic performance, and changes in appearance. If you notice these symptoms, act with compassion — not anger. Start with an open conversation and express your concern. Involve professionals such as school counselors or healthcare providers when necessary. Early intervention often leads to more successful outcomes.'
+);
+
 
