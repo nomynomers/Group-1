@@ -7,6 +7,7 @@ import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.ArticleRepository;
 import com.example.auth_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -64,5 +65,9 @@ public class ArticleService {
 
     public void delete(int id) {
         articleRepository.deleteById(id);
+    }
+
+    public List<Article> getTop3Articles() {
+        return articleRepository.findTopArticles(PageRequest.of(0, 3));
     }
 }

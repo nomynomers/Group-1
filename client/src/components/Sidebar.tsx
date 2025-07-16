@@ -64,10 +64,6 @@ const Sidebar: React.FC = () => {
           <span className="material-icons">assignment</span>
           <span>Assessment</span>
         </Link>
-        <Link to="/member/settings" style={styles.navLink}>
-          <span className="material-icons">settings</span>
-          <span>Settings</span>
-        </Link>
       </nav>
     </aside>
   );

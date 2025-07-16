@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,7 +95,9 @@ public class AppointmentService {
             throw new RuntimeException("No consultant available");
         }
 
-        Consultant assignedConsultant = consultants.get(0);
+        Consultant assignedConsultant = consultants.get(
+                ThreadLocalRandom.current().nextInt(consultants.size())
+        );
 
         List<Appointment> conflicts = appointmentRepository.findConflictingAppointments(
                 assignedConsultant.getConsultantID(),
@@ -116,11 +119,9 @@ public class AppointmentService {
                 .user(user)
                 .consultant(assignedConsultant)
                 .appointmentDate(request.getAppointmentDate())
-                .startTime(start) // ensure it's "HH:mm" format
+                .startTime(start)
                 .endTime(end)
                 .status("Pending")
-//                .meetingLink("https://meet.example.com/" + System.currentTimeMillis())
-//                .meetingLink(createGoogleMeetLink(request))
                 .build();
 
         appointmentRepository.save(appointment);
@@ -138,6 +139,7 @@ public class AppointmentService {
 
         return new MessageResponse("Appointment booked successfully.");
     }
+
 
     public List<AppointmentResponse> getAppointmentsByUser(int userId) {
         List<Appointment> appointments = appointmentRepository.findByUser_UserId(userId);

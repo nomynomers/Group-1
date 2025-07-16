@@ -1,43 +1,26 @@
-import type { FC } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface TeamMember {
+  name: string;
+  specialization: string;
+  imageCover: string;
+  description: string;
+}
 
 const Team: FC = () => {
-  const teamMembers = [
-    {
-      name: "Dr. Sarah Johnson",
-      role: "Chief Medical Officer",
-      image: "https://placehold.co/400x400",
-      description: "With over 15 years of experience in healthcare management and patient care."
-    },
-    {
-      name: "Dr. Michael Chen",
-      role: "Senior Consultant",
-      image: "https://placehold.co/400x400",
-      description: "Specialized in preventive medicine and health optimization strategies."
-    },
-    {
-      name: "Dr. Emily Rodriguez",
-      role: "Health Assessment Specialist",
-      image: "https://placehold.co/400x400",
-      description: "Expert in comprehensive health evaluations and personalized care plans."
-    }
-  ];
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/api/consultants/top3')
+      .then(res => setTeamMembers(res.data))
+      .catch(err => console.error("Error fetching team members:", err));
+  }, []);
 
   return (
-    <div style={{
-      padding: '4rem 2rem',
-      backgroundColor: '#f8f9fa'
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        textAlign: 'center'
-      }}>
-        <h2 style={{
-          fontSize: '2.5rem',
-          color: '#272b69',
-          marginBottom: '2rem',
-          fontWeight: '600'
-        }}>
+    <div style={{ padding: '4rem 2rem', backgroundColor: '#f8f9fa' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+        <h2 style={{ fontSize: '2.5rem', color: '#272b69', marginBottom: '2rem', fontWeight: '600' }}>
           Meet Our Team of Professional Consultants
         </h2>
 
@@ -56,46 +39,25 @@ const Team: FC = () => {
               transition: 'transform 0.2s ease',
               cursor: 'pointer'
             }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={member.image} 
-                alt={member.name}
-                style={{
-                  width: '100%',
-                  height: '300px',
-                  objectFit: 'cover'
-                }}
-              />
-              <div style={{
-                padding: '1.5rem'
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
               }}>
-                <h3 style={{
-                  fontSize: '1.4rem',
-                  color: '#272b69',
-                  margin: '0 0 0.5rem',
-                  fontWeight: '600'
-                }}>
+              <img
+                src={member.imageCover}
+                alt={member.name}
+                style={{ width: '100%', height: '300px', objectFit: 'cover' }}
+              />
+              <div style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.4rem', color: '#272b69', margin: '0 0 0.5rem', fontWeight: '600' }}>
                   {member.name}
                 </h3>
-                <p style={{
-                  fontSize: '1rem',
-                  color: '#4a4a4a',
-                  margin: '0 0 1rem',
-                  fontWeight: '500'
-                }}>
-                  {member.role}
+                <p style={{ fontSize: '1rem', color: '#4a4a4a', margin: '0 0 1rem', fontWeight: '500' }}>
+                  {member.specialization}
                 </p>
-                <p style={{
-                  fontSize: '0.95rem',
-                  color: '#666',
-                  margin: 0,
-                  lineHeight: '1.5'
-                }}>
+                <p style={{ fontSize: '0.95rem', color: '#666', margin: 0, lineHeight: '1.5' }}>
                   {member.description}
                 </p>
               </div>
@@ -107,4 +69,4 @@ const Team: FC = () => {
   );
 };
 
-export default Team; 
+export default Team;

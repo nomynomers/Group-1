@@ -1,11 +1,14 @@
 package com.example.auth_system.service;
 
+import com.example.auth_system.dto.ConsultantDTO;
 import com.example.auth_system.dto.ConsultantRequest;
 import com.example.auth_system.entity.Consultant;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.ConsultantRepository;
 import com.example.auth_system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,5 +90,18 @@ public class ConsultantService {
         Consultant consultant = consultantRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new RuntimeException("Consultant not found with userId: " + userId));
         return consultant.getConsultantID();
+    }
+
+    public List<ConsultantDTO> getTop3Consultants() {
+        Pageable pageable = PageRequest.of(0, 3);
+        return consultantRepository.findTop3AvailableConsultants(pageable)
+                .stream()
+                .map(c -> new ConsultantDTO(
+                        c.getUser().getFullName(),
+                        c.getSpecialization(),
+                        c.getImageCover(),
+                        String.format("With %d years of experience in %s.", c.getYearsExperience(), c.getSpecialization())
+                ))
+                .toList();
     }
 }

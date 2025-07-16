@@ -1,5 +1,6 @@
 package com.example.auth_system.controller;
 
+import com.example.auth_system.dto.ConsultantDTO;
 import com.example.auth_system.dto.ConsultantRequest;
 import com.example.auth_system.dto.ConsultantResponse;
 import com.example.auth_system.entity.Consultant;
@@ -79,6 +80,11 @@ public class ConsultantController {
     public ResponseEntity<Integer> getConsultantIdByUserId(@PathVariable int userId) {
         int consultantId = consultantService.getConsultantIdByUserId(userId);
         return ResponseEntity.ok(consultantId);
+    }
+
+    @GetMapping("/top3")
+    public ResponseEntity<List<ConsultantDTO>> getTop3Consultants() {
+        return ResponseEntity.ok(consultantService.getTop3Consultants());
     }
 
 }

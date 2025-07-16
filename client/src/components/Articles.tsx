@@ -1,39 +1,21 @@
 import type { FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const Articles: FC = () => {
   const navigate = useNavigate();
+  const [articles, setArticles] = useState([]);
 
   const handleViewAllClick = () => {
     navigate('/articles');
   };
 
-  const articles = [
-    {
-      id: 1,
-      title: "Understanding the Importance of Regular Health Check-ups",
-      date: "March 15, 2024",
-      category: "Preventive Care",
-      readTime: "5 min read",
-      image: "https://placehold.co/600x400"
-    },
-    {
-      id: 2,
-      title: "The Role of Nutrition in Mental Health",
-      date: "March 12, 2024",
-      category: "Mental Health",
-      readTime: "7 min read",
-      image: "https://placehold.co/600x400"
-    },
-    {
-      id: 3,
-      title: "Exercise Tips for Busy Professionals",
-      date: "March 10, 2024",
-      category: "Fitness",
-      readTime: "4 min read",
-      image: "https://placehold.co/600x400"
-    }
-  ];
+  useEffect(() => {
+    axios.get('/api/articles/top3')
+      .then(res => setArticles(res.data))
+      .catch(err => console.error(err));
+  }, []);
 
   return (
     <div style={{
