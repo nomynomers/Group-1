@@ -1,7 +1,10 @@
 import type { FC } from 'react';
 import heroImage from '../assets/images/hero.jpg';
+import { useNavigate } from "react-router-dom";
 
 const Hero: FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div style={{
       backgroundImage: `url(${heroImage})`,
@@ -25,7 +28,7 @@ const Hero: FC = () => {
         bottom: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.5)'
       }} />
-      
+
       <div style={{
         maxWidth: '1200px',
         width: '100%',
@@ -58,7 +61,7 @@ const Hero: FC = () => {
           margin: 0,
           textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
         }}>
-          Experience world-class healthcare services with our team of expert medical professionals. 
+          Experience world-class healthcare services with our team of expert medical professionals.
           We're committed to providing you with the best care possible.
         </p>
         <div style={{
@@ -66,30 +69,34 @@ const Hero: FC = () => {
           gap: '1.5rem',
           marginTop: '1rem'
         }}>
-          <button style={{
-            backgroundColor: '#272b69',
-            color: 'white',
-            border: 'none',
-            padding: '1rem 2.5rem',
-            borderRadius: '4px',
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s ease'
-          }}>
+          <button
+            onClick={() => navigate('/appointments/book')}
+            style={{
+              backgroundColor: '#272b69',
+              color: 'white',
+              border: 'none',
+              padding: '1rem 2.5rem',
+              borderRadius: '4px',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s ease'
+            }}>
             Book Appointment
           </button>
-          <button style={{
-            backgroundColor: 'white',
-            color: '#272b69',
-            border: '2px solid #272b69',
-            padding: '1rem 2.5rem',
-            borderRadius: '4px',
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }}>
+          <button
+            onClick={() => navigate('/appointments/book')}
+            style={{
+              backgroundColor: 'white',
+              color: '#272b69',
+              border: '2px solid #272b69',
+              padding: '1rem 2.5rem',
+              borderRadius: '4px',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}>
             Learn More
           </button>
         </div>

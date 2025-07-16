@@ -31,7 +31,7 @@ const ArticleDetails = () => {
         alt="Cover"
         className="w-full h-64 object-cover rounded mb-6"
       />
-      <div className="text-base text-gray-800 leading-relaxed whitespace-pre-line">
+      <div className="text-base text-gray-800 leading-relaxed whitespace-pre-line" style ={{ color: 'black', textAlign: 'left', padding: '50px 100px 0 100px'}}>
         {article.content}
       </div>
     </div>
