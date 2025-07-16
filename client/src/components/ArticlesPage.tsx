@@ -2,11 +2,12 @@ import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import type { Article } from '../types/Articles';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ArticlesPage: FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -28,11 +29,23 @@ const ArticlesPage: FC = () => {
   return (
     <div style={{ padding: '120px 0 60px', minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-        <h1 style={{ fontSize: '2.5rem', color: '#272b69', marginBottom: '2rem', fontWeight: '700', textAlign: 'center' }}>
+        <h1 style={{
+          fontSize: '2.5rem',
+          color: '#272b69',
+          marginBottom: '2rem',
+          fontWeight: '700',
+          textAlign: 'center'
+        }}>
           Medical Articles
         </h1>
 
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div style={{
+          display: 'flex',
+          gap: '1rem',
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          justifyContent: 'center'
+        }}>
           {categories.map((category, index) => (
             <button
               key={index}
@@ -62,14 +75,15 @@ const ArticlesPage: FC = () => {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+          gap: '2rem'
+        }}>
           {filteredArticles.map((article) => (
-            <Link
+            <div
               key={article.articleID}
-              to={`/articles/${article.articleID}`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <div style={{
+              style={{
                 backgroundColor: 'white',
                 borderRadius: '8px',
                 overflow: 'hidden',
@@ -77,42 +91,77 @@ const ArticlesPage: FC = () => {
                 transition: 'transform 0.2s ease',
                 cursor: 'pointer'
               }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-5px)';
+              onClick={() => navigate(`/articles/${article.articleID}`)}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <img
+                src={article.imageCover}
+                alt={article.articleName}
+                style={{
+                  width: '100%',
+                  height: '200px',
+                  objectFit: 'cover'
                 }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
+              />
+              <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', minHeight: '300px' }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.75rem'
                 }}>
-                <img
-                  src={article.imageCover}
-                  alt={article.articleName}
-                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                />
-                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', minHeight: '300px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.9rem', color: '#272b69', fontWeight: '500', backgroundColor: '#f0f1ff', padding: '0.25rem 0.75rem', borderRadius: '4px' }}>
-                      {article.category}
-                    </span>
-                    <span style={{ fontSize: '0.9rem', color: '#666' }}>
-                      {article.durationMinutes} min read
-                    </span>
-                  </div>
-                  <h3 style={{ fontSize: '1.3rem', color: '#272b69', margin: '0 0 0.75rem', fontWeight: '600', lineHeight: '1.4' }}>
-                    {article.articleName}
-                  </h3>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: '1rem', color: '#666', margin: '0 0 1rem', lineHeight: '1.5' }}>
-                      {article.description}
-                    </p>
-                  </div>
-                  <p style={{ fontSize: '0.9rem', color: '#666', margin: 0, paddingTop: '1rem' }}>
-                    {new Date(article.creationDate).toLocaleDateString()}
+                  <span style={{
+                    fontSize: '0.9rem',
+                    color: '#272b69',
+                    fontWeight: '500',
+                    backgroundColor: '#f0f1ff',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '4px'
+                  }}>
+                    {article.category}
+                  </span>
+                  <span style={{
+                    fontSize: '0.9rem',
+                    color: '#666'
+                  }}>
+                    {article.durationMinutes} min read
+                  </span>
+                </div>
+                <h3 style={{
+                  fontSize: '1.3rem',
+                  color: '#272b69',
+                  margin: '0 0 0.75rem',
+                  fontWeight: '600',
+                  lineHeight: '1.4'
+                }}>
+                  {article.articleName}
+                </h3>
+                <div style={{ flex: 1 }}>
+                  <p style={{
+                    fontSize: '1rem',
+                    color: '#666',
+                    margin: '0 0 1rem',
+                    lineHeight: '1.5'
+                  }}>
+                    {article.description}
                   </p>
                 </div>
+                <p style={{
+                  fontSize: '0.9rem',
+                  color: '#666',
+                  margin: 0,
+                  paddingTop: '1rem'
+                }}>
+                  {new Date(article.creationDate).toLocaleDateString()}
+                </p>
               </div>
-            </Link>
+            </div>
           ))}
-
         </div>
       </div>
     </div>

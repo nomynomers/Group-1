@@ -36,7 +36,11 @@ const Articles: FC = () => {
   ];
 
   return (
-    <div style={{ padding: '4rem 2rem', backgroundColor: 'white' }}>
+    <div style={{
+      padding: '6rem 2rem 4rem', // ✅ Increased top padding to prevent overlap
+      backgroundColor: 'white',
+      minHeight: '100vh'
+    }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{
           fontSize: '2.5rem',

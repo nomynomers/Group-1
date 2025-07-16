@@ -16,11 +16,24 @@ const ArticleDetails = () => {
   if (!article) return <div className="pt-32 text-center">Loading...</div>;
 
   return (
-    <div className="pt-32 px-6 max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold mb-4 text-[#272b69]">{article.articleName}</h1>
-      <p className="text-sm text-gray-500 mb-2">By {article.authorName} • {new Date(article.creationDate).toLocaleDateString()}</p>
-      <img src={article.imageCover} alt="Cover" className="w-full h-64 object-cover rounded mb-6" />
-      <div className="text-base text-gray-800 leading-relaxed whitespace-pre-line">{article.content}</div>
+    <div
+      className="px-6 max-w-4xl mx-auto"
+      style={{ paddingTop: '120px', paddingBottom: '60px' }} // fixes title cutoff
+    >
+      <h1 className="text-4xl font-bold mb-4 text-[#272b69]">
+        {article.articleName}
+      </h1>
+      <p className="text-sm text-gray-500 mb-2">
+        By {article.authorName} • {new Date(article.creationDate).toLocaleDateString()}
+      </p>
+      <img
+        src={article.imageCover}
+        alt="Cover"
+        className="w-full h-64 object-cover rounded mb-6"
+      />
+      <div className="text-base text-gray-800 leading-relaxed whitespace-pre-line">
+        {article.content}
+      </div>
     </div>
   );
 };
