@@ -3,9 +3,9 @@ export interface Article {
   articleName: string;
   description: string;
   category: string;
-  imageCover: string;
   durationMinutes: number;
-  creationDate: string;
+  imageCover: string;
   content?: string;
+  creationDate: string;
   authorName?: string;
 }

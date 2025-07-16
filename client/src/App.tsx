@@ -37,6 +37,8 @@ import UserCourse from './components/UserCourse'
 
 import ArticleDetails from './components/ArticleDetails';
 
+import ArticlesAdmin from './components/ArticlesAdmin';
+
 import './App.css'
 
 const AppContent = () => {
@@ -92,6 +94,7 @@ const AppContent = () => {
           <Route path="/member/assessment" element={<UserAssessment />} />
           <Route path="/member/courses" element={<UserCourse />} />
           <Route path="/articles/:id" element={<ArticleDetails />} />
+          <Route path="/admin/articles" element={<ArticlesAdmin />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}
