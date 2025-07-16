@@ -10,6 +10,7 @@ const Articles: FC = () => {
 
   const articles = [
     {
+      id: 1,
       title: "Understanding the Importance of Regular Health Check-ups",
       date: "March 15, 2024",
       category: "Preventive Care",
@@ -17,6 +18,7 @@ const Articles: FC = () => {
       image: "https://placehold.co/600x400"
     },
     {
+      id: 2,
       title: "The Role of Nutrition in Mental Health",
       date: "March 12, 2024",
       category: "Mental Health",
@@ -24,6 +26,7 @@ const Articles: FC = () => {
       image: "https://placehold.co/600x400"
     },
     {
+      id: 3,
       title: "Exercise Tips for Busy Professionals",
       date: "March 10, 2024",
       category: "Fitness",
@@ -34,13 +37,11 @@ const Articles: FC = () => {
 
   return (
     <div style={{
-      padding: '4rem 2rem',
-      backgroundColor: 'white'
+      padding: '6rem 2rem 4rem', // ✅ Increased top padding to prevent overlap
+      backgroundColor: 'white',
+      minHeight: '100vh'
     }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{
           fontSize: '2.5rem',
           color: '#272b69',
@@ -58,22 +59,25 @@ const Articles: FC = () => {
           marginTop: '1rem'
         }}>
           {articles.map((article, index) => (
-            <div key={index} style={{
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s ease',
-              cursor: 'pointer'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={article.image} 
+            <div
+              key={index}
+              style={{
+                backgroundColor: 'white',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                transition: 'transform 0.2s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <img
+                src={article.image}
                 alt={article.title}
                 style={{
                   width: '100%',
@@ -81,9 +85,7 @@ const Articles: FC = () => {
                   objectFit: 'cover'
                 }}
               />
-              <div style={{
-                padding: '1.5rem'
-              }}>
+              <div style={{ padding: '1.5rem' }}>
                 <div style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -116,17 +118,28 @@ const Articles: FC = () => {
                 }}>
                   {article.title}
                 </h3>
+
+                <Link
+                  to={`/articles/${article.id}`}
+                  style={{
+                    marginTop: '1rem',
+                    display: 'inline-block',
+                    color: '#272b69',
+                    fontWeight: '500',
+                    fontSize: '0.9rem',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Read More →
+                </Link>
               </div>
             </div>
           ))}
         </div>
 
-        <div style={{
-          textAlign: 'center',
-          marginTop: '3rem'
-        }}>
-          <Link 
-            to="/articles" 
+        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+          <Link
+            to="/articles"
             onClick={handleViewAllClick}
             style={{
               backgroundColor: '#272b69',
@@ -146,7 +159,8 @@ const Articles: FC = () => {
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = '#272b69';
-            }}>
+            }}
+          >
             View All Articles
           </Link>
         </div>
@@ -155,4 +169,4 @@ const Articles: FC = () => {
   );
 };
 
-export default Articles; 
+export default Articles;
