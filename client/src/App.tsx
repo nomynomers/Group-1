@@ -34,6 +34,7 @@ import MyAppointments from './components/MyAppointments'
 import ProfilePage from './components/ProfilePage'
 import UserAssessment from './components/UserAssessment'
 import UserCourse from './components/UserCourse'
+import UserAppointment from './components/UserAppointment'
 
 import ArticleDetails from './components/ArticleDetails';
 
@@ -92,6 +93,7 @@ const AppContent = () => {
           <Route path="/appointments/my" element={<MyAppointments />} />
           <Route path="/member/profile" element={<ProfilePage />} />
           <Route path="/member/assessment" element={<UserAssessment />} />
+          <Route path="/member/appointment" element={<UserAppointment />} />
           <Route path="/member/courses" element={<UserCourse />} />
           <Route path="/articles/:id" element={<ArticleDetails />} />
           <Route path="/admin/articles" element={<ArticlesAdmin />} />

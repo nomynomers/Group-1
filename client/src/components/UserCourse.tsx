@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import axios from 'axios';
+import { useNavigate} from 'react-router-dom';
 
 const styles = {
     container: {
@@ -81,6 +82,7 @@ const styles = {
 
 const UserCourse = () => {
     const [courses, setCourses] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchEnrolledCourses = async () => {
@@ -144,6 +146,7 @@ const UserCourse = () => {
                                 </div>
                                 <div style={styles.rightButton}>
                                     <button
+                                    onClick={() => navigate(`/learning/${course.courseID}`)}
                                         style={{
                                             backgroundColor: '#2563eb',
                                             color: 'white',

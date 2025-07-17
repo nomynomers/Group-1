@@ -39,7 +39,7 @@ const Sidebar: React.FC = () => {
     <aside style={styles.sidebar}>
       <div style={{ marginBottom: '2.5rem', textAlign: 'center' }}>
         <img
-          src="https://i.pravatar.cc/80?img=12"
+          src="https://res.cloudinary.com/ddtm7dvwo/image/upload/v1752736201/627904ad-4c92-4dd4-a659-b55e7a6a55f8.png"
           style={{ borderRadius: '9999px', width: '4rem', height: '4rem' }}
           alt="Avatar"
         />

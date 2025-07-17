@@ -18,6 +18,13 @@ const AssessmentPage: FC = () => {
     const [assessments, setAssessments] = useState<Assessment[]>([]);
 
     const handleNavigate = (id: number) => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
         const path = id === 1
             ? `/assessments/${id}/assist`
             : `/assessments/${id}`;
@@ -26,6 +33,7 @@ const AssessmentPage: FC = () => {
 
 
     useEffect(() => {
+
         window.scrollTo(0, 0);
 
         axios.get<Assessment[]>('http://localhost:8080/api/assessments')
