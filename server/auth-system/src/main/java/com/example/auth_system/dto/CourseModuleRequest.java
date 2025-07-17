@@ -21,4 +21,7 @@ public class CourseModuleRequest {
     private String content;
 
     private String videoUrl;
+
+    @Min(value = 1)
+    private int moduleOrder;
 }
