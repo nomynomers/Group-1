@@ -17,6 +17,23 @@ public class CourseModuleService {
     @Autowired
     private CourseModuleRepository moduleRepository;
 
+    private String convertToEmbedUrl(String url) {
+        if (url == null || url.isEmpty()) return url;
+
+        if (url.contains("youtu.be/")) {
+            String id = url.split("youtu.be/")[1].split("[?&]")[0];
+            return "https://www.youtube.com/embed/" + id;
+        }
+
+        if (url.contains("youtube.com/watch?v=")) {
+            String id = url.split("v=")[1].split("&")[0];
+            return "https://www.youtube.com/embed/" + id;
+        }
+
+        return url;
+    }
+
+
     public CourseModule createModule(CourseModuleRequest request) {
         CourseModule module = CourseModule.builder()
                 .courseID(request.getCourseID())
@@ -24,7 +41,7 @@ public class CourseModuleService {
                 .description(request.getDescription())
                 .durationMinutes(request.getDurationMinutes())
                 .content(request.getContent())
-                .videoUrl(request.getVideoUrl())
+                .videoUrl(convertToEmbedUrl(request.getVideoUrl()))
                 .moduleOrder(request.getModuleOrder())
                 .build();
         return moduleRepository.save(module);
@@ -43,7 +60,7 @@ public class CourseModuleService {
         module.setDescription(request.getDescription());
         module.setDurationMinutes(request.getDurationMinutes());
         module.setContent(request.getContent());
-        module.setVideoUrl(request.getVideoUrl());
+        module.setVideoUrl(convertToEmbedUrl(request.getVideoUrl()));
         module.setModuleOrder(request.getModuleOrder());
 
         return moduleRepository.save(module);
