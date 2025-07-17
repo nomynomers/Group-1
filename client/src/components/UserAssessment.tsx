@@ -87,7 +87,7 @@ const styles = {
     },
 };
 
-const UserAppointment = () => {
+const UserAssessment = () => {
     const [assessments, setAssessments] = useState<Assessment[]>([]);
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
@@ -157,4 +157,4 @@ const UserAppointment = () => {
     );
 };
 
-export default UserAppointment;
+export default UserAssessment;

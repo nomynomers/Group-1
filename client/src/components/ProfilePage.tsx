@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Sidebar from './Sidebar';
 
 const styles = {
@@ -9,36 +10,6 @@ const styles = {
     minHeight: '100vh',
     fontFamily: 'sans-serif',
     marginTop: '74px'
-  },
-  sidebar: {
-    width: '16rem',
-    backgroundColor: '#F9F9F9',
-    color: 'black',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingTop: '2rem',
-    paddingLeft: '100px'
-  },
-  logoImg: {
-    height: '4rem',
-    width: '4rem',
-    margin: '0 auto',
-  },
-  navLink: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0.5rem',
-    borderRadius: '0.375rem',
-    marginBottom: '0.5rem',
-    width: '80%',
-    gap: '0.5rem',
-    paddingLeft: '1.5rem',
-    textDecoration: 'none',
-    color: 'black',
-  },
-  activeLink: {
-    backgroundColor: '#0891b2',
   },
   main: {
     flex: 1,
@@ -82,48 +53,180 @@ const styles = {
 };
 
 const ProfilePage = () => {
+  interface UserProfile {
+    userId: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    phoneNumber: string;
+    registrationDate: string;
+    roleName: string;
+  }
+
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [formData, setFormData] = useState<UserProfile | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/user/profile', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setUser(res.data);
+        setFormData(res.data);
+      } catch (err) {
+        console.error('Failed to fetch user profile:', err);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => prev ? { ...prev, [name]: value } : prev);
+  };
+
+  const handleSave = async () => {
+    try {
+      await axios.put('http://localhost:8080/api/user/profile', formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUser(formData);
+      setIsEditing(false);
+      alert('Profile updated successfully!');
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      alert('Failed to update profile');
+    }
+  };
+
+  const formatDate = (isoDate: string) => {
+    if (!isoDate) return '';
+    const d = new Date(isoDate);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`; // For input type="date"
+  };
+
+  if (!formData) return <div style={{ padding: '2rem' }}>Loading...</div>;
+
   return (
     <div style={styles.container}>
-      {/* Sidebar */}
-      <Sidebar /> 
+      <Sidebar />
 
-      {/* Main Content */}
       <main style={styles.main}>
         <header style={styles.header}>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Welcome, Alexa</h2>
-            <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>Tue, 07 June 2022</p>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+              Welcome, {formData.firstName || 'User'}
+            </h2>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+              {new Date().toDateString()}
+            </p>
           </div>
         </header>
 
         <section style={styles.profileCard}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', gap: '1rem' }}>
-            <img src="https://i.pravatar.cc/80?img=12" style={{ borderRadius: '9999px', width: '4rem', height: '4rem' }} />
+            <img
+              src="https://res.cloudinary.com/ddtm7dvwo/image/upload/v1752736201/627904ad-4c92-4dd4-a659-b55e7a6a55f8.png"
+              alt="avatar"
+              style={{ borderRadius: '9999px', width: '4rem', height: '4rem' }}
+            />
             <div>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, textAlign: 'left', margin: '0px' }}>Alexa Rawles</h3>
-              <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0px' }}>alexarawles@gmail.com</p>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, margin: '0px', textAlign: 'left' }}>
+                {formData.firstName} {formData.lastName}
+              </h3>
+              <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0px' }}>
+                {formData.email}
+              </p>
             </div>
           </div>
 
           <form style={styles.inputContainer}>
             <div>
               <label style={{ fontSize: '0.875rem' }}>First Name</label>
-              <input type="text" style={styles.inputField} value="Alexa" disabled />
+              <input
+                type="text"
+                name="firstName"
+                style={{
+                  ...styles.inputField,
+                  color: isEditing ? 'black' : '#6b7280'
+                }}
+                value={formData.firstName}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
             </div>
             <div>
               <label style={{ fontSize: '0.875rem' }}>Last Name</label>
-              <input type="text" style={styles.inputField} value="Rawles" disabled />
+              <input
+                type="text"
+                name="lastName"
+                style={{
+                  ...styles.inputField,
+                  color: isEditing ? 'black' : '#6b7280'
+                }}
+                value={formData.lastName}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
             </div>
             <div>
               <label style={{ fontSize: '0.875rem' }}>Date of Birth</label>
-              <input type="text" style={styles.inputField} value="20/06/2005" disabled />
+              <input
+                type="date"
+                name="dateOfBirth"
+                style={{
+                  ...styles.inputField,
+                  color: isEditing ? 'black' : '#6b7280'
+                }}
+                value={formatDate(formData.dateOfBirth)}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
             </div>
             <div>
               <label style={{ fontSize: '0.875rem' }}>Phone Number</label>
-              <input type="text" style={styles.inputField} value="0987654321" disabled />
+              <input
+                type="text"
+                name="phoneNumber"
+                style={{
+                  ...styles.inputField,
+                  color: isEditing ? 'black' : '#6b7280'
+                }}
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
             </div>
+
             <div style={{ gridColumn: 'span 2' }}>
-              <button type="button" style={styles.button}>Edit</button>
+              {isEditing ? (
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button type="button" style={styles.button} onClick={handleSave}>Save</button>
+                  <button
+                    type="button"
+                    style={{ ...styles.button, backgroundColor: '#6b7280' }}
+                    onClick={() => {
+                      setFormData(user);
+                      setIsEditing(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button type="button" style={styles.button} onClick={() => setIsEditing(true)}>Edit</button>
+              )}
             </div>
           </form>
         </section>
