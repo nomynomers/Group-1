@@ -14,8 +14,16 @@ const AdminSidebar = () => {
         display: 'flex',
         flexDirection: 'column',
         padding: '20px 2rem 2rem',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        height: '100vh',
+        overflowY: 'auto',
+        zIndex: 1000,
       }}
     >
+
       <h2
         onClick={() => navigate('/')}
         style={{ textAlign: 'center', marginBottom: '40px' }}>DRUG PREVENT</h2>
@@ -43,9 +51,10 @@ const AdminSidebar = () => {
               padding: '10px',
               borderRadius: '8px',
               width: '70%',
-              backgroundColor: location.pathname === '/admin/courses' ? 'white' : 'transparent',
-              color: location.pathname === '/admin/courses' ? '#272b69' : 'white',
-              fontWeight: location.pathname === '/admin/courses' ? 'bold' : 'normal',
+              backgroundColor: location.pathname.startsWith('/admin/courses') ? 'white' : 'transparent',
+              color: location.pathname.startsWith('/admin/courses') ? '#272b69' : 'white',
+              fontWeight: location.pathname.startsWith('/admin/courses') ? 'bold' : 'normal',
+
             }}
             onClick={() => navigate('/admin/courses')}
           >

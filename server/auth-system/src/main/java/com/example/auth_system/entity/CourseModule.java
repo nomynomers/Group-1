@@ -25,4 +25,6 @@ public class CourseModule {
     private String content;
 
     private String videoUrl;
+
+    private int moduleOrder;
 }

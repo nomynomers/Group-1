@@ -102,7 +102,7 @@ const CourseManage: FC = () => {
     <div style={{ display: 'flex', height: '100vh' }}>
       <AdminSidebar />
       
-      <div style={{ padding: '20px 2rem 2rem', width: '100%' }}>
+      <div style={{ padding: '20px 2rem 2rem', width: '100%', marginLeft: '300px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <button
             onClick={() => navigate('/admin/courses/create')}
@@ -147,7 +147,7 @@ const CourseManage: FC = () => {
           <table style={{
             width: '100%',
             borderCollapse: 'collapse',
-            color: '#333' // Ensure text is visible
+            color: '#333'
           }}>
             <thead>
               <tr style={{ backgroundColor: '#f8f9fa' }}>
@@ -163,7 +163,7 @@ const CourseManage: FC = () => {
             <tbody>
               {courses && courses.length > 0 ? (
                 courses.map(course => (
-                  <tr key={course.courseID}>
+                  <tr key={course.courseID} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
                     <td style={{ padding: '1rem' }}>{course.courseName}</td>
                     <td style={{ padding: '1rem' }}>{course.description}</td>
                     <td style={{ padding: '1rem' }}>{course.targetAudience}</td>
@@ -173,6 +173,20 @@ const CourseManage: FC = () => {
                     </td>
                     <td style={{ padding: '1rem' }}>{course.author}</td>
                     <td style={{ padding: '1rem', display: 'flex' }}>
+                      <button
+                        onClick={() => navigate(`/admin/courses/${course.courseID}/modules`)}
+                        style={{
+                          backgroundColor: 'red',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.5rem 1rem',
+                          borderRadius: '4px',
+                          marginRight: '0.5rem',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Modules
+                      </button>
                       <button
                         onClick={() => navigate(`/admin/courses/${course.courseID}`)}
                         style={{

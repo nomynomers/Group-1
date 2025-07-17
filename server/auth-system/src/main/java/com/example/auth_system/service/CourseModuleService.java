@@ -3,6 +3,7 @@ package com.example.auth_system.service;
 import com.example.auth_system.dto.CourseModuleRequest;
 import com.example.auth_system.entity.CourseModule;
 import com.example.auth_system.repository.CourseModuleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,8 @@ public class CourseModuleService {
                 .description(request.getDescription())
                 .durationMinutes(request.getDurationMinutes())
                 .content(request.getContent())
-                .content(request.getVideoUrl())
+                .videoUrl(request.getVideoUrl())
+                .moduleOrder(request.getModuleOrder())
                 .build();
         return moduleRepository.save(module);
     }
@@ -42,6 +44,7 @@ public class CourseModuleService {
         module.setDurationMinutes(request.getDurationMinutes());
         module.setContent(request.getContent());
         module.setVideoUrl(request.getVideoUrl());
+        module.setModuleOrder(request.getModuleOrder());
 
         return moduleRepository.save(module);
     }
@@ -52,4 +55,10 @@ public class CourseModuleService {
         }
         moduleRepository.deleteById(moduleId);
     }
+
+    public CourseModule getModuleById(int moduleId) {
+        return moduleRepository.findById(moduleId)
+                .orElseThrow(() -> new EntityNotFoundException("Module with ID " + moduleId + " not found"));
+    }
+
 }

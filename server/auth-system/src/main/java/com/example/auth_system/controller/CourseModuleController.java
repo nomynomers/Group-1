@@ -51,4 +51,9 @@ public class CourseModuleController {
         return ResponseEntity.ok().body("Module deleted successfully");
     }
 
+    @GetMapping("/get/{moduleId}")
+    public ResponseEntity<CourseModule> getModuleById(@PathVariable Integer moduleId) {
+        CourseModule module = moduleService.getModuleById(moduleId);
+        return ResponseEntity.ok(module);
+    }
 }

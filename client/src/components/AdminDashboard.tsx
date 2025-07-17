@@ -106,7 +106,7 @@ const AdminDashboard: FC = () => {
       <AdminSidebar />
 
 
-      <div style={{ padding: '20px 2rem 2rem', width: '100%' }}>
+      <div style={{ padding: '20px 2rem 2rem', width: '100%', marginLeft: '300px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <button
             onClick={() => navigate('/admin/users/create')}

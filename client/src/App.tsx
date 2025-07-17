@@ -14,13 +14,16 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import AdminDashboard from './components/AdminDashboard'
 import CourseManage from './components/CourseManage'
+import ModuleManage from './components/ModuleManage'
 import AppointmentManage from './components/AppointmentManage'
 import CoursesInfo from './components/CoursesInfo'
 import LearningPage from './components/LearningPage'
 import CreateUser from './components/CreateUser'
 import CreateCourse from './components/CreateCourse'
+import CreateModule from './components/CreateModule'
 import UpdateUser from './components/UpdateUser'
 import UpdateCourse from './components/UpdateCourse'
+import UpdateModule from './components/UpdateModule'
 
 import AssessmentPage from './components/AssessmentPage'
 import AssistPage from './components/AssistPage'
@@ -80,8 +83,11 @@ const AppContent = () => {
           <Route path="/consultant/appointments" element={<AppointmentManage />} />
           <Route path="/admin/users/create" element={<CreateUser />} />
           <Route path="/admin/courses/create" element={<CreateCourse />} />
+          <Route path="/admin/courses/:courseID/modules/create" element={<CreateModule />} />
           <Route path="/admin/users/:userId" element={<UpdateUser />} />
           <Route path="/admin/courses/:courseId" element={<UpdateCourse />} />
+          <Route path="/admin/modules/:moduleID/edit" element={<UpdateModule />} />
+          <Route path="/admin/courses/:courseID/modules" element={<ModuleManage />} />
           <Route path="/courses/:id" element={<CoursesInfo />} />
           <Route path="/learning/:courseId" element={<LearningPage />} />
           <Route path="/assessments" element={<AssessmentPage />} />
