@@ -30,8 +30,8 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal build(User user) {
-        //  Add "ROLE_" prefix for Spring Security compatibility
-        String roleName = "ROLE_" + user.getRole().getRoleName();
+        //
+        String roleName = user.getRole().getRoleName();
 
         return new UserPrincipal(
                 String.valueOf(user.getUserId()),
@@ -60,21 +60,21 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Customize if needed
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Customize if needed
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Customize if needed
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // Customize if needed
+        return true;
     }
 }
