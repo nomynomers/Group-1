@@ -1,6 +1,7 @@
 package com.example.auth_system.repository;
 
 import com.example.auth_system.entity.Consultant;
+import com.example.auth_system.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,7 @@ public interface ConsultantRepository extends JpaRepository<Consultant, Integer>
 
     @Query("SELECT c FROM Consultant c WHERE c.available = true ORDER BY c.yearsExperience DESC")
     List<Consultant> findTop3AvailableConsultants(Pageable pageable);
+
+    Optional<Consultant> findByUser(User user);
+
 }

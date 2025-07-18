@@ -23,7 +23,7 @@ public class UserController {
     @Autowired
     private AuthService authService;
     @GetMapping("/profile")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('CONSULTANT')")
     public ResponseEntity<?> getUserProfile(Authentication authentication) {
         try {
             String email = authentication.getName();
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('CONSULTANT')")
     public ResponseEntity<?> updateUserProfile(@Valid @RequestBody UpdateProfileRequest request,
                                                Authentication authentication) {
         try {
