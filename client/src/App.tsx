@@ -35,6 +35,7 @@ import BookAppointment from './components/BookAppointment'
 import MyAppointments from './components/MyAppointments'
 
 import ProfilePage from './components/ProfilePage'
+import ProfileConsultant from './components/ProfileConsultant'
 import UserAssessment from './components/UserAssessment'
 import UserCourse from './components/UserCourse'
 import UserAppointment from './components/UserAppointment'
@@ -52,7 +53,7 @@ const AppContent = () => {
     '/admin',
     '/admin/users/create',
     '/admin/users/:userId',
-    "/consultant/appointments"
+    "/consultant"
   ];
 
   const hideLayout = noLayoutRoutes.some((path) =>
@@ -81,6 +82,7 @@ const AppContent = () => {
           <Route path="/admin/users" element={<AdminDashboard />} />
           <Route path="/admin/courses" element={<CourseManage />} />
           <Route path="/consultant/appointments" element={<AppointmentManage />} />
+          <Route path="/consultant/profile" element={<ProfileConsultant />} />
           <Route path="/admin/users/create" element={<CreateUser />} />
           <Route path="/admin/courses/create" element={<CreateCourse />} />
           <Route path="/admin/courses/:courseID/modules/create" element={<CreateModule />} />

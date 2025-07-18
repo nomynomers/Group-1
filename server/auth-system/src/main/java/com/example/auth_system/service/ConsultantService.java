@@ -2,6 +2,7 @@ package com.example.auth_system.service;
 
 import com.example.auth_system.dto.ConsultantDTO;
 import com.example.auth_system.dto.ConsultantRequest;
+import com.example.auth_system.dto.ConsultantResponse;
 import com.example.auth_system.entity.Consultant;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.ConsultantRepository;
@@ -103,5 +104,15 @@ public class ConsultantService {
                         String.format("With %d years of experience in %s.", c.getYearsExperience(), c.getSpecialization())
                 ))
                 .toList();
+    }
+
+    public ConsultantResponse getConsultantProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Consultant consultant = consultantRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Consultant not found"));
+
+        return ConsultantResponse.fromEntity(consultant);
     }
 }
