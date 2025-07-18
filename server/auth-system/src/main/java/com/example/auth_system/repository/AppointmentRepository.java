@@ -25,6 +25,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             @Param("startTime") LocalTime startTime
     );
 
+    @Query("SELECT a FROM Appointment a " +
+            "WHERE a.user.userId = :userId " +
+            "AND a.appointmentDate = :appointmentDate " +
+            "AND CAST(startTime AS TIME) = CAST(:startTime AS TIME)")
+    List<Appointment> findConflictingAppointmentsForUser(
+            @Param("userId") int userId,
+            @Param("appointmentDate") LocalDate appointmentDate,
+            @Param("startTime") LocalTime startTime);
+
     List<Appointment> findByUser_UserId(int userID);
     List<Appointment> findByConsultant_ConsultantID(int consultantId);
 }

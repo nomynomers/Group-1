@@ -90,24 +90,40 @@ public class AppointmentService {
 
     @Transactional
     public MessageResponse createAppointment(AppointmentRequest request) {
+        List<Appointment> userConflicts = appointmentRepository.findConflictingAppointmentsForUser(
+                request.getUserID(),
+                request.getAppointmentDate(),
+                request.getStartTime()
+        );
+
+        if (!userConflicts.isEmpty()) {
+            return new MessageResponse("Error: You already have an appointment scheduled at this time. Please choose another time slot.");
+        }
+
         List<Consultant> consultants = consultantRepository.findAll();
         if (consultants.isEmpty()) {
             throw new RuntimeException("No consultant available");
         }
 
-        Consultant assignedConsultant = consultants.get(
-                ThreadLocalRandom.current().nextInt(consultants.size())
-        );
+        Consultant assignedConsultant = null;
 
-        List<Appointment> conflicts = appointmentRepository.findConflictingAppointments(
-                assignedConsultant.getConsultantID(),
-                request.getAppointmentDate(),
-                request.getStartTime()
-        );
+        for (Consultant consultant : consultants) {
+            List<Appointment> conflicts = appointmentRepository.findConflictingAppointments(
+                    consultant.getConsultantID(),
+                    request.getAppointmentDate(),
+                    request.getStartTime()
+            );
 
-        if (!conflicts.isEmpty()) {
-            return new MessageResponse("Error: This time slot is already booked.");
+            if (conflicts.isEmpty()) {
+                assignedConsultant = consultant;
+                break;
+            }
         }
+
+        if (assignedConsultant == null) {
+            return new MessageResponse("Error: All consultants are booked at this time. Please choose another time slot.");
+        }
+
 
         User user = userRepository.findById(request.getUserID())
                 .orElseThrow(() -> new RuntimeException("User not found"));
