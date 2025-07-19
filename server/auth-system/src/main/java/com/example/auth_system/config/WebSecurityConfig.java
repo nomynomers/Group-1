@@ -5,13 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpMethod;
+
 import java.util.Arrays;
 
 @Configuration
@@ -36,7 +36,6 @@ public class WebSecurityConfig {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
-    //  Use the bean method instead of field injection
     @Bean
     public AuthTokenFilter authTokenFilter() {
         return new AuthTokenFilter(jwtUtils, userDetailsService);
@@ -46,7 +45,7 @@ public class WebSecurityConfig {
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder()); //
+        authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
@@ -63,11 +62,11 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Your frontend URL
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -81,16 +80,49 @@ public class WebSecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
                         .requestMatchers(
-                                "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/auth/**", "/public/**", "/api/articles/**"
+                                "/api/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/auth/**",
+                                "/public/**"
                         ).permitAll()
-                        .requestMatchers("/api/courses", "/api/courses/**", "/api/assessments",
-                                "/api/assessments/**", "api/evaluations/**", "api/consultants/user/**",
-                                "/api/consultants/top3").permitAll()
-                        .requestMatchers("/api/modules/create", "/api/assessments/create").hasRole("ADMIN")
+
+                        // Public GET for articles (home, detail, top3)
+                        .requestMatchers(HttpMethod.GET, "/api/articles/**").permitAll()
+
+                        // Admin-only article operations (create, update, delete)
+                        .requestMatchers(HttpMethod.POST, "/api/articles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/articles/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/articles/**").hasRole("ADMIN")
+
+                        // Other admin-only endpoints
+                        .requestMatchers(
+                                "/api/admin/**",
+                                "/api/modules/create",
+                                "/api/assessments/create"
+                        ).hasRole("ADMIN")
+
+                        // Public course & consultant views
+                        .requestMatchers(
+                                "/api/courses", "/api/courses/**",
+                                "/api/assessments", "/api/assessments/**",
+                                "/api/evaluations/**",
+                                "/api/consultants/user/**",
+                                "/api/consultants/top3"
+                        ).permitAll()
+
+                        // Authenticated roles
+                        .requestMatchers("/api/appointments/**", "/api/user-assessments/**")
+                        .hasAnyRole("USER", "ADMIN", "CONSULTANT")
+                                 
+                        // CONSULTANT
                         .requestMatchers("api/consultants/user-info/**").hasRole("CONSULTANT")
-                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "CONSULTANT")
-                        .requestMatchers("/api/appointments/**", "/api/user-assessments/**").hasAnyRole("USER", "ADMIN", "CONSULTANT")
+
+                        // Catch-all for authenticated
+                        
+
                         .anyRequest().authenticated()
                 );
 
