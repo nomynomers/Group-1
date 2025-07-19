@@ -3,6 +3,7 @@ package com.example.auth_system.controller;
 import com.example.auth_system.dto.ConsultantDTO;
 import com.example.auth_system.dto.ConsultantRequest;
 import com.example.auth_system.dto.ConsultantResponse;
+import com.example.auth_system.dto.UserProfile;
 import com.example.auth_system.entity.Consultant;
 import com.example.auth_system.service.ConsultantService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -33,7 +35,7 @@ public class ConsultantController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CONSULTANT')")
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable int id, @RequestBody ConsultantRequest request) {
         try {
@@ -85,6 +87,23 @@ public class ConsultantController {
     @GetMapping("/top3")
     public ResponseEntity<List<ConsultantDTO>> getTop3Consultants() {
         return ResponseEntity.ok(consultantService.getTop3Consultants());
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('CONSULTANT')")
+    public ResponseEntity<?> getLoggedInConsultantProfile(Principal principal) {
+        try {
+            ConsultantResponse response = consultantService.getConsultantProfile(principal.getName());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('CONSULTANT')")
+    @GetMapping("/user-info/{id}")
+    public UserProfile getUser(@PathVariable int id) {
+        return consultantService.getUserById(id);
     }
 
 }

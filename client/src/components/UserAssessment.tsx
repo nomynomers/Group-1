@@ -110,7 +110,7 @@ const UserAssessment = () => {
     return (
         <div style={styles.container}>
             {/* Sidebar */}
-            <Sidebar /> 
+            <Sidebar />
 
             {/* Main Content */}
             <main style={styles.main}>
@@ -142,7 +142,13 @@ const UserAssessment = () => {
                                         <td>{assess.recommendationProvided}</td>
                                         <td>  <a
                                             style={{ color: '#0891b2', cursor: 'pointer', textDecoration: 'underline' }}
-                                            onClick={() => navigate(`/assessments/${assess.userAssessmentID}/assist/result`)}
+                                            onClick={() =>
+                                                navigate(
+                                                    assess.assessmentID === 1
+                                                        ? `/assessments/${assess.userAssessmentID}/assist/result`
+                                                        : `/assessments/${assess.userAssessmentID}/result`
+                                                )
+                                            }
                                         >
                                             View
                                         </a></td>

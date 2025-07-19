@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useEffect } from 'react';
 import axios from 'axios';
+import SidebarConsultant from './SidebarConsultant';
 
 interface Appointment {
   appointmentID: number;
@@ -15,7 +16,26 @@ interface Appointment {
   endTime: string;
   status: string;
   note: string;
+  userID: number;
 }
+
+interface UserProfile {
+  email: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  phoneNumber: string;
+}
+
+interface UserAssessment {
+  userAssessmentID: number;
+  assessmentID: number;
+  completionDate: string;
+  riskLevel: string;
+  totalScore: number;
+  recommendationProvided: boolean;
+}
+
 
 const AppointmentManage: FC = () => {
   const [loading, setLoading] = useState(true);
@@ -27,9 +47,13 @@ const AppointmentManage: FC = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelNote, setCancelNote] = useState('');
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
-
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [userAssessments, setUserAssessments] = useState<UserAssessment[]>([]);
+  const [showAssessmentsModal, setShowAssessmentsModal] = useState(false);
 
   useEffect(() => {
+
     const fetchAppointments = async () => {
       try {
         setLoading(true);
@@ -74,6 +98,27 @@ const AppointmentManage: FC = () => {
     fetchAppointments();
   }, [user]);
 
+  const fetchUserProfile = async (userID: number) => {
+    try {
+      const token = localStorage.getItem('token');
+
+      const [userRes, assessmentsRes] = await Promise.all([
+        axios.get(`http://localhost:8080/api/consultants/user-info/${userID}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get(`http://localhost:8080/api/user-assessments/${userID}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      setSelectedUser(userRes.data);
+      setUserAssessments(assessmentsRes.data); // store assessment list
+      setShowUserModal(true);
+    } catch (error) {
+      console.error("Failed to fetch user profile or assessments", error);
+    }
+  };
+
   const handleCancel = (appointmentId: number) => {
     setSelectedAppointmentId(appointmentId);
     setCancelNote('');
@@ -116,51 +161,50 @@ const AppointmentManage: FC = () => {
   };
 
 
-const updateStatus = async (appointmentId: number, status: string) => {
-  const token = localStorage.getItem('token');
+  const updateStatus = async (appointmentId: number, status: string) => {
+    const token = localStorage.getItem('token');
 
-  try {
-    await axios.put(
-      `http://localhost:8080/api/appointments/${appointmentId}/status?status=${status}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+    try {
+      await axios.put(
+        `http://localhost:8080/api/appointments/${appointmentId}/status?status=${status}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      }
-    );
+      );
 
-    // ✅ Fetch lại toàn bộ appointment sau khi update
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userId = user?.id;
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?.id;
 
-    const consultantRes = await axios.get(
-      `http://localhost:8080/api/consultants/user/${userId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const consultantId = consultantRes.data;
+      const consultantRes = await axios.get(
+        `http://localhost:8080/api/consultants/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const consultantId = consultantRes.data;
 
-    const appointmentRes = await axios.get(
-      `http://localhost:8080/api/appointments/consultant/${consultantId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      const appointmentRes = await axios.get(
+        `http://localhost:8080/api/appointments/consultant/${consultantId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setAppointments(appointmentRes.data);
+      setAppointments(appointmentRes.data);
 
-  } catch (err: any) {
-    console.error('Update failed', err);
-    alert('Failed to update appointment status.');
-  }
-};
+    } catch (err: any) {
+      console.error('Update failed', err);
+      alert('Failed to update appointment status.');
+    }
+  };
 
 
 
@@ -180,72 +224,9 @@ const updateStatus = async (appointmentId: number, status: string) => {
 
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-      <div
-        style={{
-          width: '220px',
-          backgroundColor: '#272b69',
-          color: 'white',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '20px 2rem 2rem',
-        }}>
-        <h2 style={{
-          textAlign: 'center',
-          marginBottom: '40px',
-        }}>DRUG PREVENT</h2>
-        <nav>
-          <ul style={{
-            listStyle: 'none',
-            textAlign: 'left',
-          }}>
-            <li style={{
-              margin: '10px 0',
-              cursor: 'pointer',
-              padding: '10px',
-              borderRadius: '8px',
-              width: '70%',
-            }}
-              onClick={() => navigate('/admin')}>
-              Dashboard</li>
+      <SidebarConsultant />
 
-            <li style={{
-              margin: '10px 0',
-              cursor: 'pointer',
-              padding: '10px',
-              borderRadius: '8px',
-              width: '70%',
-              backgroundColor: location.pathname === '/consultant/appointments' ? 'white' : 'transparent',
-              color: location.pathname === '/consultant/appointments' ? '#272b69' : 'white',
-              fontWeight: location.pathname === '/consultant/appointments' ? 'bold' : 'normal',
-            }}
-              onClick={() => navigate('/consultant/appointments')}>
-              Appointment</li>
-
-            <li style={{
-              margin: '10px 0',
-              cursor: 'pointer',
-              padding: '10px',
-              borderRadius: '8px',
-              width: '70%',
-              backgroundColor: location.pathname === '/admin/users' ? 'white' : 'transparent',
-              color: location.pathname === '/admin/users' ? '#272b69' : 'white',
-              fontWeight: location.pathname === '/admin/users' ? 'bold' : 'normal',
-            }}
-              onClick={() => navigate('/admin/users')}
-            >Users</li>
-
-            <li style={{
-              margin: '10px 0',
-              cursor: 'pointer',
-              padding: '10px',
-              borderRadius: '8px',
-              width: '70%',
-            }}>Settings</li>
-          </ul>
-        </nav>
-      </div>
-
-      <div style={{ padding: '20px 2rem 2rem', width: '100%' }}>
+      <div style={{ padding: '20px 2rem 2rem', width: '100%', marginLeft: '300px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <button
             onClick={handleLogout}
@@ -289,16 +270,26 @@ const updateStatus = async (appointmentId: number, status: string) => {
             <tbody>
               {appointments.length > 0 ? (
                 appointments.map((appt, index) => (
-                  <tr key={index}>
-                    <td style={{ padding: '1rem' }}>{appt.name}</td>
+                  <tr key={index} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
+                    <td style={{ padding: '1rem' }}>
+                      <span
+                        onClick={() => fetchUserProfile(appt.userID)}
+                        style={{
+                          color: '#007bff',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {appt.name}
+                      </span>
+                    </td>
                     <td style={{ padding: '1rem' }}>{appt.date}</td>
                     <td style={{ padding: '1rem' }}>{appt.startTime}-{appt.endTime}</td>
                     <td style={{ padding: '1rem' }}>
                       {appt.status === "Confirmed" ? (
-                      <a href={appt.meetingLink} target="_blank" rel="noopener noreferrer">
-                        {appt.meetingLink}
-                      </a>
-                      ):(
+                        <a href={appt.meetingLink} target="_blank" rel="noopener noreferrer">
+                          {appt.meetingLink}
+                        </a>
+                      ) : (
                         <span style={{ color: '#9CA3AF', fontStyle: 'italic' }}>Accept to get meeting link</span>
                       )}
                     </td>
@@ -416,6 +407,98 @@ const updateStatus = async (appointmentId: number, status: string) => {
                 style={{ backgroundColor: '#dc3545', color: 'white', padding: '0.5rem 1rem', border: 'none' }}
               >
                 Confirm Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {showUserModal && selectedUser && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              padding: '2rem',
+              borderRadius: '8px',
+              width: '600px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+            }}
+          >
+            <h3 style={{ marginBottom: '1rem', color: '#272b69' }}>User Profile</h3>
+            <p><strong>First Name:</strong> {selectedUser.firstName}</p>
+            <p><strong>Last Name:</strong> {selectedUser.lastName}</p>
+            <p><strong>Email:</strong> {selectedUser.email}</p>
+            <p><strong>Phone:</strong> {selectedUser.phoneNumber}</p>
+            <p><strong>Date of Birth:</strong> {selectedUser.dateOfBirth}</p>
+
+            {selectedUser && (
+              <div style={{ padding: '1rem 0' }}>
+                <h3 style={{ marginBottom: '0.5rem', color: '#272b69' }}>Assessment History</h3>
+                {userAssessments.length > 0 ? (
+                  <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#272b69', color: '#fff' }}>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Assessment ID</th>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Completion Date</th>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Risk Level</th>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Total Score</th>
+                          {/* <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Action</th> */}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userAssessments.map((a) => (
+                          <tr key={a.userAssessmentID} style={{ color: '#272b69' }}>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.assessmentID}</td>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                              {new Date(a.completionDate).toLocaleDateString()}
+                            </td>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.riskLevel}</td>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.totalScore}</td>
+{/* 
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                              <a onClick={() => navigate(`/assessments/${a.userAssessmentID}/assist/result`)} style={{ cursor: 'pointer', color: '#007bff' }}>View</a>
+                            </td> */}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p style={{ fontStyle: 'italic' }}>No assessments found.</p>
+                )}
+              </div>
+            )}
+
+
+
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1rem' }}>
+              <button
+                onClick={() => setShowUserModal(false)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#272b69',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                }}
+              >
+                Close
               </button>
             </div>
           </div>

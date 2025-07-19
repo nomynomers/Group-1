@@ -116,8 +116,13 @@ public class WebSecurityConfig {
                         // Authenticated roles
                         .requestMatchers("/api/appointments/**", "/api/user-assessments/**")
                         .hasAnyRole("USER", "ADMIN", "CONSULTANT")
+                                 
+                        // CONSULTANT
+                        .requestMatchers("api/consultants/user-info/**").hasRole("CONSULTANT")
 
                         // Catch-all for authenticated
+                        
+
                         .anyRequest().authenticated()
                 );
 
