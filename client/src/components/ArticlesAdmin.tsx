@@ -16,6 +16,7 @@ interface Article {
 const ArticleAdmin: FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const ArticleAdmin: FC = () => {
       return;
     }
 =======
+=======
+>>>>>>> Stashed changes
   const [error, setError] = useState('');
 
   const fetchArticles = () => {
@@ -56,6 +59,7 @@ const ArticleAdmin: FC = () => {
     try {
       const token = localStorage.getItem('token');
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const response = await fetch('http://localhost:8080/api/articles', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -73,6 +77,8 @@ const ArticleAdmin: FC = () => {
     } finally {
       setLoading(false);
 =======
+=======
+>>>>>>> Stashed changes
       await axios.delete(`/api/admin/articles/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -82,6 +88,9 @@ const ArticleAdmin: FC = () => {
     } catch (err) {
       console.error('Delete failed:', err);
       alert('Failed to delete article');
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
   };
@@ -287,4 +296,7 @@ export default ArticleAdmin;
     </div>
   );
 }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
