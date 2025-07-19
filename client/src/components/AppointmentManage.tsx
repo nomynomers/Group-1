@@ -449,41 +449,41 @@ const AppointmentManage: FC = () => {
               <div style={{ padding: '1rem 0' }}>
                 <h3 style={{ marginBottom: '0.5rem', color: '#272b69' }}>Assessment History</h3>
                 {userAssessments.length > 0 ? (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ccc'}}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#272b69' }}>
-                        <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Assessment ID</th>
-                        <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Completion Date</th>
-                        <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Risk Level</th>
-                        <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Total Score</th>
-                        <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Recommendation</th>
-                        <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {userAssessments.map((a) => (
-                        <tr key={a.userAssessmentID} style={{color: '#272b69'}}>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.assessmentID}</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                            {new Date(a.completionDate).toLocaleDateString()}
-                          </td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.riskLevel}</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.totalScore}</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                            {a.recommendationProvided}
-                          </td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
-                            <a onClick={() => navigate(`/assessments/${a.userAssessmentID}/assist/result`)}>View</a >
-                          </td>
+                  <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#272b69', color: '#fff' }}>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Assessment ID</th>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Completion Date</th>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Risk Level</th>
+                          <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Total Score</th>
+                          {/* <th style={{ padding: '8px', borderBottom: '1px solid #ccc' }}>Action</th> */}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {userAssessments.map((a) => (
+                          <tr key={a.userAssessmentID} style={{ color: '#272b69' }}>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.assessmentID}</td>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                              {new Date(a.completionDate).toLocaleDateString()}
+                            </td>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.riskLevel}</td>
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{a.totalScore}</td>
+{/* 
+                            <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>
+                              <a onClick={() => navigate(`/assessments/${a.userAssessmentID}/assist/result`)} style={{ cursor: 'pointer', color: '#007bff' }}>View</a>
+                            </td> */}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 ) : (
                   <p style={{ fontStyle: 'italic' }}>No assessments found.</p>
                 )}
               </div>
             )}
+
 
 
 
