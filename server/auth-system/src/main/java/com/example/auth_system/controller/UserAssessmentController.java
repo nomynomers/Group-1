@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173", maxAge = 3600)
 @SecurityRequirement(name = "bearerAuth")
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasRole('USER') or hasRole('CONSULTANT')")
 public class UserAssessmentController {
 
     @Autowired

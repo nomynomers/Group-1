@@ -3,6 +3,7 @@ package com.example.auth_system.controller;
 import com.example.auth_system.dto.ConsultantDTO;
 import com.example.auth_system.dto.ConsultantRequest;
 import com.example.auth_system.dto.ConsultantResponse;
+import com.example.auth_system.dto.UserProfile;
 import com.example.auth_system.entity.Consultant;
 import com.example.auth_system.service.ConsultantService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -97,6 +98,12 @@ public class ConsultantController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
+    }
+
+    @PreAuthorize("hasRole('CONSULTANT')")
+    @GetMapping("/user-info/{id}")
+    public UserProfile getUser(@PathVariable int id) {
+        return consultantService.getUserById(id);
     }
 
 }

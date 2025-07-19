@@ -3,7 +3,7 @@ import axios from 'axios';
 import Sidebar from './Sidebar';
 
 interface Appointment {
-  consultantName: string;
+  name: string;
   meetingLink: string | null;
   date: string;
   startTime: string;
@@ -80,7 +80,7 @@ const UserAssessment = () => {
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {appointments.map((a, idx) => (
                 <li key={idx} style={{ border: '1px solid #E5E7EB', padding: '1rem', borderRadius: '0.5rem' }}>
-                  <p><strong>Consultant:</strong> {a.consultantName}</p>
+                  <p><strong>Consultant:</strong> {a.name}</p>
                   {a.status === "Confirmed" && (
                     <p>
                       <strong>Meeting Link:</strong>{' '}

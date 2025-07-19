@@ -192,6 +192,7 @@ public class AppointmentService {
 
         return appointments.stream().map(a -> AppointmentResponse.builder()
                 .appointmentID(a.getAppointmentID())
+                .userID(a.getUser().getUserId())
                 .name(a.getUser().getFirstName() + " " + a.getUser().getLastName())
                 .meetingLink(a.getMeetingLink())
                 .date(a.getAppointmentDate().toString())

@@ -3,6 +3,7 @@ package com.example.auth_system.service;
 import com.example.auth_system.dto.ConsultantDTO;
 import com.example.auth_system.dto.ConsultantRequest;
 import com.example.auth_system.dto.ConsultantResponse;
+import com.example.auth_system.dto.UserProfile;
 import com.example.auth_system.entity.Consultant;
 import com.example.auth_system.entity.User;
 import com.example.auth_system.repository.ConsultantRepository;
@@ -114,5 +115,25 @@ public class ConsultantService {
                 .orElseThrow(() -> new RuntimeException("Consultant not found"));
 
         return ConsultantResponse.fromEntity(consultant);
+    }
+
+    private UserProfile mapToProfile(User user) {
+        return UserProfile.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .dateOfBirth(user.getDateOfBirth())
+                .phoneNumber(user.getPhoneNumber())
+                .registrationDate(user.getRegistrationDate())
+                .roleName(user.getRole().getRoleName())
+                .build();
+    }
+
+    public UserProfile getUserById(int id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return mapToProfile(user);
+
     }
 }
