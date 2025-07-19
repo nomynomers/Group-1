@@ -1,11 +1,14 @@
 package com.example.auth_system.config;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +18,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 @Component
 @Slf4j
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -38,29 +44,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String jwt = parseJwt(request);
-        log.info("==== AuthTokenFilter ====");
-        log.info("Request URI: {}", request.getRequestURI());
-        log.info("Authorization Header: {}", request.getHeader("Authorization"));
-        log.info("Parsed JWT: {}", jwt);
-
         if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
             String email = jwtUtils.getEmailFromJwtToken(jwt);
-            log.info("Token valid. Email: {}", email);
+
+            //
+            String role = jwtUtils.getAllClaimsFromToken(jwt).get("role", String.class);
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            log.info("UserDetails: {}", userDetails.getUsername());
 
+            //
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            log.warn("Invalid or missing JWT token.");
         }
 
         filterChain.doFilter(request, response);
     }
+
 
 
     private String parseJwt(HttpServletRequest request) {

@@ -20,12 +20,22 @@ public class JwtUtils {
     private int jwtExpirationMs;
 
     public String generateJwtToken(UserPrincipal userPrincipal) {
+        String role = userPrincipal.getAuthorities().stream()
+                .findFirst()
+                .map(authority -> {
+                    String authorityName = authority.getAuthority(); // e.g., "ROLE_ADMIN"
+                    return authorityName.startsWith("ROLE_")
+                            ? authorityName.substring(5) //
+                            : authorityName;
+                })
+                .orElse("USER");
+
         return Jwts.builder()
                 .setSubject(userPrincipal.getEmail())
                 .claim("role", userPrincipal.getAuthorities().stream()
                         .findFirst()
-                        .map(authority -> authority.getAuthority())
-                        .orElse("ROLE_USER"))
+                        .map(authority -> authority.getAuthority()) // <- This returns "ROLE_ADMIN"
+                        .orElse("ROLE_USER"))//
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -61,5 +71,11 @@ public class JwtUtils {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
         return false;
+    }
+    public Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
