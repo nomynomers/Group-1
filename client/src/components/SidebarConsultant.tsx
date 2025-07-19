@@ -60,21 +60,6 @@ const SidebarConsultant = () => {
           >
             Appointments
           </li>
-          <li
-            style={{
-              margin: '10px 0',
-              cursor: 'pointer',
-              padding: '10px',
-              borderRadius: '8px',
-              width: '70%',
-              backgroundColor: location.pathname === '/admin/users' ? 'white' : 'transparent',
-              color: location.pathname === '/admin/users' ? '#272b69' : 'white',
-              fontWeight: location.pathname === '/admin/users' ? 'bold' : 'normal',
-            }}
-            onClick={() => navigate('/admin/users')}
-          >
-            Users
-          </li>
         </ul>
       </nav>
     </div>

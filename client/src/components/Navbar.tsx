@@ -99,6 +99,27 @@ const Navbar: FC = () => {
                 Admin Dashboard
               </Link>
             )}
+            {(user.roleName === 'CONSULTANT') && (
+              <Link
+                to="/consultant/appointments"
+                style={{
+                  color: 'white',
+                  textDecoration: 'none',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '4px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
+              >
+                Consultant Dashboard
+              </Link>
+            )}
             <span
               style={{
                 color: 'white',

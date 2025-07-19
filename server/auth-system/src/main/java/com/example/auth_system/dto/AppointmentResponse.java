@@ -10,6 +10,7 @@ import lombok.*;
 @Setter
 public class AppointmentResponse {
     private int appointmentID;
+    private int userID;
     private String name;
     private String meetingLink;
     private String date;
