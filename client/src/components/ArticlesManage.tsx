@@ -1,19 +1,20 @@
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
 import AdminSidebar from './AdminSidebar';
+import { useUser } from '../context/UserContext';
 
 interface Article {
   articleID: number;
   articleName: string;
+  description: string;
   category: string;
   durationMinutes: number;
   imageCover: string;
-  author: string;
+  authorName: string;
 }
 
-const ArticleAdmin: FC = () => {
+const ArticlesManage: FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,49 +29,50 @@ const ArticleAdmin: FC = () => {
     }
 
     fetchArticles();
-  }, [navigate]);
+  }, []);
 
   const fetchArticles = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:8080/api/articles', {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Articles from API:', data);
         setArticles(data);
       } else {
-        setError('Unauthorized or failed to load articles.');
+        setError('Failed to fetch articles');
       }
-    } catch (err) {
-      setError('An error occurred while fetching articles.');
+    } catch {
+      setError('An error occurred while fetching articles');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteArticle = async (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this article?')) return;
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:8080/api/articles/${id}`, {
+      const response = await fetch(`http://localhost:8080/api/admin/articles/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       });
 
       if (response.ok) {
-        setArticles(articles.filter(article => article.articleID !== id));
+        setArticles(articles.filter(a => a.articleID !== id));
       } else {
-        setError('Failed to delete article.');
+        setError('Failed to delete article');
       }
-    } catch (err) {
-      setError('An error occurred while deleting article.');
+    } catch {
+      setError('Error deleting article');
     }
   };
 
@@ -114,12 +116,12 @@ const ArticleAdmin: FC = () => {
               borderRadius: '4px',
               fontWeight: 'bold',
               cursor: 'pointer',
+              transition: 'all 0.2s ease'
             }}
           >
             Logout
           </button>
         </div>
-
         <h1 style={{ color: '#272b69', marginBottom: '2rem' }}>Article Management</h1>
 
         <div style={{
@@ -136,50 +138,43 @@ const ArticleAdmin: FC = () => {
           }}>
             <thead>
               <tr style={{ backgroundColor: '#f8f9fa' }}>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Title</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Category</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Duration</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Cover</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Author</th>
-                <th style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>Actions</th>
+                <th style={thStyle}>Name</th>
+                <th style={thStyle}>Description</th>
+                <th style={thStyle}>Category</th>
+                <th style={thStyle}>Duration</th>
+                <th style={thStyle}>Image</th>
+                <th style={thStyle}>Author</th>
+                <th style={thStyle}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {articles && articles.length > 0 ? (
+              {articles.length > 0 ? (
                 articles.map(article => (
-                  <tr key={article.articleID} style={{ borderBottom: '1px solid #dee2e6' }}>
-                    <td style={{ padding: '1rem' }}>{article.articleName}</td>
-                    <td style={{ padding: '1rem' }}>{article.category}</td>
-                    <td style={{ padding: '1rem' }}>{article.durationMinutes} min</td>
-                    <td style={{ padding: '1rem' }}>
+                  <tr key={article.articleID} style={{ borderBottom: '1px solid #dee2e6', backgroundColor: 'white' }}>
+                    <td style={tdStyle}>{article.articleName}</td>
+                    <td style={tdStyle}>{article.description}</td>
+                    <td style={tdStyle}>{article.category}</td>
+                    <td style={tdStyle}>{article.durationMinutes}</td>
+                    <td style={tdStyle}>
                       <img src={article.imageCover} alt="cover" style={{ width: '80px', height: '50px', objectFit: 'cover' }} />
                     </td>
-                    <td style={{ padding: '1rem' }}>{article.author}</td>
-                    <td style={{ padding: '1rem', display: 'flex' }}>
+                    <td style={tdStyle}>{article.authorName}</td>
+                    <td style={{ ...tdStyle, display: 'flex' }}>
                       <button
-                        onClick={() => navigate(`/admin/articles/${article.articleID}`)}
-                        style={{
-                          backgroundColor: '#272b69',
-                          color: 'white',
-                          border: 'none',
-                          padding: '0.5rem 1rem',
-                          borderRadius: '4px',
-                          marginRight: '0.5rem',
-                          cursor: 'pointer'
-                        }}
+                        onClick={() => navigate(`/admin/articles/view/${article.articleID}`)}
+                        style={actionButton('#17a2b8')}
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => navigate(`/admin/articles/edit/${article.articleID}`)}
+                        style={actionButton('#272b69')}
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteArticle(article.articleID)}
-                        style={{
-                          backgroundColor: '#dc3545',
-                          color: 'white',
-                          border: 'none',
-                          padding: '0.5rem 1rem',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
+                        onClick={() => handleDelete(article.articleID)}
+                        style={actionButton('#dc3545')}
                       >
                         Delete
                       </button>
@@ -188,7 +183,7 @@ const ArticleAdmin: FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
+                  <td colSpan={7} style={{ padding: '1rem', textAlign: 'center', color: '#333' }}>
                     No articles found
                   </td>
                 </tr>
@@ -201,4 +196,24 @@ const ArticleAdmin: FC = () => {
   );
 };
 
-export default ArticleAdmin;
+const thStyle = {
+  padding: '1rem',
+  borderBottom: '1px solid #dee2e6',
+  color: '#272b69'
+};
+
+const tdStyle = {
+  padding: '1rem'
+};
+
+const actionButton = (color: string) => ({
+  backgroundColor: color,
+  color: 'white',
+  border: 'none',
+  padding: '0.5rem 1rem',
+  borderRadius: '4px',
+  marginRight: '0.5rem',
+  cursor: 'pointer'
+});
+
+export default ArticlesManage;

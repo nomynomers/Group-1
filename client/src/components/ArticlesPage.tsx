@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import type { Article } from '../types/Articles';
+import type { Article } from '../types/Article';
 import { useNavigate } from 'react-router-dom';
 
 const ArticlesPage: FC = () => {

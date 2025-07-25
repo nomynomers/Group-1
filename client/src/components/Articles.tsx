@@ -3,9 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
+// Define the article type
+interface Article {
+  id: number;
+  title: string;
+  image: string;
+  category: string;
+  readTime: string;
+}
+
 const Articles: FC = () => {
   const navigate = useNavigate();
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<Article[]>([]); // ✅ Use the type here
 
   const handleViewAllClick = () => {
     navigate('/articles');
@@ -19,7 +28,7 @@ const Articles: FC = () => {
 
   return (
     <div style={{
-      padding: '6rem 2rem 4rem', // ✅ Increased top padding to prevent overlap
+      padding: '6rem 2rem 4rem',
       backgroundColor: 'white',
       minHeight: '100vh'
     }}>
@@ -40,9 +49,9 @@ const Articles: FC = () => {
           gap: '2rem',
           marginTop: '1rem'
         }}>
-          {articles.map((article, index) => (
+          {articles.map((article) => (
             <div
-              key={index}
+              key={article.id}
               style={{
                 backgroundColor: 'white',
                 borderRadius: '8px',

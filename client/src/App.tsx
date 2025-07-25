@@ -42,13 +42,16 @@ import UserAppointment from './components/UserAppointment'
 
 import ArticleDetails from './components/ArticleDetails';
 
-import ArticlesAdmin from './components/ArticlesAdmin';
-
+import ArticlesManage from './components/ArticlesManage.tsx';
+import ArticlesForm from './components/ArticlesForm.tsx';
+import ArticleCreate from './components/ArticleCreate';
+import ArticleEdit from './components/ArticleEdit';
 import './App.css'
+
 
 const AppContent = () => {
   const location = useLocation();
-  
+
   const noLayoutRoutes = [
     '/admin',
     '/admin/users/create',
@@ -104,7 +107,11 @@ const AppContent = () => {
           <Route path="/member/appointment" element={<UserAppointment />} />
           <Route path="/member/courses" element={<UserCourse />} />
           <Route path="/articles/:id" element={<ArticleDetails />} />
-          <Route path="/admin/articles" element={<ArticlesAdmin />} />
+          <Route path="/admin/articles" element={<ArticlesManage />} />
+          <Route path="/admin/articles/create" element={<ArticleCreate />} />
+          <Route path="/admin/articles/edit/:id" element={<ArticleEdit />} />
+          <Route path="/admin/articles/view/:id" element={<ArticleDetails />} />
+
         </Routes>
       </main>
       {!hideLayout && <Footer />}
