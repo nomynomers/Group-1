@@ -4,6 +4,8 @@ VALUES
 ('ADMIN'),
 ('USER')
 
+-------------------------Courses---------------------------------------
+
 INSERT INTO [DrugPrevention].[dbo].[Courses] (
     courseName,
     description,
@@ -70,6 +72,99 @@ VALUES
  'https://www.youtube.com/embed/WQEatyCe7ZY',
  3
 );
+
+INSERT INTO Courses (courseName, description, targetAudience, durationMinutes, imageCover, author)
+VALUES 
+(
+  'Effective Communication with Teens',
+  'Teaches parents how to communicate effectively with teenagers about drugs and risky behaviors.',
+  'Parents',
+  10,
+  'https://example.com/images/communication_teens.png',
+  'Lisa Pham'
+),
+(
+  'Substance Abuse in the Workplace',
+  'Educates adults on recognizing and addressing substance abuse among colleagues and employees.',
+  'Adults',
+  9,
+  'https://example.com/images/workplace_abuse.png',
+  'David Tran'
+),
+(
+  'Digital Tools for Drug Education',
+  'Guides teachers in using modern digital tools to deliver engaging drug education lessons.',
+  'Teachers',
+  8,
+  'https://example.com/images/digital_education.png',
+  'Thu Nguyen'
+),
+(
+  'Peer Pressure and How to Handle It',
+  'Helps youth identify and resist peer pressure situations involving drugs.',
+  'Youth',
+  7,
+  'https://example.com/images/peer_pressure.png',
+  'Long Ho'
+),
+(
+  'Supporting Children of Addicted Parents',
+  'Provides support strategies for parents and caregivers of children in addicted households.',
+  'Parents',
+  12,
+  'https://example.com/images/support_children.png',
+  'Minh Ha'
+),
+(
+  'Community Initiatives to Prevent Drug Use',
+  'Outlines programs and initiatives communities can undertake to prevent substance abuse.',
+  'Teachers',
+  11,
+  'https://example.com/images/community_initiative.png',
+  'Quang Le'
+);
+
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(2, 'Understanding Peer Pressure', 'Recognize common pressure tactics.', 2, N'See how peer influence works in teen environments.', 'https://example.com/videos/refusal-1.mp4', 1),
+(2, 'Refusal Techniques', 'Ways to confidently say no.', 2, N'Techniques like assertive communication and role play.', 'https://example.com/videos/refusal-2.mp4', 2),
+(2, 'Building Confidence', 'Stay strong in tough situations.', 2, N'Strategies to build self-esteem and resilience.', 'https://example.com/videos/refusal-3.mp4', 3);
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(3, 'Therapeutic Approaches', 'Overview of common counseling techniques.', 4, N'CBT, group therapy, and more.', 'https://example.com/videos/counseling-1.mp4', 1),
+(3, 'Recovery Support Systems', 'Support networks and their importance.', 4, N'Role of family, peers, and professionals.', 'https://example.com/videos/counseling-2.mp4', 2),
+(3, 'Preventing Relapse', 'Techniques to avoid returning to drug use.', 4, N'Recognizing triggers and having a recovery plan.', 'https://example.com/videos/counseling-3.mp4', 3);
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(1004, 'Foundations of Communication', 'Basic skills for listening and speaking.', 3, N'Learn the do’s and don’ts of talking with teens.', 'https://example.com/videos/parenting-1.mp4', 1),
+(1004, 'Drug Topics for Discussion', 'What to say and how to say it.', 3, N'Conversation starters around drugs and health.', 'https://example.com/videos/parenting-2.mp4', 2),
+(1004, 'Keeping Communication Open', 'Creating a safe space.', 4, N'Make teens feel heard and supported.', 'https://example.com/videos/parenting-3.mp4', 3);
+	INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(1005, 'Recognizing Signs', 'How to identify substance abuse.', 3, N'Behavioral and performance indicators in the workplace.', 'https://example.com/videos/workplace-1.mp4', 1),
+(1005, 'Responding Professionally', 'Steps to take as a manager or coworker.', 3, N'Balancing empathy and responsibility.', 'https://example.com/videos/workplace-2.mp4', 2),
+(1005, 'Building a Drug-Free Policy', 'Policy and support programs.', 3, N'Creating a safe and supportive work culture.', 'https://example.com/videos/workplace-3.mp4', 3);
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(1006, 'Digital Resources Overview', 'Tools and platforms for teaching.', 3, N'Videos, interactive quizzes, VR tools.', 'https://example.com/videos/edtech-1.mp4', 1),
+(1006, 'Lesson Planning with Tech', 'How to integrate tech into the classroom.', 2, N'Example lesson structures using multimedia.', 'https://example.com/videos/edtech-2.mp4', 2),
+(1006, 'Assessing Student Engagement', 'Track learning progress.', 3, N'Monitoring and feedback with technology.', 'https://example.com/videos/edtech-3.mp4', 3);
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(1007, 'What is Peer Pressure?', 'Types and effects.', 2, N'Direct, indirect, and self-imposed pressure explained.', 'https://example.com/videos/peer-1.mp4', 1),
+(1007, 'Practice Saying No', 'Realistic refusal scenarios.', 3, N'Scripts and responses for high-pressure moments.', 'https://example.com/videos/peer-2.mp4', 2),
+(1007, 'Support Systems', 'Finding your allies.', 2, N'Surrounding yourself with people who respect your choices.', 'https://example.com/videos/peer-3.mp4', 3);
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(1008, 'Understanding Trauma in Children', 'Psychological effects explained.', 4, N'How addiction affects childhood development.', 'https://example.com/videos/child-support-1.mp4', 1),
+(1008, 'Building Safe Environments', 'Creating structure and trust.', 4, N'Practical parenting advice for stability.', 'https://example.com/videos/child-support-2.mp4', 2),
+(1008, 'Connecting with Resources', 'Where to find help.', 4, N'School counselors, therapy, and support groups.', 'https://example.com/videos/child-support-3.mp4', 3);
+INSERT INTO CourseModules (courseID, moduleName, description, durationMinutes, content, videoUrl, moduleOrder)
+VALUES 
+(1009, 'Types of Community Programs', 'Different models for prevention.', 4, N'Youth centers, afterschool programs, and campaigns.', 'https://example.com/videos/community-1.mp4', 1),
+(1009, 'Engaging Stakeholders', 'Working with parents, schools, and leaders.', 3, N'Collaboration between sectors for stronger impact.', 'https://example.com/videos/community-2.mp4', 2),
+(1009, 'Measuring Program Success', 'Using data to improve impact.', 4, N'Surveys, interviews, and long-term tracking methods.', 'https://example.com/videos/community-3.mp4', 3);
+
 
 ------------------------------ASSESSMENTS----------------------------
 
@@ -223,6 +318,8 @@ VALUES
 (2002, 'Yes, but not in the past 3 months', 1, 0, 38),
 (2002, 'Yes, in the past 3 months', 2, 0, 39);
 
+-------------------------------------------------Articles---------------------------------------------------------------
+
 -- Blog 1: The Power of Education in Preventing Drug Abuse
 INSERT INTO Articles (createdBy, articleName, description, category, durationMinutes, imageCover, content)
 VALUES (
@@ -259,4 +356,41 @@ VALUES (
   'Recognizing the early signs of drug use can prevent long-term harm. These signs include sudden behavior changes, withdrawal from family, declining academic performance, and changes in appearance. If you notice these symptoms, act with compassion — not anger. Start with an open conversation and express your concern. Involve professionals such as school counselors or healthcare providers when necessary. Early intervention often leads to more successful outcomes.'
 );
 
+INSERT INTO Articles (createdBy, articleName, description, category, durationMinutes, imageCover, content)
+VALUES 
+(1, 'The Impact of Drugs on Mental Health',
+ 'An in-depth look at how substance abuse affects psychological well-being.',
+ 'Mental Health', 8,
+ 'https://example.com/images/drug-mental-health.jpg',
+ 'This article explores the connection between drug use and mental health issues such as anxiety, depression, and psychosis.'),
+ 
+(1, 'How to Talk to Teenagers About Drugs',
+ 'Tips and strategies for parents to have honest conversations about drugs with their teens.',
+ 'Parenting', 6,
+ 'https://example.com/images/talk-teens-drugs.jpg',
+ 'Discover practical advice for initiating conversations, building trust, and answering tough questions about substance use.'),
+
+(1, 'Why Early Education Prevents Drug Abuse',
+ 'The role of early intervention and school-based programs in reducing drug use.',
+ 'Education', 7,
+ 'https://example.com/images/drug-prevention-school.jpg',
+ 'Learn how educators and communities can equip children with skills to avoid risky behaviors from a young age.'),
+
+(1, 'Supporting Friends Through Recovery',
+ 'Ways to be a helpful ally to someone recovering from addiction.',
+ 'Support', 5,
+ 'https://example.com/images/support-recovery.jpg',
+ 'Find out what to say, what not to say, and how to maintain a supportive relationship with someone in recovery.'),
+
+(1, 'Understanding Prescription Drug Abuse',
+ 'Explore how legal medications can become dangerous when misused.',
+ 'Awareness', 6,
+ 'https://example.com/images/prescription-abuse.jpg',
+ 'This article sheds light on the dangers of prescription drug misuse and how to prevent it.'),
+
+(1, 'Community Programs that Make a Difference',
+ 'Successful community-led drug prevention programs around the world.',
+ 'Community', 9,
+ 'https://example.com/images/community-programs.jpg',
+ 'Case studies and examples of local programs that have significantly reduced drug-related problems in their areas.');
 

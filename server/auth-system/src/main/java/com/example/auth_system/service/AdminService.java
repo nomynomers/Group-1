@@ -44,6 +44,7 @@ public class AdminService {
 
         user.setFirstName(updatedUser.getFirstName());
         user.setLastName(updatedUser.getLastName());
+        user.setEmail(updatedUser.getEmail());
         user.setPhoneNumber(updatedUser.getPhoneNumber());
         user.setDateOfBirth(updatedUser.getDateOfBirth());
 
