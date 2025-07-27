@@ -1,7 +1,15 @@
+/**
+ * @file This file contains the About component, which displays information about the application.
+ */
 import type { FC } from 'react';
 import { useEffect } from 'react';
 
+/**
+ * The About component.
+ * @returns {JSX.Element} The rendered About component.
+ */
 const About: FC = () => {
+  // Scroll to the top of the page when the component mounts.
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -81,4 +89,4 @@ const About: FC = () => {
   );
 };
 
-export default About; 
+export default About;
